@@ -12,7 +12,7 @@ import { queryClient, apiRequest } from "@/lib/queryClient";
 import { insertDeliverySchema, type InsertDelivery } from "@shared/schema";
 import { formatPrice } from "@/lib/utils";
 import AppHeader from "@/components/app-header";
-import WorkingMap from "@/components/working-map";
+import EmbeddedOpenStreetMap from "@/components/embedded-openstreetmap";
 import BottomNavigation from "@/components/bottom-navigation";
 
 const deliveryTypes = [
@@ -111,7 +111,7 @@ export default function DeliveryForm() {
     <>
       <AppHeader />
       
-      <WorkingMap height="h-64" showDrivers={false} />
+      <EmbeddedOpenStreetMap height="256px" showDrivers={false} />
       
       {/* Delivery Form Bottom Sheet */}
       <div className="floating-panel bg-white rounded-t-3xl absolute bottom-0 left-0 right-0 z-10 overflow-hidden" style={{ height: "calc(100vh - 256px)" }}>
