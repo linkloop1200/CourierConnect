@@ -392,7 +392,7 @@ export default function UberStyleHome() {
       </div>
 
       {/* Top Bar */}
-      <div className="absolute top-0 left-0 right-0 z-20 bg-white/95 backdrop-blur-sm p-4 pt-6">
+      <div className="absolute top-0 left-0 right-0 z-20 bg-white/95 backdrop-blur-sm p-4 pt-8">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
             <div className="w-8 h-8 bg-brand-blue rounded-lg flex items-center justify-center">
@@ -450,7 +450,7 @@ export default function UberStyleHome() {
                   onClick={handleCalculateEstimate}
                   disabled={!pickup || !delivery}
                 >
-                  Bereken
+                  Berekenen
                 </Button>
               </div>
             )}
