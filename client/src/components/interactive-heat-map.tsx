@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import MapAlternative from "./map-alternative";
+import LeafletMap from "./leaflet-map";
 import type { Delivery } from "@shared/schema";
 
 interface HeatMapData {
@@ -144,7 +144,7 @@ export default function InteractiveHeatMap({ timeRange = "today" }: InteractiveH
         </CardHeader>
         <CardContent>
           <div className="relative">
-            <MapAlternative
+            <LeafletMap
               height="384px"
               showDrivers={true}
               showPackages={true}

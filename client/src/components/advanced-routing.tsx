@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import MapAlternative from "./map-alternative";
+import LeafletMap from "./leaflet-map";
 import type { Delivery, Driver } from "@shared/schema";
 
 interface RouteOptimization {
@@ -226,7 +226,7 @@ export default function AdvancedRouting({ driverId }: AdvancedRoutingProps) {
             <CardTitle>Route Visualisatie</CardTitle>
           </CardHeader>
           <CardContent>
-            <MapAlternative
+            <LeafletMap
               height="320px"
               showDrivers={true}
               showPackages={true}

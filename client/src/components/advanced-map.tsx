@@ -1,4 +1,4 @@
-import MapAlternative from "./map-alternative";
+import LeafletMap from "./leaflet-map";
 
 interface AdvancedMapProps {
   height?: string;
@@ -15,7 +15,7 @@ interface AdvancedMapProps {
 
 export default function AdvancedMap(props: AdvancedMapProps) {
   return (
-    <MapAlternative
+    <LeafletMap
       {...props}
       enableRealTimeTracking={props.enableRealTimeTracking}
       showHeatMap={props.showHeatMap}
