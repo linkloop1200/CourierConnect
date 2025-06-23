@@ -235,10 +235,7 @@ export default function UberStyleHome() {
     } else if (showLocationPicker === 'delivery') {
       // Set delivery location and return to main screen
       setDelivery(location);
-      // Calculate estimate if we have pickup too
-      if (pickup?.coordinates) {
-        calculateEstimate(pickup.coordinates, location.coordinates);
-      }
+      // Don't calculate automatically - wait for user to click calculate button
     }
     
     // Clear search and suggestions
@@ -284,33 +281,23 @@ export default function UberStyleHome() {
     getCurrentLocation();
   }, []);
 
-  // Calculate estimate when both locations are set
-  useEffect(() => {
-    if (pickup && delivery) {
-      const service = services.find(s => s.id === selectedService);
-      const basePrice = Math.floor(Math.random() * 4) + 8; // €8-12 base
-      const finalPrice = Math.round(basePrice * (service?.multiplier || 1));
-      const baseTime = Math.floor(Math.random() * 15) + 45; // 45-60 min base
-      const finalTime = Math.round(baseTime / (service?.multiplier || 1));
-      
-      setEstimate({
-        price: `€${finalPrice}`,
-        time: `${finalTime} min`
-      });
-    }
-  }, [pickup, delivery, selectedService]);
+  // Don't auto-calculate - wait for user button click
 
   const handleLocationSelect = (location: UberStyleLocation) => {
     if (showLocationPicker === 'pickup') {
       setPickup(location);
     } else if (showLocationPicker === 'delivery') {
       setDelivery(location);
-      // Calculate estimate only when both locations are set
-      if (pickup?.coordinates) {
-        calculateEstimate(pickup.coordinates, location.coordinates);
-      }
+      // Don't calculate automatically - wait for user to click calculate button
     }
     setShowLocationPicker(null);
+  };
+
+  // Manual calculation trigger
+  const handleCalculateEstimate = () => {
+    if (pickup?.coordinates && delivery?.coordinates) {
+      calculateEstimate(pickup.coordinates, delivery.coordinates);
+    }
   };
 
   const handleBookDelivery = () => {
@@ -457,7 +444,7 @@ export default function UberStyleHome() {
 
       {/* Service Selection */}
       {pickup && delivery && (
-        <div className="absolute bottom-0 left-0 right-0 z-20 bg-white rounded-t-3xl shadow-2xl">
+        <div className="absolute bottom-20 left-0 right-0 z-30 bg-white rounded-t-3xl shadow-2xl">
           <div className="p-6">
             <h3 className="text-lg font-bold mb-4">Kies je service</h3>
             
@@ -486,12 +473,25 @@ export default function UberStyleHome() {
               ))}
             </div>
 
-            <Button 
-              className="w-full bg-brand-blue text-white py-4 h-auto text-lg font-semibold"
-              onClick={handleBookDelivery}
-            >
-              Boek bezorging {estimate?.price && `• ${estimate.price}`}
-            </Button>
+            {/* Calculate button - only show when both locations are set but no estimate */}
+            {pickup && delivery && !estimate && (
+              <Button 
+                className="w-full bg-green-600 text-white py-4 h-auto text-lg font-semibold mb-4"
+                onClick={handleCalculateEstimate}
+              >
+                Bereken prijs
+              </Button>
+            )}
+
+            {/* Book button - only show when estimate is available */}
+            {estimate && (
+              <Button 
+                className="w-full bg-brand-blue text-white py-4 h-auto text-lg font-semibold"
+                onClick={handleBookDelivery}
+              >
+                Boek bezorging • {estimate.price}
+              </Button>
+            )}
 
             {/* Role-based Quick Access */}
             <div className="mt-6 pt-4 border-t border-gray-200">

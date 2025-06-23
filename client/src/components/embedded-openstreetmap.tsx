@@ -174,7 +174,7 @@ export default function EmbeddedOpenStreetMap({
       </div>
 
       {/* Legend */}
-      <div className="absolute bottom-20 left-4 bg-white/95 p-3 rounded-lg shadow-lg text-xs z-30">
+      <div className="absolute bottom-20 left-4 bg-white/95 p-3 rounded-lg shadow-lg text-xs z-10">
         <div className="space-y-2">
           <div className="flex items-center space-x-2">
             <div className="w-3 h-3 bg-green-500 rounded-full"></div>
