@@ -35,7 +35,7 @@ export default function Tracking({ params }: TrackingProps) {
   const toggleBottomSheet = () => {
     const newState = !isBottomSheetOpen;
     setIsBottomSheetOpen(newState);
-    setBottomSheetHeight(newState ? 'calc(100vh - 256px)' : '80px');
+    setBottomSheetHeight(newState ? 'calc(100vh - 256px)' : '120px');
   };
 
   const getStatusSteps = (status: string) => {

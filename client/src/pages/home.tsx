@@ -31,7 +31,7 @@ export default function Home() {
   const toggleBottomSheet = () => {
     const newState = !isBottomSheetOpen;
     setIsBottomSheetOpen(newState);
-    setBottomSheetHeight(newState ? 'calc(100vh - 384px)' : '80px');
+    setBottomSheetHeight(newState ? 'calc(100vh - 384px)' : '120px');
   };
 
   const handleTouchStart = (e: React.TouchEvent) => {
