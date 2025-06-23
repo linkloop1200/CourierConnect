@@ -229,15 +229,24 @@ export default function UberStyleHome() {
       coordinates: suggestion.coordinates
     };
     
-    // Set as pickup location
-    setPickup(location);
+    if (showLocationPicker === 'pickup') {
+      // Set pickup location and return to main screen
+      setPickup(location);
+    } else if (showLocationPicker === 'delivery') {
+      // Set delivery location and return to main screen
+      setDelivery(location);
+      // Calculate estimate if we have pickup too
+      if (pickup?.coordinates) {
+        calculateEstimate(pickup.coordinates, location.coordinates);
+      }
+    }
     
     // Clear search and suggestions
     setSearchValue('');
     setShowSuggestions(false);
     
-    // Go to delivery location picker instead of setting default
-    setShowLocationPicker('delivery');
+    // Return to main screen
+    setShowLocationPicker(null);
   };
 
   // Get current location (Uber-style)
