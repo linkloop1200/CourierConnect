@@ -62,6 +62,12 @@ export default function EmbeddedOpenStreetMap({
         key={zoom}
       />
       
+      {/* Hide original zoom text and add repositioned version */}
+      <div className="absolute top-2 left-2 w-40 h-6 bg-white z-40"></div>
+      <div className="absolute top-2 right-2 bg-white/90 px-2 py-1 rounded text-xs text-gray-600 z-40 pointer-events-none">
+        Amsterdam • Zoom: {zoom}
+      </div>
+      
       {/* Overlay markers */}
       <div className="absolute inset-0 pointer-events-none">
         {/* User location marker */}
