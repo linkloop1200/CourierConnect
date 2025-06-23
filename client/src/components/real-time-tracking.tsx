@@ -4,7 +4,7 @@ import { MapPin, Navigation, Clock, Truck } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import WorkingMap from "./working-map";
+import MapAlternative from "./map-alternative";
 import type { Delivery, Driver } from "@shared/schema";
 
 interface RealTimeTrackingProps {
@@ -100,9 +100,11 @@ export default function RealTimeTracking({ deliveryId }: RealTimeTrackingProps) 
       </Card>
 
       {/* Real-time GPS Map */}
-      <WorkingMap
-        height="h-80"
+      <MapAlternative
+        height="320px"
         showDrivers={true}
+        showPackages={true}
+        enableRealTimeTracking={true}
         pickupLocation={deliveryData.pickupLatitude && deliveryData.pickupLongitude ? 
           { lat: parseFloat(deliveryData.pickupLatitude), lng: parseFloat(deliveryData.pickupLongitude) } : undefined}
         deliveryLocation={deliveryData.deliveryLatitude && deliveryData.deliveryLongitude ? 

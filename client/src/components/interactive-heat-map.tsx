@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import WorkingMap from "./working-map";
+import MapAlternative from "./map-alternative";
 import type { Delivery } from "@shared/schema";
 
 interface HeatMapData {
@@ -144,10 +144,11 @@ export default function InteractiveHeatMap({ timeRange = "today" }: InteractiveH
         </CardHeader>
         <CardContent>
           <div className="relative">
-            <WorkingMap
-              height="h-96"
+            <MapAlternative
+              height="384px"
               showDrivers={true}
               showPackages={true}
+              showHeatMap={true}
               userLocation={{ lat: 52.3676, lng: 4.9041 }}
               pickupLocation={{ lat: 52.3700, lng: 4.8950 }}
               deliveryLocation={{ lat: 52.3650, lng: 4.9150 }}

@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import WorkingMap from "./working-map";
+import MapAlternative from "./map-alternative";
 import type { Delivery, Driver } from "@shared/schema";
 
 interface RouteOptimization {
@@ -226,10 +226,11 @@ export default function AdvancedRouting({ driverId }: AdvancedRoutingProps) {
             <CardTitle>Route Visualisatie</CardTitle>
           </CardHeader>
           <CardContent>
-            <WorkingMap
-              height="h-80"
+            <MapAlternative
+              height="320px"
               showDrivers={true}
               showPackages={true}
+              showRouteOptimization={true}
               driverLocation={{ lat: 52.3676, lng: 4.9041 }}
               pickupLocation={{ lat: 52.3700, lng: 4.8950 }}
               deliveryLocation={{ lat: 52.3650, lng: 4.9150 }}
