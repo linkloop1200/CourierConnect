@@ -5,7 +5,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import AppHeader from "@/components/app-header";
 import MapView from "@/components/map-view";
+import GoogleMap from "@/components/google-map";
 import BottomNavigation from "@/components/bottom-navigation";
+import { parseCoordinates } from "@/lib/geocoding";
 import { formatPrice, formatDateTime } from "@/lib/utils";
 import type { Delivery, Driver } from "@shared/schema";
 
@@ -73,7 +75,17 @@ export default function Tracking({ params }: TrackingProps) {
     <>
       <AppHeader />
       
-      <MapView height="h-64" showDrivers={true} />
+      {import.meta.env.VITE_GOOGLE_MAPS_API_KEY ? (
+        <GoogleMap 
+          height="h-64" 
+          showDrivers={true}
+          pickupLocation={parseCoordinates(deliveryData?.pickupLatitude, deliveryData?.pickupLongitude)}
+          deliveryLocation={parseCoordinates(deliveryData?.deliveryLatitude, deliveryData?.deliveryLongitude)}
+          driverLocation={deliveryData?.driver ? parseCoordinates(deliveryData.driver.currentLatitude, deliveryData.driver.currentLongitude) : undefined}
+        />
+      ) : (
+        <MapView height="h-64" showDrivers={true} />
+      )}
       
       {/* Tracking Bottom Sheet */}
       <div className="floating-panel bg-white rounded-t-3xl absolute bottom-0 left-0 right-0 z-10 overflow-hidden" style={{ height: "calc(100vh - 256px)" }}>
