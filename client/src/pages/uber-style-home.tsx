@@ -293,12 +293,15 @@ export default function UberStyleHome() {
     setShowLocationPicker(null);
   };
 
-  // Manual calculation trigger
+  // Manual calculation trigger - show service selection
   const handleCalculateEstimate = () => {
     if (pickup?.coordinates && delivery?.coordinates) {
       calculateEstimate(pickup.coordinates, delivery.coordinates);
+      setShowServiceSelection(true);
     }
   };
+
+  const [showServiceSelection, setShowServiceSelection] = useState(false);
 
   const handleBookDelivery = () => {
     if (pickup && delivery) {
@@ -438,14 +441,26 @@ export default function UberStyleHome() {
                 </div>
               </div>
             </Button>
+
+            {/* Calculate button - show when both addresses are filled */}
+            {pickup && delivery && !showServiceSelection && (
+              <div className="mt-4">
+                <Button 
+                  className="w-full bg-brand-blue text-white py-4 h-auto text-lg font-semibold"
+                  onClick={handleCalculateEstimate}
+                >
+                  Bereken
+                </Button>
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>
 
-      {/* Service Selection */}
-      {pickup && delivery && (
-        <div className="absolute bottom-20 left-0 right-0 z-30 bg-white rounded-t-3xl shadow-2xl">
-          <div className="p-6">
+      {/* Service Selection - connected to navigation bar */}
+      {showServiceSelection && (
+        <div className="absolute bottom-0 left-0 right-0 z-30 bg-white rounded-t-3xl shadow-2xl max-h-[calc(100vh-5rem)] overflow-y-auto">
+          <div className="p-6 pb-24">
             <h3 className="text-lg font-bold mb-4">Kies je service</h3>
             
             <div className="space-y-3 mb-6">
@@ -473,25 +488,12 @@ export default function UberStyleHome() {
               ))}
             </div>
 
-            {/* Calculate button - only show when both locations are set but no estimate */}
-            {pickup && delivery && !estimate && (
-              <Button 
-                className="w-full bg-green-600 text-white py-4 h-auto text-lg font-semibold mb-4"
-                onClick={handleCalculateEstimate}
-              >
-                Bereken prijs
-              </Button>
-            )}
-
-            {/* Book button - only show when estimate is available */}
-            {estimate && (
-              <Button 
-                className="w-full bg-brand-blue text-white py-4 h-auto text-lg font-semibold"
-                onClick={handleBookDelivery}
-              >
-                Boek bezorging • {estimate.price}
-              </Button>
-            )}
+            <Button 
+              className="w-full bg-brand-blue text-white py-4 h-auto text-lg font-semibold"
+              onClick={handleBookDelivery}
+            >
+              Boek bezorging {estimate?.price && `• ${estimate.price}`}
+            </Button>
 
             {/* Role-based Quick Access */}
             <div className="mt-6 pt-4 border-t border-gray-200">
