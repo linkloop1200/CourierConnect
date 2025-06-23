@@ -14,6 +14,9 @@ import UberStyleHome from "@/pages/uber-style-home";
 import BookingFlow from "@/pages/booking-flow";
 import DriverDashboard from "@/pages/driver-dashboard";
 import RealTimeTracking from "@/pages/real-time-tracking";
+import PaymentCheckout from "@/pages/payment-checkout";
+import IdealPayment from "@/pages/ideal-payment";
+import AdvancedRoutingSystem from "@/pages/advanced-routing-system";
 
 function Router() {
   return (
@@ -23,6 +26,9 @@ function Router() {
       <Route path="/book" component={BookingFlow} />
       <Route path="/driver" component={DriverDashboard} />
       <Route path="/live/:id" component={RealTimeTracking} />
+      <Route path="/payment" component={PaymentCheckout} />
+      <Route path="/ideal" component={IdealPayment} />
+      <Route path="/routing" component={AdvancedRoutingSystem} />
       <Route path="/delivery" component={DeliveryForm} />
       <Route path="/tracking/:id" component={Tracking} />
       <Route path="/activity" component={Activity} />

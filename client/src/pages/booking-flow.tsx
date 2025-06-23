@@ -208,10 +208,10 @@ export default function BookingFlow({ params }: BookingFlowProps) {
         <div className="absolute bottom-0 left-0 right-0 p-4 bg-white border-t">
           <Button 
             className="w-full bg-brand-blue text-white py-4 h-auto text-lg font-semibold"
-            onClick={handleSubmitDetails}
-            disabled={!packageDetails.description || !packageDetails.recipientName || createDeliveryMutation.isPending}
+            onClick={() => setLocation('/payment')}
+            disabled={!packageDetails.description || !packageDetails.recipientName}
           >
-            {createDeliveryMutation.isPending ? "Bezig..." : "Bevestig bezorging"}
+            Naar betaling
           </Button>
         </div>
       </div>

@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
+import { useLocation } from "wouter";
 import { Navigation, Phone, MessageCircle, CheckCircle, Clock, MapPin, Star, Package, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -26,6 +27,7 @@ interface ActiveDelivery extends Delivery {
 
 export default function DriverDashboard() {
   const { toast } = useToast();
+  const [, setLocation] = useLocation();
   const [isOnline, setIsOnline] = useState(true);
   const [activeDelivery, setActiveDelivery] = useState<ActiveDelivery | null>(null);
   const [driverLocation, setDriverLocation] = useState({ lat: 52.3676, lng: 4.9041 });
@@ -270,6 +272,16 @@ export default function DriverDashboard() {
 
               {/* Action Buttons */}
               <div className="space-y-2">
+                {/* Advanced Routing Button */}
+                <Button 
+                  variant="outline"
+                  className="w-full border-purple-500 text-purple-600 hover:bg-purple-500 hover:text-white"
+                  onClick={() => setLocation("/routing")}
+                >
+                  <Navigation className="h-4 w-4 mr-2" />
+                  Route Optimaliseren
+                </Button>
+                
                 {activeDelivery.status === "assigned" && (
                   <Button 
                     className="w-full bg-brand-blue text-white"

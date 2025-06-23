@@ -213,6 +213,24 @@ export default function Home() {
             >
               👨‍💼 Bezorger Dashboard
             </Button>
+
+            {/* Payment & Routing Systems */}
+            <div className="grid grid-cols-2 gap-3 mt-3">
+              <Button 
+                variant="outline"
+                className="border-purple-500 text-purple-600 py-3 h-auto text-sm font-medium hover:bg-purple-500 hover:text-white transition-colors"
+                onClick={() => setLocation("/payment")}
+              >
+                💳 Payment System
+              </Button>
+              <Button 
+                variant="outline"
+                className="border-orange-500 text-orange-600 py-3 h-auto text-sm font-medium hover:bg-orange-500 hover:text-white transition-colors"
+                onClick={() => setLocation("/routing")}
+              >
+                🗺️ Advanced Routing
+              </Button>
+            </div>
           </div>
           </div>
         </div>
