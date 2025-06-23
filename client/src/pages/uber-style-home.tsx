@@ -232,9 +232,11 @@ export default function UberStyleHome() {
     if (showLocationPicker === 'pickup') {
       // Set pickup location and return to main screen
       setPickup(location);
+      saveAddress(location);
     } else if (showLocationPicker === 'delivery') {
       // Set delivery location and return to main screen
       setDelivery(location);
+      saveAddress(location);
       // Don't calculate automatically - wait for user to click calculate button
     }
     
@@ -302,6 +304,34 @@ export default function UberStyleHome() {
   };
 
   const [showServiceSelection, setShowServiceSelection] = useState(false);
+  const [savedAddresses, setSavedAddresses] = useState<UberStyleLocation[]>([]);
+
+  // Load saved addresses from localStorage on component mount
+  useEffect(() => {
+    const stored = localStorage.getItem('spoedpakketjes-addresses');
+    if (stored) {
+      try {
+        setSavedAddresses(JSON.parse(stored));
+      } catch (error) {
+        console.error('Error loading saved addresses:', error);
+      }
+    }
+  }, []);
+
+  // Save address to localStorage
+  const saveAddress = (address: UberStyleLocation) => {
+    const existing = savedAddresses.find(addr => addr.address === address.address);
+    if (!existing) {
+      const newAddress: UberStyleLocation = {
+        ...address,
+        type: 'recent',
+        id: `saved-${Date.now()}`
+      };
+      const updated = [...savedAddresses, newAddress].slice(-10); // Keep last 10
+      setSavedAddresses(updated);
+      localStorage.setItem('spoedpakketjes-addresses', JSON.stringify(updated));
+    }
+  };
 
   const handleBookDelivery = () => {
     if (pickup && delivery) {
@@ -369,6 +399,33 @@ export default function UberStyleHome() {
             )}
           </div>
         </div>
+
+        {/* Saved Addresses */}
+        {savedAddresses.length > 0 && (
+          <div className="px-4 pb-4">
+            <h3 className="text-sm font-medium text-gray-700 mb-3">Recente adressen</h3>
+            <div className="space-y-1">
+              {savedAddresses.slice(-5).reverse().map((address) => (
+                <Button
+                  key={address.id}
+                  variant="ghost"
+                  className="w-full justify-start h-auto p-4 text-left"
+                  onClick={() => handleLocationSelect(address)}
+                >
+                  <div className="flex items-center space-x-3">
+                    <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
+                      <Clock className="h-4 w-4 text-gray-600" />
+                    </div>
+                    <div>
+                      <p className="font-medium">{address.name}</p>
+                      <p className="text-sm text-gray-500 truncate">{address.address}</p>
+                    </div>
+                  </div>
+                </Button>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Instructions */}
         <div className="p-6 text-center">
