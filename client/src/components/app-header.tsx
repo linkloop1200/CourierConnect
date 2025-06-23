@@ -9,7 +9,9 @@ export default function AppHeader({ title = "Spoedpakketjes", showNotifications 
   return (
     <header className="bg-brand-blue text-white p-4 flex items-center justify-between relative z-20">
       <div className="flex items-center space-x-3">
-        <Box className="text-xl" />
+        <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center">
+          <span className="text-brand-blue font-bold text-lg">📦</span>
+        </div>
         <h1 className="text-lg font-bold">{title}</h1>
       </div>
       <div className="flex items-center space-x-4">

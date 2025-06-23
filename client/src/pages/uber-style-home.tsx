@@ -218,7 +218,12 @@ export default function UberStyleHome() {
       {/* Top Bar */}
       <div className="absolute top-0 left-0 right-0 z-20 bg-white/95 backdrop-blur-sm p-4">
         <div className="flex items-center justify-between">
-          <h1 className="text-xl font-bold text-brand-blue">Spoedpakketjes</h1>
+          <div className="flex items-center space-x-3">
+            <div className="w-8 h-8 bg-brand-blue rounded-lg flex items-center justify-center">
+              <span className="text-white font-bold text-lg">📦</span>
+            </div>
+            <h1 className="text-xl font-bold text-brand-blue">Spoedpakketjes</h1>
+          </div>
           <Button variant="ghost" size="sm" className="w-10 h-10 rounded-full">
             <User className="h-5 w-5" />
           </Button>
