@@ -22,7 +22,7 @@ export default function DriverMobileApp({ driverId }: DriverMobileAppProps) {
   // Get driver's assigned deliveries
   const { data: deliveries, isLoading } = useQuery<Delivery[]>({
     queryKey: ['/api/drivers', driverId, 'deliveries'],
-    refetchInterval: 30000, // Refresh every 30 seconds
+    refetchInterval: false, // Disabled to prevent infinite loading
   });
 
   // Get driver info

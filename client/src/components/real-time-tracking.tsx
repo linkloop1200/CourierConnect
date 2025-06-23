@@ -17,18 +17,14 @@ export default function RealTimeTracking({ deliveryId }: RealTimeTrackingProps) 
   // Real-time delivery tracking
   const { data: deliveryData, refetch } = useQuery<Delivery & { driver: Driver | null }>({
     queryKey: ['/api/deliveries', deliveryId],
-    refetchInterval: 5000, // Update every 5 seconds for real-time tracking
+    // Disabled automatic refresh to prevent infinite loading
+    refetchInterval: false,
   });
 
-  // Simulate real-time GPS updates
+  // Manual refresh updates only
   useEffect(() => {
-    const interval = setInterval(() => {
-      setLastUpdate(new Date());
-      refetch();
-    }, 10000); // Real-time GPS updates every 10 seconds
-
-    return () => clearInterval(interval);
-  }, [refetch]);
+    setLastUpdate(new Date());
+  }, [deliveryData]);
 
   const getStatusColor = (status: string) => {
     switch (status) {

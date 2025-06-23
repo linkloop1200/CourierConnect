@@ -30,7 +30,7 @@ export default function AutomatedDeliveryStatus({ deliveryId }: AutomatedDeliver
 
   const { data: delivery, refetch } = useQuery<Delivery & { driver: Driver | null }>({
     queryKey: ['/api/deliveries', deliveryId],
-    refetchInterval: autoUpdates ? 10000 : false,
+    refetchInterval: false, // Disabled automatic refresh
   });
 
   const updateStatusMutation = useMutation({
