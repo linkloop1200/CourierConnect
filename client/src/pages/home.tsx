@@ -31,7 +31,7 @@ export default function Home() {
   const toggleBottomSheet = () => {
     const newState = !isBottomSheetOpen;
     setIsBottomSheetOpen(newState);
-    setBottomSheetHeight(newState ? 'calc(100vh - 384px)' : '140px');
+    setBottomSheetHeight(newState ? 'calc(100vh - 384px)' : '60px');
   };
 
   const handleTouchStart = (e: React.TouchEvent) => {
@@ -96,18 +96,14 @@ export default function Home() {
           onTouchStart={handleTouchStart}
         ></div>
 
-        {/* Collapsed Header - Large and Prominent */}
+        {/* Collapsed Header - Compact */}
         {!isBottomSheetOpen && (
           <div 
-            className="px-6 py-3 text-center cursor-pointer hover:bg-brand-blue-light transition-all duration-200 bg-white"
+            className="px-6 py-2 text-center cursor-pointer hover:bg-brand-blue-light transition-all duration-200 bg-white flex items-center justify-center space-x-2"
             onClick={toggleBottomSheet}
           >
-            <div className="flex flex-col items-center space-y-1">
-              <ChevronUp className="h-5 w-5 text-brand-blue animate-bounce" />
-              <div className="flex flex-col items-center">
-                <span className="text-sm font-semibold text-gray-800">Menu openen</span>
-              </div>
-            </div>
+            <ChevronUp className="h-4 w-4 text-brand-blue animate-bounce" />
+            <span className="text-sm font-medium text-gray-700">Menu</span>
           </div>
         )}
 
