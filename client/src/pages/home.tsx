@@ -31,7 +31,7 @@ export default function Home() {
   const toggleBottomSheet = () => {
     const newState = !isBottomSheetOpen;
     setIsBottomSheetOpen(newState);
-    setBottomSheetHeight(newState ? 'calc(100vh - 384px)' : '60px');
+    setBottomSheetHeight(newState ? 'calc(100vh - 384px)' : '80px');
   };
 
   const handleTouchStart = (e: React.TouchEvent) => {
@@ -83,11 +83,8 @@ export default function Home() {
       
       {/* Delivery Bottom Sheet */}
       <div 
-        className={`floating-panel bg-white rounded-t-3xl fixed left-0 right-0 z-20 overflow-hidden transition-all duration-300 ease-in-out`}
-        style={{ 
-          height: bottomSheetHeight,
-          bottom: isBottomSheetOpen ? '0px' : '80px'
-        }}
+        className={`floating-panel bg-white rounded-t-3xl absolute bottom-0 left-0 right-0 z-10 overflow-hidden transition-all duration-300 ease-in-out`}
+        style={{ height: bottomSheetHeight }}
       >
         {/* Handle Bar - Clickable and Swipeable */}
         <div 
@@ -96,14 +93,17 @@ export default function Home() {
           onTouchStart={handleTouchStart}
         ></div>
 
-        {/* Collapsed Header - Compact */}
+        {/* Collapsed Header */}
         {!isBottomSheetOpen && (
           <div 
-            className="px-6 py-2 text-center cursor-pointer hover:bg-brand-blue-light transition-all duration-200 bg-white flex items-center justify-center space-x-2"
+            className="px-6 py-3 text-center border-b border-gray-100 cursor-pointer hover:bg-gray-50 transition-colors"
             onClick={toggleBottomSheet}
           >
-            <ChevronUp className="h-4 w-4 text-brand-blue animate-bounce" />
-            <span className="text-sm font-medium text-gray-700">Menu</span>
+            <div className="flex items-center justify-center space-x-2">
+              <span className="text-sm text-gray-600">Bezorgopties</span>
+              <ChevronUp className="h-5 w-5 text-brand-blue animate-bounce" />
+              <span className="text-xs text-brand-blue font-medium">Tik om te openen</span>
+            </div>
           </div>
         )}
 
