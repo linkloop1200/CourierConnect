@@ -114,11 +114,11 @@ export default function DeliveryForm() {
       <MapView height="h-64" showDrivers={false} />
       
       {/* Delivery Form Bottom Sheet */}
-      <div className="floating-panel bg-white rounded-t-3xl absolute bottom-0 left-0 right-0 z-10" style={{ height: "calc(100vh - 256px)" }}>
+      <div className="floating-panel bg-white rounded-t-3xl absolute bottom-0 left-0 right-0 z-10 overflow-hidden" style={{ height: "calc(100vh - 256px)" }}>
         {/* Handle Bar */}
         <div className="w-12 h-1 bg-gray-300 rounded-full mx-auto mt-3 mb-6"></div>
 
-        <div className="px-6 pb-20">
+        <div className="px-6 pb-32 overflow-y-auto" style={{ height: "calc(100% - 40px)" }}>
           <div className="flex items-center justify-between mb-6">
             <Button
               variant="ghost"
@@ -263,13 +263,15 @@ export default function DeliveryForm() {
               )}
 
               {/* Submit Button */}
-              <Button 
-                type="submit" 
-                className="w-full bg-brand-blue text-white py-4 h-auto text-lg font-semibold hover:bg-brand-blue-dark transition-colors"
-                disabled={createDeliveryMutation.isPending}
-              >
-                {createDeliveryMutation.isPending ? "Bezig..." : "Bezorging aanvragen"}
-              </Button>
+              <div className="mt-6">
+                <Button 
+                  type="submit" 
+                  className="w-full bg-brand-blue text-white py-4 h-auto text-lg font-semibold hover:bg-brand-blue-dark transition-colors"
+                  disabled={createDeliveryMutation.isPending}
+                >
+                  {createDeliveryMutation.isPending ? "Bezig..." : "Bezorging aanvragen"}
+                </Button>
+              </div>
             </form>
           </Form>
         </div>
