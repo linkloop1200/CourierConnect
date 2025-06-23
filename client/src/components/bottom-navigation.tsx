@@ -62,7 +62,7 @@ export default function BottomNavigation({ onNavigate }: BottomNavigationProps) 
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-30">
-      <div className="flex w-full">
+      <div className="flex max-w-lg mx-auto">
         {navigationItems.map(({ path, icon: IconComponent, label }) => (
           <button 
             key={path}
