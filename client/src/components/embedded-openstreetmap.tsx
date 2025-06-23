@@ -31,20 +31,32 @@ export default function EmbeddedOpenStreetMap({
 
   // Create OpenStreetMap iframe URL with dynamic zoom
   const getOsmUrl = () => {
-    const zoomFactor = zoom / 13; // Base zoom level
-    const latDiff = 0.0275 / zoomFactor; // Smaller area for higher zoom
-    const lngDiff = 0.05 / zoomFactor;
+    // Calculate bounding box based on zoom level
+    const baseLatDiff = 0.055; // Base latitude difference
+    const baseLngDiff = 0.10; // Base longitude difference
+    
+    // Higher zoom = smaller area visible
+    const zoomMultiplier = Math.pow(0.5, zoom - 13); // Exponential scaling
+    const latDiff = baseLatDiff * zoomMultiplier;
+    const lngDiff = baseLngDiff * zoomMultiplier;
     
     const minLat = center.lat - latDiff;
     const maxLat = center.lat + latDiff;
     const minLng = center.lng - lngDiff;
     const maxLng = center.lng + lngDiff;
     
-    return `https://www.openstreetmap.org/export/embed.html?bbox=${minLng}%2C${minLat}%2C${maxLng}%2C${maxLat}&amp;layer=mapnik&amp;marker=${center.lat}%2C${center.lng}`;
+    return `https://www.openstreetmap.org/export/embed.html?bbox=${minLng}%2C${minLat}%2C${maxLng}%2C${maxLat}&layer=mapnik&marker=${center.lat}%2C${center.lng}`;
   };
 
-  const handleZoomIn = () => setZoom(Math.min(zoom + 1, 18));
-  const handleZoomOut = () => setZoom(Math.max(zoom - 1, 8));
+  const handleZoomIn = () => {
+    const newZoom = Math.min(zoom + 1, 17);
+    setZoom(newZoom);
+  };
+  
+  const handleZoomOut = () => {
+    const newZoom = Math.max(zoom - 1, 10);
+    setZoom(newZoom);
+  };
 
   const openFullMap = () => {
     window.open(`https://www.openstreetmap.org/#map=${zoom}/${center.lat}/${center.lng}`, '_blank');
@@ -55,11 +67,11 @@ export default function EmbeddedOpenStreetMap({
       {/* OpenStreetMap iframe */}
       <iframe
         src={getOsmUrl()}
-        className="w-full h-full"
+        className="w-full h-full transition-opacity duration-300"
         style={{ border: 'none' }}
         title="OpenStreetMap van Amsterdam"
         loading="lazy"
-        key={zoom}
+        key={`osm-${zoom}`}
       />
       
       {/* Overlay markers */}
@@ -150,24 +162,29 @@ export default function EmbeddedOpenStreetMap({
         <Button
           size="sm"
           variant="outline"
-          className="w-9 h-9 p-0 bg-white shadow-lg hover:bg-gray-50"
+          className={`w-9 h-9 p-0 bg-white shadow-lg hover:bg-gray-50 transition-all duration-200 ${zoom >= 17 ? 'opacity-50 cursor-not-allowed' : 'hover:scale-105'}`}
           onClick={handleZoomIn}
+          disabled={zoom >= 17}
+          title="Inzoomen"
         >
           <Plus className="h-4 w-4" />
         </Button>
         <Button
           size="sm"
           variant="outline"
-          className="w-9 h-9 p-0 bg-white shadow-lg hover:bg-gray-50"
+          className={`w-9 h-9 p-0 bg-white shadow-lg hover:bg-gray-50 transition-all duration-200 ${zoom <= 10 ? 'opacity-50 cursor-not-allowed' : 'hover:scale-105'}`}
           onClick={handleZoomOut}
+          disabled={zoom <= 10}
+          title="Uitzoomen"
         >
           <Minus className="h-4 w-4" />
         </Button>
         <Button
           size="sm"
           variant="outline"
-          className="w-9 h-9 p-0 bg-white shadow-lg hover:bg-gray-50"
+          className="w-9 h-9 p-0 bg-white shadow-lg hover:bg-gray-50 hover:scale-105 transition-all duration-200"
           onClick={openFullMap}
+          title="Volledige kaart openen"
         >
           <ExternalLink className="h-4 w-4" />
         </Button>
@@ -208,8 +225,8 @@ export default function EmbeddedOpenStreetMap({
 
       {/* Zoom indicator */}
       <div className="absolute top-4 left-1/2 transform -translate-x-1/2 z-30">
-        <div className="bg-white/90 px-3 py-1 rounded-full text-xs text-gray-700">
-          Amsterdam • Zoom: {zoom}
+        <div className="bg-white/90 px-3 py-1 rounded-full text-xs text-gray-700 shadow-sm border">
+          Amsterdam • Zoom: {zoom}/17
         </div>
       </div>
     </div>
