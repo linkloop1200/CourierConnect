@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { Loader } from "@googlemaps/js-api-loader";
 import { useConfig } from "@/hooks/use-config";
+import { getGoogleMapsLoader } from "@/lib/google-maps-loader";
 import { AlertTriangle, MapPin, CheckCircle, ExternalLink } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -20,13 +20,7 @@ export function GoogleMapsStatus() {
       }
 
       try {
-        const loader = new Loader({
-          apiKey: config.GOOGLE_MAPS_API_KEY,
-          version: "weekly",
-          libraries: ["maps", "marker", "places"]
-        });
-
-        await loader.load();
+        await getGoogleMapsLoader(config.GOOGLE_MAPS_API_KEY);
         
         // Test if we can create a basic map instance
         const testDiv = document.createElement('div');

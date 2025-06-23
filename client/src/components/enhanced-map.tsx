@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from "react";
-import { Loader } from "@googlemaps/js-api-loader";
 import { Button } from "@/components/ui/button";
 import { Navigation, MapPin, Truck, Package } from "lucide-react";
 import { useConfig } from "@/hooks/use-config";
+import { getGoogleMapsLoader } from "@/lib/google-maps-loader";
 
 interface EnhancedMapProps {
   height?: string;
@@ -37,13 +37,7 @@ export default function EnhancedMap({
       return;
     }
 
-    const loader = new Loader({
-      apiKey: config.GOOGLE_MAPS_API_KEY,
-      version: "weekly",
-      libraries: ["maps", "marker"]
-    });
-
-    loader.load().then(() => {
+    getGoogleMapsLoader(config.GOOGLE_MAPS_API_KEY).then(() => {
       if (mapRef.current && !mapInstanceRef.current) {
         try {
           const map = new google.maps.Map(mapRef.current, {
@@ -165,7 +159,7 @@ export default function EnhancedMap({
           setIsLoading(false);
         }
       }
-    }).catch((error) => {
+    }).catch((error: any) => {
       console.error("Error loading Google Maps:", error);
       setUseGoogleMaps(false);
       setIsLoading(false);
