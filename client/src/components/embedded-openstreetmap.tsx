@@ -26,11 +26,20 @@ export default function EmbeddedOpenStreetMap({
 }: EmbeddedOpenStreetMapProps) {
   const [zoom, setZoom] = useState(13);
   
+  // Auto-zoom op ophaallocatie
+  useEffect(() => {
+    if (pickupLocation) {
+      setZoom(15); // Zoom in naar niveau 15 voor betere detail
+    } else {
+      setZoom(13); // Terug naar overzicht niveau
+    }
+  }, [pickupLocation]);
+  
   // Amsterdam center coordinates - altijd gefocust op Amsterdam
   const center = { lat: 52.3676, lng: 4.9041 };
   
-  // Altijd Amsterdam centrum - geen automatische centrering op locaties
-  const mapCenter = center;
+  // Centreer op ophaallocatie als deze bestaat, anders Amsterdam centrum
+  const mapCenter = pickupLocation ? pickupLocation : center;
   
   // Functie om echte coördinaten om te zetten naar kaart percentages
   const coordsToMapPosition = (lat: number, lng: number) => {
@@ -94,7 +103,7 @@ export default function EmbeddedOpenStreetMap({
       {/* OpenStreetMap iframe */}
       <iframe
         src={getOsmUrl()}
-        className="w-full h-full transition-opacity duration-300"
+        className="w-full h-full transition-all duration-500 ease-in-out"
         style={{ border: 'none' }}
         title="OpenStreetMap van Amsterdam"
         loading="lazy"
@@ -285,7 +294,7 @@ export default function EmbeddedOpenStreetMap({
       {/* Zoom indicator */}
       <div className="absolute top-4 left-1/2 transform -translate-x-1/2 z-30">
         <div className="bg-white/90 px-3 py-1 rounded-full text-xs text-gray-700 shadow-sm border">
-          Amsterdam • Zoom: {zoom}/17
+          {pickupLocation ? 'Ophaallocatie' : 'Amsterdam'} • Zoom: {zoom}/17
         </div>
       </div>
     </div>
