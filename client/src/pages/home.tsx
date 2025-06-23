@@ -34,16 +34,19 @@ export default function Home() {
   };
 
   const handleTouchStart = (e: React.TouchEvent) => {
+    e.preventDefault();
     const touch = e.touches[0];
     const startY = touch.clientY;
+    let moved = false;
     
     const handleTouchMove = (e: TouchEvent) => {
+      moved = true;
       const touch = e.touches[0];
       const deltaY = touch.clientY - startY;
       
-      if (deltaY > 50 && isBottomSheetOpen) {
+      if (deltaY > 30 && isBottomSheetOpen) {
         toggleBottomSheet();
-      } else if (deltaY < -50 && !isBottomSheetOpen) {
+      } else if (deltaY < -30 && !isBottomSheetOpen) {
         toggleBottomSheet();
       }
     };
@@ -51,6 +54,11 @@ export default function Home() {
     const handleTouchEnd = () => {
       document.removeEventListener('touchmove', handleTouchMove);
       document.removeEventListener('touchend', handleTouchEnd);
+      
+      // If no movement, treat as tap
+      if (!moved) {
+        toggleBottomSheet();
+      }
     };
 
     document.addEventListener('touchmove', handleTouchMove);
@@ -73,8 +81,9 @@ export default function Home() {
       
       {/* Delivery Bottom Sheet */}
       <div 
-        className="floating-panel bg-white rounded-t-3xl absolute bottom-0 left-0 right-0 z-10 overflow-hidden transition-all duration-300 ease-in-out" 
+        className={`floating-panel bg-white rounded-t-3xl absolute bottom-0 left-0 right-0 z-10 overflow-hidden transition-all duration-300 ease-in-out ${!isBottomSheetOpen ? 'cursor-pointer' : ''}`}
         style={{ height: bottomSheetHeight }}
+        onClick={!isBottomSheetOpen ? toggleBottomSheet : undefined}
       >
         {/* Handle Bar - Clickable and Swipeable */}
         <div 
@@ -85,8 +94,15 @@ export default function Home() {
 
         {/* Collapsed Header */}
         {!isBottomSheetOpen && (
-          <div className="px-6 py-2 text-center border-b border-gray-100">
-            <p className="text-sm text-gray-600">Tik om menu te openen</p>
+          <div 
+            className="px-6 py-3 text-center border-b border-gray-100 cursor-pointer hover:bg-gray-50 transition-colors"
+            onClick={toggleBottomSheet}
+          >
+            <div className="flex items-center justify-center space-x-2">
+              <span className="text-sm text-gray-600">Bezorgopties</span>
+              <div className="w-4 h-0.5 bg-gray-400 rounded"></div>
+              <span className="text-xs text-blue-600 font-medium">Tik om te openen</span>
+            </div>
           </div>
         )}
 
