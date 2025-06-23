@@ -22,59 +22,58 @@ export default function BottomNavigation({ onNavigate }: BottomNavigationProps) 
     return false;
   };
 
-  // Role-based navigation items
+  // Role-based navigation items - limited to 4 items max
   const getNavigationItems = () => {
-    const baseItems = [
-      { path: "/", icon: Home, label: "Home" },
-      { path: "/account", icon: User, label: "Account" }
-    ];
-
     if (isCustomer) {
       return [
-        baseItems[0], // Home
+        { path: "/", icon: Home, label: "Home" },
         { path: "/payment", icon: CreditCard, label: "Betaling" },
         { path: "/activity", icon: BarChart3, label: "Activiteit" },
-        baseItems[1] // Account
+        { path: "/account", icon: User, label: "Account" }
       ];
     }
 
     if (isDriver) {
       return [
-        baseItems[0], // Home
+        { path: "/", icon: Home, label: "Home" },
         { path: "/driver", icon: Truck, label: "Dashboard" },
         { path: "/activity", icon: BarChart3, label: "Activiteit" },
-        baseItems[1] // Account
+        { path: "/account", icon: User, label: "Account" }
       ];
     }
 
     if (isAdmin) {
       return [
-        baseItems[0], // Home
+        { path: "/", icon: Home, label: "Home" },
         { path: "/routing", icon: MapPin, label: "Routes" },
         { path: "/activity", icon: BarChart3, label: "Analytics" },
-        baseItems[1] // Account
+        { path: "/account", icon: User, label: "Account" }
       ];
     }
 
-    return [...baseItems, { path: "/activity", icon: BarChart3, label: "Activiteit" }];
+    return [
+      { path: "/", icon: Home, label: "Home" },
+      { path: "/activity", icon: BarChart3, label: "Activiteit" },
+      { path: "/account", icon: User, label: "Account" }
+    ];
   };
 
   const navigationItems = getNavigationItems();
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-30">
-      <div className="flex">
+      <div className="flex justify-around max-w-md mx-auto px-2">
         {navigationItems.map(({ path, icon: IconComponent, label }) => (
           <button 
             key={path}
             onClick={() => handleNavigation(path)}
             className={cn(
-              "flex-1 py-3 flex flex-col items-center space-y-1 transition-colors",
-              isActive(path) ? "text-brand-blue" : "text-gray-400"
+              "flex flex-col items-center space-y-1 py-2 px-3 rounded-lg transition-colors min-w-0",
+              isActive(path) ? "text-brand-blue bg-blue-50" : "text-gray-400"
             )}
           >
-            <IconComponent className="text-lg" />
-            <span className="text-xs font-medium">{label}</span>
+            <IconComponent className="h-5 w-5" />
+            <span className="text-xs font-medium truncate">{label}</span>
           </button>
         ))}
       </div>
