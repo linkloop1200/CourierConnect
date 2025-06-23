@@ -31,6 +31,30 @@ export default function EmbeddedOpenStreetMap({
   
   // Altijd Amsterdam centrum - geen automatische centrering op locaties
   const mapCenter = center;
+  
+  // Functie om echte coördinaten om te zetten naar kaart percentages
+  const coordsToMapPosition = (lat: number, lng: number) => {
+    // Amsterdam bounding box voor zoom level 13
+    const baseLatDiff = 0.055;
+    const baseLngDiff = 0.10;
+    const zoomMultiplier = Math.pow(0.5, zoom - 13);
+    const latDiff = baseLatDiff * zoomMultiplier;
+    const lngDiff = baseLngDiff * zoomMultiplier;
+    
+    const minLat = mapCenter.lat - latDiff;
+    const maxLat = mapCenter.lat + latDiff;
+    const minLng = mapCenter.lng - lngDiff;
+    const maxLng = mapCenter.lng + lngDiff;
+    
+    // Converteer naar percentages
+    const x = ((lng - minLng) / (maxLng - minLng)) * 100;
+    const y = ((maxLat - lat) / (maxLat - minLat)) * 100; // Y is omgekeerd
+    
+    return {
+      left: `${Math.max(5, Math.min(95, x))}%`,
+      top: `${Math.max(5, Math.min(95, y))}%`
+    };
+  };
 
   // Create OpenStreetMap iframe URL with dynamic zoom
   const getOsmUrl = () => {
@@ -74,7 +98,7 @@ export default function EmbeddedOpenStreetMap({
         style={{ border: 'none' }}
         title="OpenStreetMap van Amsterdam"
         loading="lazy"
-        key={`osm-${zoom}`}
+        key={`osm-${zoom}-${pickupLocation?.lat}-${deliveryLocation?.lat}`}
       />
       
       {/* Overlay markers */}
@@ -90,33 +114,33 @@ export default function EmbeddedOpenStreetMap({
           </div>
         )}
         
-        {/* Pickup location - Huis icoon - Amsterdam Noord */}
+        {/* Pickup location - Huis icoon - Echte coördinaten */}
         {pickupLocation && (
           <div 
             className="absolute w-10 h-10 bg-green-500 rounded-full border-3 border-white shadow-lg flex items-center justify-center transform -translate-x-1/2 -translate-y-1/2 pointer-events-auto cursor-pointer hover:scale-110 transition-transform z-20"
-            style={{ left: '40%', top: '25%' }}
+            style={coordsToMapPosition(pickupLocation.lat, pickupLocation.lng)}
             title={pickupLocation.address || "Ophaallocatie"}
           >
             <Home className="h-5 w-5 text-white" />
           </div>
         )}
         
-        {/* Delivery location - Rood pakket icoon - Amsterdam Zuid */}
+        {/* Delivery location - Rood pakket icoon - Echte coördinaten */}
         {deliveryLocation && (
           <div 
             className="absolute w-10 h-10 bg-red-500 rounded-full border-3 border-white shadow-lg flex items-center justify-center transform -translate-x-1/2 -translate-y-1/2 pointer-events-auto cursor-pointer hover:scale-110 transition-transform z-20"
-            style={{ left: '65%', top: '75%' }}
+            style={coordsToMapPosition(deliveryLocation.lat, deliveryLocation.lng)}
             title={deliveryLocation.address || "Bezorglocatie"}
           >
             <Package className="h-5 w-5 text-white" />
           </div>
         )}
         
-        {/* Driver location - Paarse scooter icoon - Amsterdam Centrum */}
+        {/* Driver location - Paarse scooter icoon - Echte coördinaten */}
         {driverLocation && (
           <div 
             className={`absolute w-10 h-10 bg-purple-500 rounded-full border-3 border-white shadow-lg flex items-center justify-center transform -translate-x-1/2 -translate-y-1/2 pointer-events-auto cursor-pointer hover:scale-110 transition-transform z-20 ${enableRealTimeTracking ? 'animate-pulse' : ''}`}
-            style={{ left: '50%', top: '50%' }}
+            style={coordsToMapPosition(driverLocation.lat, driverLocation.lng)}
             title="Bezorger onderweg"
           >
             <span className="text-white text-lg">🛴</span>
@@ -143,51 +167,43 @@ export default function EmbeddedOpenStreetMap({
           </>
         )}
         
-        {/* Optimale route weergave - Amsterdam route */}
-        {pickupLocation && deliveryLocation && (
-          <svg className="absolute inset-0 w-full h-full pointer-events-none z-10">
-            {/* Hoofdroute lijn - van Noord naar Zuid Amsterdam */}
-            <path
-              d="M 40% 25% Q 50% 45% 65% 75%"
-              stroke="#4f46e5"
-              strokeWidth="5"
-              fill="none"
-              opacity="0.7"
-              strokeLinecap="round"
-            />
-            {/* Geanimeerde overlay voor beweging effect */}
-            <path
-              d="M 40% 25% Q 50% 45% 65% 75%"
-              stroke="#818cf8"
-              strokeWidth="3"
-              fill="none"
-              strokeDasharray="12,8"
-              strokeLinecap="round"
-            >
-              <animate 
-                attributeName="stroke-dashoffset" 
-                values="0;-20" 
-                dur="3s" 
-                repeatCount="indefinite" 
+        {/* Optimale route weergave - Echte coördinaten */}
+        {pickupLocation && deliveryLocation && (() => {
+          const pickupPos = coordsToMapPosition(pickupLocation.lat, pickupLocation.lng);
+          const deliveryPos = coordsToMapPosition(deliveryLocation.lat, deliveryLocation.lng);
+          const midX = (parseFloat(pickupPos.left) + parseFloat(deliveryPos.left)) / 2;
+          const midY = (parseFloat(pickupPos.top) + parseFloat(deliveryPos.top)) / 2;
+          
+          return (
+            <svg className="absolute inset-0 w-full h-full pointer-events-none z-10">
+              {/* Hoofdroute lijn */}
+              <path
+                d={`M ${pickupPos.left} ${pickupPos.top} Q ${midX}% ${midY - 5}% ${deliveryPos.left} ${deliveryPos.top}`}
+                stroke="#4f46e5"
+                strokeWidth="5"
+                fill="none"
+                opacity="0.7"
+                strokeLinecap="round"
               />
-            </path>
-            {/* Route richtingspijl */}
-            <polygon
-              points="-3,-6 3,0 -3,6"
-              fill="#4f46e5"
-              opacity="0.8"
-              transform="translate(52%, 50%) rotate(45)"
-            >
-              <animateTransform
-                attributeName="transform"
-                type="translate"
-                values="40% 25%; 50% 45%; 65% 75%"
-                dur="4s"
-                repeatCount="indefinite"
-              />
-            </polygon>
-          </svg>
-        )}
+              {/* Geanimeerde overlay voor beweging effect */}
+              <path
+                d={`M ${pickupPos.left} ${pickupPos.top} Q ${midX}% ${midY - 5}% ${deliveryPos.left} ${deliveryPos.top}`}
+                stroke="#818cf8"
+                strokeWidth="3"
+                fill="none"
+                strokeDasharray="12,8"
+                strokeLinecap="round"
+              >
+                <animate 
+                  attributeName="stroke-dashoffset" 
+                  values="0;-20" 
+                  dur="3s" 
+                  repeatCount="indefinite" 
+                />
+              </path>
+            </svg>
+          );
+        })()}
       </div>
       
       {/* Map controls overlay */}
