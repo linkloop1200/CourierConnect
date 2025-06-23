@@ -43,7 +43,7 @@ export default function EmbeddedOpenStreetMap({
   
   // Functie om echte coördinaten om te zetten naar kaart percentages
   const coordsToMapPosition = (lat: number, lng: number) => {
-    // Amsterdam bounding box voor zoom level 13
+    // Gebruik exact dezelfde bounding box berekening als in getOsmUrl()
     const baseLatDiff = 0.055;
     const baseLngDiff = 0.10;
     const zoomMultiplier = Math.pow(0.5, zoom - 13);
@@ -55,13 +55,17 @@ export default function EmbeddedOpenStreetMap({
     const minLng = mapCenter.lng - lngDiff;
     const maxLng = mapCenter.lng + lngDiff;
     
-    // Converteer naar percentages
+    // Converteer naar percentages (identiek aan iframe bounds)
     const x = ((lng - minLng) / (maxLng - minLng)) * 100;
-    const y = ((maxLat - lat) / (maxLat - minLat)) * 100; // Y is omgekeerd
+    const y = ((maxLat - lat) / (maxLat - minLat)) * 100;
+    
+    // Beperk tot kaart gebied
+    const clampedX = Math.max(5, Math.min(95, x));
+    const clampedY = Math.max(5, Math.min(95, y));
     
     return {
-      left: `${Math.max(5, Math.min(95, x))}%`,
-      top: `${Math.max(5, Math.min(95, y))}%`
+      left: `${clampedX}%`,
+      top: `${clampedY}%`
     };
   };
 
@@ -123,33 +127,47 @@ export default function EmbeddedOpenStreetMap({
           </div>
         )}
         
-        {/* Pickup location - Huis icoon - Echte coördinaten */}
+        {/* Pickup location - Huis icoon - Altijd in centrum wanneer gefocust */}
         {pickupLocation && (
           <div 
             className="absolute w-10 h-10 bg-green-500 rounded-full border-3 border-white shadow-lg flex items-center justify-center transform -translate-x-1/2 -translate-y-1/2 pointer-events-auto cursor-pointer hover:scale-110 transition-transform z-20"
-            style={coordsToMapPosition(pickupLocation.lat, pickupLocation.lng)}
+            style={{ left: '50%', top: '50%' }}
             title={pickupLocation.address || "Ophaallocatie"}
           >
             <Home className="h-5 w-5 text-white" />
           </div>
         )}
         
-        {/* Delivery location - Rood pakket icoon - Echte coördinaten */}
-        {deliveryLocation && (
+        {/* Delivery location - Rood pakket icoon - Relatieve positie ten opzichte van pickup */}
+        {deliveryLocation && pickupLocation && (
           <div 
             className="absolute w-10 h-10 bg-red-500 rounded-full border-3 border-white shadow-lg flex items-center justify-center transform -translate-x-1/2 -translate-y-1/2 pointer-events-auto cursor-pointer hover:scale-110 transition-transform z-20"
-            style={coordsToMapPosition(deliveryLocation.lat, deliveryLocation.lng)}
+            style={{ 
+              left: `${50 + (deliveryLocation.lng - pickupLocation.lng) * 1000}%`, 
+              top: `${50 - (deliveryLocation.lat - pickupLocation.lat) * 1000}%`
+            }}
             title={deliveryLocation.address || "Bezorglocatie"}
           >
             <Package className="h-5 w-5 text-white" />
           </div>
         )}
         
-        {/* Driver location - Paarse scooter icoon - Echte coördinaten */}
+        {/* Delivery location - Alleen delivery zonder pickup */}
+        {deliveryLocation && !pickupLocation && (
+          <div 
+            className="absolute w-10 h-10 bg-red-500 rounded-full border-3 border-white shadow-lg flex items-center justify-center transform -translate-x-1/2 -translate-y-1/2 pointer-events-auto cursor-pointer hover:scale-110 transition-transform z-20"
+            style={{ left: '60%', top: '60%' }}
+            title={deliveryLocation.address || "Bezorglocatie"}
+          >
+            <Package className="h-5 w-5 text-white" />
+          </div>
+        )}
+        
+        {/* Driver location - Paarse scooter icoon - Tussen pickup en delivery */}
         {driverLocation && (
           <div 
             className={`absolute w-10 h-10 bg-purple-500 rounded-full border-3 border-white shadow-lg flex items-center justify-center transform -translate-x-1/2 -translate-y-1/2 pointer-events-auto cursor-pointer hover:scale-110 transition-transform z-20 ${enableRealTimeTracking ? 'animate-pulse' : ''}`}
-            style={coordsToMapPosition(driverLocation.lat, driverLocation.lng)}
+            style={{ left: '45%', top: '40%' }}
             title="Bezorger onderweg"
           >
             <span className="text-white text-lg">🛴</span>
@@ -176,43 +194,36 @@ export default function EmbeddedOpenStreetMap({
           </>
         )}
         
-        {/* Optimale route weergave - Echte coördinaten */}
-        {pickupLocation && deliveryLocation && (() => {
-          const pickupPos = coordsToMapPosition(pickupLocation.lat, pickupLocation.lng);
-          const deliveryPos = coordsToMapPosition(deliveryLocation.lat, deliveryLocation.lng);
-          const midX = (parseFloat(pickupPos.left) + parseFloat(deliveryPos.left)) / 2;
-          const midY = (parseFloat(pickupPos.top) + parseFloat(deliveryPos.top)) / 2;
-          
-          return (
-            <svg className="absolute inset-0 w-full h-full pointer-events-none z-10">
-              {/* Hoofdroute lijn */}
-              <path
-                d={`M ${pickupPos.left} ${pickupPos.top} Q ${midX}% ${midY - 5}% ${deliveryPos.left} ${deliveryPos.top}`}
-                stroke="#4f46e5"
-                strokeWidth="5"
-                fill="none"
-                opacity="0.7"
-                strokeLinecap="round"
+        {/* Optimale route weergave - Vaste posities */}
+        {pickupLocation && deliveryLocation && (
+          <svg className="absolute inset-0 w-full h-full pointer-events-none z-10">
+            {/* Hoofdroute lijn van pickup naar delivery */}
+            <path
+              d="M 50% 50% Q 55% 45% 60% 60%"
+              stroke="#4f46e5"
+              strokeWidth="5"
+              fill="none"
+              opacity="0.7"
+              strokeLinecap="round"
+            />
+            {/* Geanimeerde overlay voor beweging effect */}
+            <path
+              d="M 50% 50% Q 55% 45% 60% 60%"
+              stroke="#818cf8"
+              strokeWidth="3"
+              fill="none"
+              strokeDasharray="12,8"
+              strokeLinecap="round"
+            >
+              <animate 
+                attributeName="stroke-dashoffset" 
+                values="0;-20" 
+                dur="3s" 
+                repeatCount="indefinite" 
               />
-              {/* Geanimeerde overlay voor beweging effect */}
-              <path
-                d={`M ${pickupPos.left} ${pickupPos.top} Q ${midX}% ${midY - 5}% ${deliveryPos.left} ${deliveryPos.top}`}
-                stroke="#818cf8"
-                strokeWidth="3"
-                fill="none"
-                strokeDasharray="12,8"
-                strokeLinecap="round"
-              >
-                <animate 
-                  attributeName="stroke-dashoffset" 
-                  values="0;-20" 
-                  dur="3s" 
-                  repeatCount="indefinite" 
-                />
-              </path>
-            </svg>
-          );
-        })()}
+            </path>
+          </svg>
+        )}
       </div>
       
       {/* Map controls overlay */}
