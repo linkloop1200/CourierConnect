@@ -4,7 +4,7 @@ import { useLocation } from "wouter";
 import { Package, Mail, Home as HomeIcon, Building } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import AppHeader from "@/components/app-header";
-import ProfessionalMap from "@/components/professional-map";
+import RealOSMMap from "@/components/real-osm-map";
 import BottomNavigation from "@/components/bottom-navigation";
 import type { Address } from "@shared/schema";
 
@@ -69,7 +69,7 @@ export default function Home() {
     <>
       <AppHeader />
       
-      <ProfessionalMap 
+      <RealOSMMap 
         height="384px"
         showDrivers={true} 
         showPackages={true} 
