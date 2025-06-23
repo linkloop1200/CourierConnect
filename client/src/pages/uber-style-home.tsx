@@ -82,6 +82,42 @@ export default function UberStyleHome() {
     }
   }, [isDriver]);
 
+  // Get address suggestions
+  const getAddressSuggestions = async (query: string): Promise<Array<{
+    id: string;
+    name: string;
+    address: string;
+    coordinates: { lat: number; lng: number };
+  }>> => {
+    try {
+      const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query + ', Netherlands')}&limit=5&addressdetails=1`, {
+        headers: {
+          'User-Agent': 'Spoedpakketjes/1.0'
+        }
+      });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+      
+      const data = await response.json();
+      if (data && data.length > 0) {
+        return data.map((item: any, index: number) => ({
+          id: `suggestion-${index}`,
+          name: item.display_name.split(',')[0],
+          address: item.display_name,
+          coordinates: {
+            lat: parseFloat(item.lat),
+            lng: parseFloat(item.lon)
+          }
+        }));
+      }
+    } catch (error) {
+      console.error('Address suggestions error:', error);
+    }
+    return [];
+  };
+
   // Geocode address to coordinates
   const geocodeAddress = async (address: string): Promise<{ lat: number; lng: number } | null> => {
     try {
@@ -127,39 +163,59 @@ export default function UberStyleHome() {
 
   // Debounce for address input
   const [addressTimeout, setAddressTimeout] = useState<NodeJS.Timeout | null>(null);
+  const [addressSuggestions, setAddressSuggestions] = useState<Array<{
+    id: string;
+    name: string;
+    address: string;
+    coordinates: { lat: number; lng: number };
+  }>>([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [searchValue, setSearchValue] = useState('');
 
-  // Handle address input with geocoding
-  const handleAddressInput = (address: string, type: 'pickup' | 'delivery') => {
+  // Handle search input and get suggestions
+  const handleSearchInput = (query: string) => {
+    setSearchValue(query);
+    
     if (addressTimeout) {
       clearTimeout(addressTimeout);
     }
 
-    if (address.length > 3) {
+    if (query.length > 2) {
+      setShowSuggestions(true);
       const timeout = setTimeout(async () => {
         try {
-          const coordinates = await geocodeAddress(address);
-          if (coordinates) {
-            const location: UberStyleLocation = {
-              id: `${type}-${Date.now()}`,
-              name: address,
-              address: address,
-              type: 'recent',
-              coordinates
-            };
-            
-            if (type === 'pickup') {
-              setPickup(location);
-            } else {
-              setDelivery(location);
-            }
-          }
+          const suggestions = await getAddressSuggestions(query);
+          setAddressSuggestions(suggestions);
         } catch (error) {
-          console.error('Address input error:', error);
+          console.error('Address search error:', error);
         }
-      }, 500); // 500ms debounce
+      }, 300); // 300ms debounce voor suggesties
       
       setAddressTimeout(timeout);
+    } else {
+      setShowSuggestions(false);
+      setAddressSuggestions([]);
     }
+  };
+
+  // Handle suggestion selection
+  const handleSuggestionSelect = (suggestion: any) => {
+    const location: UberStyleLocation = {
+      id: `suggestion-${Date.now()}`,
+      name: suggestion.name,
+      address: suggestion.address,
+      type: 'recent',
+      coordinates: suggestion.coordinates
+    };
+    
+    // Always set as pickup location for now
+    setPickup(location);
+    
+    setSearchValue(suggestion.name);
+    setShowSuggestions(false);
+    
+    // Calculate estimate if we have pickup
+    calculateEstimate(location.coordinates, delivery?.coordinates);
   };
 
   // Get current location (Uber-style)
@@ -244,27 +300,48 @@ export default function UberStyleHome() {
           </div>
         </div>
 
-        {/* Search */}
+        {/* Search with Autocomplete */}
         <div className="p-4">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
             <Input
               placeholder="Zoek een adres..."
               className="pl-10 h-12 bg-gray-50 border-none"
-              onChange={(e) => {
-                const address = e.target.value;
-                if (address.length > 3) {
-                  handleAddressInput(address, showLocationPicker!);
+              value={searchValue}
+              onChange={(e) => handleSearchInput(e.target.value)}
+              onFocus={() => {
+                if (searchValue.length > 2) {
+                  setShowSuggestions(true);
                 }
               }}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') {
-                  const address = e.currentTarget.value;
-                  handleAddressInput(address, showLocationPicker!);
-                  setShowLocationPicker(null);
-                }
+              onBlur={() => {
+                // Delay hiding suggestions to allow clicking
+                setTimeout(() => setShowSuggestions(false), 200);
               }}
             />
+            
+            {/* Suggestions Dropdown */}
+            {showSuggestions && addressSuggestions.length > 0 && (
+              <div className="absolute top-full left-0 right-0 bg-white border border-gray-200 rounded-lg shadow-lg z-50 max-h-60 overflow-y-auto">
+                {addressSuggestions.map((suggestion) => (
+                  <div
+                    key={suggestion.id}
+                    className="p-3 hover:bg-gray-50 cursor-pointer border-b last:border-b-0"
+                    onClick={() => handleSuggestionSelect(suggestion)}
+                  >
+                    <div className="flex items-center space-x-3">
+                      <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                        <MapPin className="h-4 w-4 text-blue-600" />
+                      </div>
+                      <div className="flex-1">
+                        <div className="font-medium text-gray-900">{suggestion.name}</div>
+                        <div className="text-sm text-gray-500 truncate">{suggestion.address}</div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
 
