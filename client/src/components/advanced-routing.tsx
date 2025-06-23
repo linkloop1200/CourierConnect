@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import EnhancedMap from "./enhanced-map";
+import WorkingMap from "./working-map";
 import type { Delivery, Driver } from "@shared/schema";
 
 interface RouteOptimization {
@@ -226,10 +226,13 @@ export default function AdvancedRouting({ driverId }: AdvancedRoutingProps) {
             <CardTitle>Route Visualisatie</CardTitle>
           </CardHeader>
           <CardContent>
-            <EnhancedMap
+            <WorkingMap
               height="h-80"
               showDrivers={true}
               showPackages={true}
+              driverLocation={{ lat: 52.3676, lng: 4.9041 }}
+              pickupLocation={{ lat: 52.3700, lng: 4.8950 }}
+              deliveryLocation={{ lat: 52.3650, lng: 4.9150 }}
             />
             <div className="mt-4 flex space-x-3">
               <Button className="flex-1 bg-brand-blue hover:bg-brand-blue-dark">

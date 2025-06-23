@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import AppHeader from "@/components/app-header";
 import BottomNavigation from "@/components/bottom-navigation";
@@ -11,185 +11,204 @@ import AdvancedRouting from "@/components/advanced-routing";
 import InteractiveHeatMap from "@/components/interactive-heat-map";
 import AutomatedDeliveryStatus from "@/components/automated-delivery-status";
 import AddressAutocomplete from "@/components/address-autocomplete";
-import MultilingualSupport, { LanguageProvider, LanguageSelector } from "@/components/multilingual-support";
+import MultilingualSupport from "@/components/multilingual-support";
 import GamifiedRewards from "@/components/gamified-rewards";
-import GoogleMapsStatus from "@/components/google-maps-config";
 
 export default function FeaturesDemo() {
   const [selectedFeature, setSelectedFeature] = useState("tracking");
+  const [selectedAddress, setSelectedAddress] = useState("");
 
-  const features = [
-    {
-      id: "tracking",
-      name: "Real-time GPS tracking",
-      description: "Live locatie tracking met automatische updates",
-      component: <RealTimeTracking deliveryId={5} />
-    },
-    {
-      id: "payment",
-      name: "Payment processing system",
-      description: "Veilige betalingsverwerking met multiple methoden",
-      component: <PaymentProcessing amount="15.50" deliveryId={5} onPaymentComplete={() => {}} />
-    },
-    {
-      id: "driver",
-      name: "Driver mobile application",
-      description: "Chauffeur app met route navigatie en status updates",
-      component: <DriverMobileApp driverId={1} />
-    },
-    {
-      id: "routing",
-      name: "Advanced routing optimization",
-      description: "AI-powered route optimalisatie voor efficiency",
-      component: <AdvancedRouting driverId={1} />
-    },
-    {
-      id: "heatmap",
-      name: "Interactive GPS tracking heat map",
-      description: "Interactieve heat map met real-time data visualisatie",
-      component: <InteractiveHeatMap timeRange="today" />
-    },
-    {
-      id: "automation",
-      name: "Automated delivery status progression",
-      description: "Automatische status updates en progressie tracking",
-      component: <AutomatedDeliveryStatus deliveryId={5} />
-    },
-    {
-      id: "autocomplete",
-      name: "One-click address autocomplete",
-      description: "Slimme adres aanvulling met Nederlandse postcodes",
-      component: (
-        <div className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Adres Autocomplete Demo</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <AddressAutocomplete
-                placeholder="Voer een Nederlands adres in..."
-                onAddressSelect={(address) => console.log('Selected:', address)}
-                showRecentAddresses={true}
-              />
-            </CardContent>
-          </Card>
-        </div>
-      )
-    },
-    {
-      id: "multilingual",
-      name: "Multilingual support with flag selector",
-      description: "12 talen ondersteuning met RTL en auto-detectie",
-      component: <MultilingualSupport />
-    },
-    {
-      id: "rewards",
-      name: "Gamified delivery rewards system",
-      description: "Punten systeem met achievements en beloningen",
-      component: <GamifiedRewards />
-    }
-  ];
+  const handleAddressSelect = (address: any) => {
+    setSelectedAddress(address.address);
+  };
 
   return (
-    <LanguageProvider>
-      <div className="min-h-screen bg-gray-50">
-        <AppHeader title="Features Demo" showNotifications={false} />
-        
-        <div className="container mx-auto px-4 py-6">
-          <div className="flex items-center justify-between mb-6">
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900">Spoedpakketjes Features</h1>
-              <p className="text-gray-600">Alle nieuwe functionaliteiten in één overzicht</p>
-            </div>
-            <LanguageSelector variant="compact" />
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {/* Feature Selector */}
-            <div className="md:col-span-1">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Features</CardTitle>
-                </CardHeader>
-                <CardContent className="p-0">
-                  <div className="space-y-1">
-                    {features.map((feature) => (
-                      <button
-                        key={feature.id}
-                        onClick={() => setSelectedFeature(feature.id)}
-                        className={`w-full text-left p-4 transition-colors ${
-                          selectedFeature === feature.id
-                            ? 'bg-brand-blue text-white'
-                            : 'hover:bg-gray-50'
-                        }`}
-                      >
-                        <div className="space-y-1">
-                          <h3 className="font-medium text-sm">{feature.name}</h3>
-                          <p className={`text-xs ${
-                            selectedFeature === feature.id ? 'text-blue-100' : 'text-gray-500'
-                          }`}>
-                            {feature.description}
-                          </p>
-                        </div>
-                      </button>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Google Maps Configuration */}
-              <div className="mt-4">
-                <GoogleMapsStatus />
-              </div>
-
-              {/* Implementation Status */}
-              <Card className="mt-4">
-                <CardHeader>
-                  <CardTitle>Implementatie Status</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm">Features compleet</span>
-                      <Badge className="bg-green-600">9/9</Badge>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm">Database integratie</span>
-                      <Badge className="bg-blue-600">PostgreSQL</Badge>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm">Mobile responsief</span>
-                      <Badge className="bg-green-600">100%</Badge>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm">TypeScript errors</span>
-                      <Badge variant="outline" className="text-orange-600">
-                        Fixing...
-                      </Badge>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-
-            {/* Feature Display */}
-            <div className="md:col-span-2">
-              <Card className="min-h-[600px]">
-                <CardHeader>
-                  <CardTitle>
-                    {features.find(f => f.id === selectedFeature)?.name}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="overflow-auto max-h-[800px]">
-                  {features.find(f => f.id === selectedFeature)?.component}
-                </CardContent>
-              </Card>
-            </div>
-          </div>
+    <div className="min-h-screen bg-gray-50">
+      <AppHeader title="Features Demo" showNotifications={false} />
+      
+      <div className="container mx-auto px-4 py-6">
+        <div className="mb-6">
+          <h1 className="text-2xl font-bold text-gray-900">Spoedpakketjes Live Demo</h1>
+          <p className="text-gray-600">Interactieve demonstratie van alle 9 functies</p>
         </div>
 
-        <BottomNavigation />
+        <Tabs value={selectedFeature} onValueChange={setSelectedFeature} className="space-y-6">
+          <TabsList className="grid grid-cols-3 lg:grid-cols-5 gap-2 h-auto p-2">
+            <TabsTrigger value="tracking" className="text-xs">
+              GPS Tracking
+            </TabsTrigger>
+            <TabsTrigger value="payment" className="text-xs">
+              Betaling
+            </TabsTrigger>
+            <TabsTrigger value="driver" className="text-xs">
+              Chauffeur App
+            </TabsTrigger>
+            <TabsTrigger value="routing" className="text-xs">
+              Route Opt.
+            </TabsTrigger>
+            <TabsTrigger value="heatmap" className="text-xs">
+              Heat Map
+            </TabsTrigger>
+            <TabsTrigger value="automation" className="text-xs">
+              Automatisering
+            </TabsTrigger>
+            <TabsTrigger value="autocomplete" className="text-xs">
+              Adres
+            </TabsTrigger>
+            <TabsTrigger value="multilingual" className="text-xs">
+              Talen
+            </TabsTrigger>
+            <TabsTrigger value="rewards" className="text-xs">
+              Beloningen
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="tracking" className="space-y-4">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center space-x-2">
+                  <Badge className="bg-blue-500">1</Badge>
+                  <span>Real-time GPS Tracking</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <RealTimeTracking deliveryId={1} />
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="payment" className="space-y-4">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center space-x-2">
+                  <Badge className="bg-green-500">2</Badge>
+                  <span>Payment Processing</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <PaymentProcessing 
+                  amount="15.50" 
+                  deliveryId={1} 
+                  onPaymentComplete={() => console.log("Payment completed")} 
+                />
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="driver" className="space-y-4">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center space-x-2">
+                  <Badge className="bg-orange-500">3</Badge>
+                  <span>Driver Mobile App</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <DriverMobileApp driverId={1} />
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="routing" className="space-y-4">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center space-x-2">
+                  <Badge className="bg-purple-500">4</Badge>
+                  <span>Advanced Routing</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <AdvancedRouting driverId={1} />
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="heatmap" className="space-y-4">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center space-x-2">
+                  <Badge className="bg-red-500">5</Badge>
+                  <span>Interactive Heat Map</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <InteractiveHeatMap timeRange="today" />
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="automation" className="space-y-4">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center space-x-2">
+                  <Badge className="bg-yellow-500">6</Badge>
+                  <span>Automated Delivery Status</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <AutomatedDeliveryStatus deliveryId={1} />
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="autocomplete" className="space-y-4">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center space-x-2">
+                  <Badge className="bg-indigo-500">7</Badge>
+                  <span>Address Autocomplete</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <AddressAutocomplete 
+                    placeholder="Voer adres in voor demo..."
+                    onAddressSelect={handleAddressSelect}
+                    showRecentAddresses={true}
+                  />
+                  {selectedAddress && (
+                    <div className="p-3 bg-green-50 rounded-lg">
+                      <p className="text-sm text-green-800">
+                        Geselecteerd adres: <strong>{selectedAddress}</strong>
+                      </p>
+                    </div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="multilingual" className="space-y-4">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center space-x-2">
+                  <Badge className="bg-teal-500">8</Badge>
+                  <span>Multilingual Support</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <MultilingualSupport />
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="rewards" className="space-y-4">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center space-x-2">
+                  <Badge className="bg-pink-500">9</Badge>
+                  <span>Gamified Rewards</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <GamifiedRewards />
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
       </div>
-    </LanguageProvider>
+
+      <BottomNavigation />
+    </div>
   );
 }

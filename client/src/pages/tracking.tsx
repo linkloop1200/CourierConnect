@@ -4,7 +4,7 @@ import { ArrowLeft, Check, Truck, Home, Phone, MessageCircle, Star } from "lucid
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import AppHeader from "@/components/app-header";
-import EnhancedMap from "@/components/enhanced-map";
+import WorkingMap from "@/components/working-map";
 import BottomNavigation from "@/components/bottom-navigation";
 import { parseCoordinates } from "@/lib/geocoding";
 import { formatPrice, formatDateTime } from "@/lib/utils";
@@ -74,7 +74,7 @@ export default function Tracking({ params }: TrackingProps) {
     <>
       <AppHeader />
       
-      <EnhancedMap 
+      <WorkingMap 
         height="h-64" 
         showDrivers={true}
         pickupLocation={parseCoordinates(deliveryData?.pickupLatitude, deliveryData?.pickupLongitude) || undefined}

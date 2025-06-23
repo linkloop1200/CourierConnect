@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
-import EnhancedMap from "./enhanced-map";
+import WorkingMap from "./working-map";
 import type { Delivery, Driver } from "@shared/schema";
 
 interface DriverMobileAppProps {
@@ -186,7 +186,7 @@ export default function DriverMobileApp({ driverId }: DriverMobileAppProps) {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <EnhancedMap
+            <WorkingMap
               height="h-48"
               showDrivers={true}
               userLocation={currentLocation}

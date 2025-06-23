@@ -4,7 +4,7 @@ import { useLocation } from "wouter";
 import { Package, Mail, Home as HomeIcon, Building } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import AppHeader from "@/components/app-header";
-import EnhancedMap from "@/components/enhanced-map";
+import WorkingMap from "@/components/working-map";
 import BottomNavigation from "@/components/bottom-navigation";
 import type { Address } from "@shared/schema";
 
@@ -30,7 +30,14 @@ export default function Home() {
     <>
       <AppHeader />
       
-      <EnhancedMap showDrivers={true} showPackages={true} />
+      <WorkingMap 
+        showDrivers={true} 
+        showPackages={true} 
+        userLocation={{ lat: 52.3676, lng: 4.9041 }}
+        pickupLocation={{ lat: 52.3700, lng: 4.8950 }}
+        deliveryLocation={{ lat: 52.3650, lng: 4.9150 }}
+        driverLocation={{ lat: 52.3680, lng: 4.9000 }}
+      />
       
       {/* Delivery Bottom Sheet */}
       <div className="floating-panel bg-white rounded-t-3xl absolute bottom-0 left-0 right-0 z-10 overflow-hidden" style={{ height: "calc(100vh - 384px)" }}>
