@@ -1,5 +1,6 @@
-import { useState, useEffect } from "react";
-import { MapPin, Navigation, Truck, Package, Zap } from "lucide-react";
+import { useEffect, useState } from "react";
+import { MapPin, Plus, Minus, Navigation } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
 interface WorkingMapProps {
@@ -10,262 +11,278 @@ interface WorkingMapProps {
   pickupLocation?: { lat: number; lng: number; address?: string };
   deliveryLocation?: { lat: number; lng: number; address?: string };
   driverLocation?: { lat: number; lng: number };
+  enableRealTimeTracking?: boolean;
 }
 
 export default function WorkingMap({ 
-  height = "h-96", 
-  showDrivers = true, 
+  height = "400px",
+  showDrivers = true,
   showPackages = true,
   userLocation,
   pickupLocation,
   deliveryLocation,
-  driverLocation
+  driverLocation,
+  enableRealTimeTracking = false
 }: WorkingMapProps) {
-  const [mapMode, setMapMode] = useState<'street' | 'satellite'>('street');
-  const [animationStep, setAnimationStep] = useState(0);
+  const [zoom, setZoom] = useState(13);
 
-  // Animate driver movement
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setAnimationStep(prev => (prev + 1) % 360);
-    }, 100);
-    return () => clearInterval(interval);
-  }, []);
+  const handleZoomIn = () => {
+    setZoom(Math.min(zoom + 1, 18));
+  };
 
-  const getMapStyle = () => {
-    if (mapMode === 'satellite') {
-      return {
-        background: `
-          radial-gradient(circle at 20% 30%, rgba(34, 139, 34, 0.3) 0%, transparent 50%),
-          radial-gradient(circle at 80% 70%, rgba(101, 67, 33, 0.2) 0%, transparent 50%),
-          radial-gradient(circle at 40% 80%, rgba(0, 100, 0, 0.25) 0%, transparent 40%),
-          linear-gradient(45deg, #8FBC8F 0%, #228B22 25%, #6B8E23 50%, #9ACD32 75%, #ADFF2F 100%)
-        `
-      };
-    }
-    return {
-      background: `
-        linear-gradient(90deg, #f8f9fa 0%, #e9ecef 50%, #f8f9fa 100%),
-        repeating-linear-gradient(
-          45deg,
-          transparent,
-          transparent 2px,
-          rgba(0,0,0,0.03) 2px,
-          rgba(0,0,0,0.03) 4px
-        )
-      `
-    };
+  const handleZoomOut = () => {
+    setZoom(Math.max(zoom - 1, 8));
   };
 
   return (
-    <div className={`${height} relative overflow-hidden rounded-lg border-2 border-gray-200`}>
-      {/* Map Background */}
-      <div 
-        className="absolute inset-0 transition-all duration-500"
-        style={getMapStyle()}
-      >
-        {/* Street Grid for Street View */}
-        {mapMode === 'street' && (
-          <div className="absolute inset-0 opacity-30">
-            <svg width="100%" height="100%" viewBox="0 0 400 300">
-              {/* Horizontal Streets */}
-              <line x1="0" y1="75" x2="400" y2="75" stroke="#666" strokeWidth="3" />
-              <line x1="0" y1="150" x2="400" y2="150" stroke="#666" strokeWidth="4" />
-              <line x1="0" y1="225" x2="400" y2="225" stroke="#666" strokeWidth="3" />
-              
-              {/* Vertical Streets */}
-              <line x1="100" y1="0" x2="100" y2="300" stroke="#666" strokeWidth="2" />
-              <line x1="200" y1="0" x2="200" y2="300" stroke="#666" strokeWidth="3" />
-              <line x1="300" y1="0" x2="300" y2="300" stroke="#666" strokeWidth="2" />
-              
-              {/* Buildings */}
-              <rect x="20" y="20" width="60" height="40" fill="#ddd" stroke="#999" />
-              <rect x="120" y="30" width="50" height="30" fill="#ddd" stroke="#999" />
-              <rect x="320" y="15" width="70" height="50" fill="#ddd" stroke="#999" />
-              <rect x="30" y="180" width="55" height="35" fill="#ddd" stroke="#999" />
-              <rect x="250" y="170" width="60" height="40" fill="#ddd" stroke="#999" />
-            </svg>
-          </div>
-        )}
-
-        {/* Trees and Landmarks for Satellite View */}
-        {mapMode === 'satellite' && (
-          <div className="absolute inset-0 opacity-60">
-            <div className="absolute top-4 left-8 w-3 h-3 bg-green-600 rounded-full"></div>
-            <div className="absolute top-12 right-12 w-4 h-4 bg-green-700 rounded-full"></div>
-            <div className="absolute bottom-16 left-16 w-3 h-3 bg-green-600 rounded-full"></div>
-            <div className="absolute bottom-8 right-8 w-2 h-2 bg-green-500 rounded-full"></div>
-            <div className="absolute top-1/2 left-1/3 w-6 h-2 bg-blue-400 rounded-full opacity-70"></div>
-          </div>
-        )}
+    <div className="relative w-full rounded-lg overflow-hidden border border-gray-300 bg-gray-50" style={{ height }}>
+      {/* Base map layer - Amsterdam style */}
+      <div className="w-full h-full relative">
+        {/* Background gradient */}
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-100 via-blue-50 to-green-50"></div>
+        
+        {/* Grid overlay for map feel */}
+        <div 
+          className="absolute inset-0 opacity-20"
+          style={{
+            backgroundImage: `
+              linear-gradient(rgba(107, 114, 128, 0.3) 1px, transparent 1px),
+              linear-gradient(90deg, rgba(107, 114, 128, 0.3) 1px, transparent 1px)
+            `,
+            backgroundSize: '24px 24px'
+          }}
+        />
+        
+        {/* Amsterdam geographic features */}
+        <svg className="absolute inset-0 w-full h-full" viewBox="0 0 400 300">
+          {/* Water bodies (IJ, Amstel) */}
+          <path d="M0,80 Q100,70 200,80 T400,85" fill="#3b82f6" opacity="0.4" />
+          <path d="M0,180 Q150,170 300,175 L400,175" fill="#3b82f6" opacity="0.3" />
+          <circle cx="320" cy="60" r="15" fill="#3b82f6" opacity="0.3" />
+          
+          {/* Canal rings */}
+          <ellipse cx="200" cy="150" rx="80" ry="60" fill="none" stroke="#1e40af" strokeWidth="2" opacity="0.6" />
+          <ellipse cx="200" cy="150" rx="60" ry="45" fill="none" stroke="#1e40af" strokeWidth="1.5" opacity="0.5" />
+          <ellipse cx="200" cy="150" rx="40" ry="30" fill="none" stroke="#1e40af" strokeWidth="1" opacity="0.4" />
+          
+          {/* Parks (Vondelpark, Museumplein) */}
+          <rect x="50" y="200" width="40" height="25" fill="#10b981" opacity="0.4" rx="5" />
+          <circle cx="300" cy="120" r="18" fill="#10b981" opacity="0.4" />
+          <rect x="180" y="80" width="25" height="15" fill="#10b981" opacity="0.3" rx="3" />
+          
+          {/* Major roads */}
+          <line x1="0" y1="150" x2="400" y2="150" stroke="#6b7280" strokeWidth="3" opacity="0.6" />
+          <line x1="200" y1="0" x2="200" y2="300" stroke="#6b7280" strokeWidth="3" opacity="0.6" />
+          <line x1="0" y1="100" x2="400" y2="110" stroke="#9ca3af" strokeWidth="2" opacity="0.5" />
+          <line x1="0" y1="200" x2="400" y2="190" stroke="#9ca3af" strokeWidth="2" opacity="0.5" />
+          
+          {/* Historic center buildings */}
+          <rect x="180" y="130" width="8" height="12" fill="#8b5cf6" opacity="0.7" />
+          <rect x="190" y="125" width="6" height="15" fill="#8b5cf6" opacity="0.6" />
+          <rect x="205" y="135" width="10" height="10" fill="#8b5cf6" opacity="0.7" />
+          <rect x="220" y="128" width="7" height="14" fill="#8b5cf6" opacity="0.6" />
+          
+          {/* Railway stations */}
+          <circle cx="200" cy="50" r="3" fill="#f59e0b" opacity="0.8" />
+          <circle cx="120" cy="180" r="2" fill="#f59e0b" opacity="0.7" />
+          
+          {/* Neighborhoods */}
+          <text x="150" y="200" fontSize="8" fill="#6b7280" opacity="0.7">Jordaan</text>
+          <text x="250" y="120" fontSize="8" fill="#6b7280" opacity="0.7">Centrum</text>
+          <text x="320" y="200" fontSize="8" fill="#6b7280" opacity="0.7">Oost</text>
+        </svg>
+        
+        {/* Amsterdam label */}
+        <div className="absolute top-3 left-3 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-medium text-gray-700 border border-gray-200">
+          Amsterdam
+        </div>
       </div>
-
-      {/* Interactive Markers */}
-      <div className="absolute inset-0 p-4">
-        {/* Pickup Location */}
-        {pickupLocation && (
-          <div 
-            className="absolute animate-bounce"
-            style={{ 
-              left: '25%', 
-              top: '30%',
-              transform: 'translate(-50%, -50%)'
-            }}
-          >
-            <div className="relative">
-              <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center shadow-lg border-2 border-white">
-                <Package className="text-white text-xs" />
-              </div>
-              <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 bg-green-500 text-white text-xs px-2 py-1 rounded whitespace-nowrap">
-                Ophalen
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Delivery Location */}
-        {deliveryLocation && (
-          <div 
-            className="absolute animate-pulse"
-            style={{ 
-              left: '75%', 
-              top: '60%',
-              transform: 'translate(-50%, -50%)'
-            }}
-          >
-            <div className="relative">
-              <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center shadow-lg border-2 border-white">
-                <MapPin className="text-white text-xs" />
-              </div>
-              <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 bg-blue-500 text-white text-xs px-2 py-1 rounded whitespace-nowrap">
-                Bezorgen
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Driver Location with Animation */}
-        {driverLocation && showDrivers && (
-          <div 
-            className="absolute transition-all duration-1000"
-            style={{ 
-              left: `${45 + Math.sin(animationStep * 0.02) * 15}%`, 
-              top: `${45 + Math.cos(animationStep * 0.02) * 10}%`,
-              transform: 'translate(-50%, -50%)'
-            }}
-          >
-            <div className="relative">
-              <div className="w-10 h-10 bg-orange-500 rounded-full flex items-center justify-center shadow-lg border-2 border-white animate-pulse">
-                <Truck className="text-white text-sm" />
-              </div>
-              <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 bg-orange-500 text-white text-xs px-2 py-1 rounded whitespace-nowrap">
-                Chauffeur
-              </div>
-              <div className="absolute inset-0 rounded-full bg-orange-500 opacity-30 animate-ping"></div>
-            </div>
-          </div>
-        )}
-
-        {/* User Location */}
+      
+      {/* Interactive markers */}
+      <div className="absolute inset-0 pointer-events-none">
+        {/* User location */}
         {userLocation && (
           <div 
-            className="absolute"
-            style={{ 
-              left: '50%', 
-              top: '70%',
-              transform: 'translate(-50%, -50%)'
-            }}
+            className="absolute w-8 h-8 bg-blue-500 rounded-full border-3 border-white shadow-lg flex items-center justify-center transform -translate-x-1/2 -translate-y-1/2 pointer-events-auto cursor-pointer hover:scale-110 transition-all duration-200"
+            style={{ left: '50%', top: '50%' }}
+            title="Jouw huidige locatie"
           >
-            <div className="relative">
-              <div className="w-6 h-6 bg-blue-600 rounded-full border-4 border-white shadow-lg">
-                <div className="absolute inset-0 rounded-full bg-blue-600 opacity-30 animate-ping"></div>
-              </div>
-              <div className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 bg-blue-600 text-white text-xs px-2 py-1 rounded whitespace-nowrap">
-                Jij
-              </div>
-            </div>
+            <span className="text-white text-sm">🏠</span>
           </div>
         )}
-
-        {/* Route Line Animation */}
+        
+        {/* Pickup location */}
+        {pickupLocation && (
+          <div 
+            className="absolute w-8 h-8 bg-green-500 rounded-full border-3 border-white shadow-lg flex items-center justify-center transform -translate-x-1/2 -translate-y-1/2 pointer-events-auto cursor-pointer hover:scale-110 transition-all duration-200"
+            style={{ left: '35%', top: '40%' }}
+            title={pickupLocation.address || "Ophaallocatie"}
+          >
+            <span className="text-white text-sm">📦</span>
+          </div>
+        )}
+        
+        {/* Delivery location */}
+        {deliveryLocation && (
+          <div 
+            className="absolute w-8 h-8 bg-red-500 rounded-full border-3 border-white shadow-lg flex items-center justify-center transform -translate-x-1/2 -translate-y-1/2 pointer-events-auto cursor-pointer hover:scale-110 transition-all duration-200"
+            style={{ left: '70%', top: '65%' }}
+            title={deliveryLocation.address || "Bezorglocatie"}
+          >
+            <span className="text-white text-sm">🎯</span>
+          </div>
+        )}
+        
+        {/* Driver location */}
+        {driverLocation && (
+          <div 
+            className={`absolute w-8 h-8 bg-purple-500 rounded-full border-3 border-white shadow-lg flex items-center justify-center transform -translate-x-1/2 -translate-y-1/2 pointer-events-auto cursor-pointer hover:scale-110 transition-all duration-200 ${enableRealTimeTracking ? 'animate-pulse' : ''}`}
+            style={{ left: '55%', top: '45%' }}
+            title="Chauffeur onderweg"
+          >
+            <span className="text-white text-sm">🚐</span>
+          </div>
+        )}
+        
+        {/* Available drivers */}
+        {showDrivers && (
+          <>
+            <div 
+              className="absolute w-6 h-6 bg-green-400 rounded-full border-2 border-white shadow-md flex items-center justify-center transform -translate-x-1/2 -translate-y-1/2 cursor-pointer hover:scale-110 transition-all duration-200"
+              style={{ left: '25%', top: '30%' }}
+              title="Beschikbare chauffeur - Jan van Amsterdam"
+            >
+              <span className="text-white text-xs">🚚</span>
+            </div>
+            <div 
+              className="absolute w-6 h-6 bg-green-400 rounded-full border-2 border-white shadow-md flex items-center justify-center transform -translate-x-1/2 -translate-y-1/2 cursor-pointer hover:scale-110 transition-all duration-200"
+              style={{ left: '80%', top: '35%' }}
+              title="Beschikbare chauffeur - Maria de Jong"
+            >
+              <span className="text-white text-xs">🚚</span>
+            </div>
+            <div 
+              className="absolute w-6 h-6 bg-orange-400 rounded-full border-2 border-white shadow-md flex items-center justify-center transform -translate-x-1/2 -translate-y-1/2 cursor-pointer hover:scale-110 transition-all duration-200"
+              style={{ left: '65%', top: '25%' }}
+              title="Bezige chauffeur - Piet Jansen"
+            >
+              <span className="text-white text-xs">🚚</span>
+            </div>
+          </>
+        )}
+        
+        {/* Animated route */}
         {pickupLocation && deliveryLocation && (
           <svg className="absolute inset-0 w-full h-full pointer-events-none">
             <defs>
-              <linearGradient id="routeGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" style={{ stopColor: '#10b981', stopOpacity: 0.8 }} />
-                <stop offset="50%" style={{ stopColor: '#3b82f6', stopOpacity: 0.6 }} />
-                <stop offset="100%" style={{ stopColor: '#3b82f6', stopOpacity: 0.8 }} />
-              </linearGradient>
+              <filter id="glow">
+                <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+                <feMerge> 
+                  <feMergeNode in="coloredBlur"/>
+                  <feMergeNode in="SourceGraphic"/>
+                </feMerge>
+              </filter>
             </defs>
-            <path
-              d="M 25% 30% Q 50% 20% 75% 60%"
-              stroke="url(#routeGradient)"
-              strokeWidth="4"
-              strokeDasharray="10,5"
-              fill="none"
-              className="animate-pulse"
+            <path 
+              d="M 35% 40% Q 52% 35% 70% 65%" 
+              stroke="#8b5cf6" 
+              strokeWidth="4" 
+              fill="none" 
+              strokeDasharray="12,6"
+              opacity="0.9"
+              filter="url(#glow)"
+            >
+              <animate attributeName="stroke-dashoffset" values="0;-18" dur="2s" repeatCount="indefinite" />
+            </path>
+            
+            {/* Route direction arrow */}
+            <path 
+              d="M 52% 35% L 56% 32% L 56% 38% Z" 
+              fill="#8b5cf6" 
+              opacity="0.8"
             />
-            <circle r="3" fill="#10b981" opacity="0.8">
-              <animateMotion dur="3s" repeatCount="indefinite">
-                <mpath href="#route"/>
-              </animateMotion>
-            </circle>
           </svg>
         )}
       </div>
-
+      
       {/* Map Controls */}
-      <div className="absolute top-4 right-4 flex flex-col space-y-2">
+      <div className="absolute top-4 right-4 flex flex-col space-y-2 z-30">
         <Button
-          variant="secondary"
-          size="icon"
-          className="w-10 h-10 bg-white rounded shadow-lg hover:bg-gray-50"
-          onClick={() => setMapMode(mapMode === 'street' ? 'satellite' : 'street')}
+          size="sm"
+          variant="outline"
+          className="w-9 h-9 p-0 bg-white/95 backdrop-blur-sm shadow-lg hover:bg-gray-50 border-gray-200"
+          onClick={handleZoomIn}
         >
-          {mapMode === 'street' ? '🛰️' : '🗺️'}
+          <Plus className="h-4 w-4" />
         </Button>
-        
         <Button
-          variant="secondary"
-          size="icon"
-          className="w-10 h-10 bg-white rounded shadow-lg hover:bg-gray-50"
+          size="sm"
+          variant="outline"
+          className="w-9 h-9 p-0 bg-white/95 backdrop-blur-sm shadow-lg hover:bg-gray-50 border-gray-200"
+          onClick={handleZoomOut}
         >
-          <Navigation className="text-blue-600 h-4 w-4" />
+          <Minus className="h-4 w-4" />
+        </Button>
+        <Button
+          size="sm"
+          variant="outline"
+          className="w-9 h-9 p-0 bg-white/95 backdrop-blur-sm shadow-lg hover:bg-gray-50 border-gray-200"
+        >
+          <Navigation className="h-4 w-4" />
         </Button>
       </div>
 
-      {/* Map Info */}
-      <div className="absolute bottom-4 left-4 bg-white bg-opacity-90 rounded-lg p-3 shadow-lg">
-        <div className="flex items-center space-x-2 text-sm">
-          <Zap className="h-4 w-4 text-green-500" />
-          <span className="text-gray-700">Live Tracking Actief</span>
-        </div>
-        <div className="text-xs text-gray-500 mt-1">
-          Amsterdam, Nederland
-        </div>
-      </div>
-
-      {/* Legend */}
-      {showPackages && (
-        <div className="absolute top-4 left-4 bg-white bg-opacity-90 rounded-lg p-2 shadow-lg">
-          <div className="space-y-1 text-xs">
-            <div className="flex items-center space-x-2">
-              <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-              <span>Ophaallocatie</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
-              <span>Bezorglocatie</span>
-            </div>
-            {showDrivers && (
-              <div className="flex items-center space-x-2">
-                <div className="w-3 h-3 bg-orange-500 rounded-full"></div>
-                <span>Chauffeur</span>
-              </div>
-            )}
+      {/* Map Legend */}
+      <div className="absolute bottom-4 left-4 bg-white/95 backdrop-blur-sm p-3 rounded-lg shadow-lg text-xs z-30 border border-gray-200">
+        <div className="space-y-2">
+          <div className="flex items-center space-x-2">
+            <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
+            <span className="text-gray-700">Jouw locatie</span>
           </div>
+          <div className="flex items-center space-x-2">
+            <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+            <span className="text-gray-700">Ophalen</span>
+          </div>
+          <div className="flex items-center space-x-2">
+            <div className="w-3 h-3 bg-red-500 rounded-full"></div>
+            <span className="text-gray-700">Bezorgen</span>
+          </div>
+          {driverLocation && (
+            <div className="flex items-center space-x-2">
+              <div className="w-3 h-3 bg-purple-500 rounded-full"></div>
+              <span className="text-gray-700">Chauffeur</span>
+            </div>
+          )}
+          {showDrivers && (
+            <div className="flex items-center space-x-2">
+              <div className="w-3 h-3 bg-green-400 rounded-full"></div>
+              <span className="text-gray-700">Beschikbaar</span>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Real-time tracking indicator */}
+      {enableRealTimeTracking && (
+        <div className="absolute top-4 left-4 z-30">
+          <Badge className="bg-green-500 text-white animate-pulse shadow-lg">
+            <div className="w-2 h-2 bg-white rounded-full mr-2"></div>
+            Live tracking
+          </Badge>
         </div>
       )}
+
+      {/* Map attribution */}
+      <div className="absolute bottom-1 right-2 text-xs text-gray-500 bg-white/80 backdrop-blur-sm px-2 py-1 rounded z-30">
+        Kaart van Amsterdam
+      </div>
+
+      {/* Zoom level indicator */}
+      <div className="absolute top-4 left-1/2 transform -translate-x-1/2 z-30">
+        <div className="bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs text-gray-700 border border-gray-200">
+          Amsterdam Centrum • Zoom: {zoom}
+        </div>
+      </div>
     </div>
   );
 }
