@@ -62,13 +62,13 @@ export default function BottomNavigation({ onNavigate }: BottomNavigationProps) 
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-30">
-      <div className="flex">
+      <div className="flex justify-around max-w-xs mx-auto px-4">
         {navigationItems.map(({ path, icon: IconComponent, label }) => (
           <button 
             key={path}
             onClick={() => handleNavigation(path)}
             className={cn(
-              "flex-1 py-3 flex flex-col items-center space-y-1 transition-colors",
+              "flex flex-col items-center space-y-1 py-3 px-2 transition-colors",
               isActive(path) ? "text-brand-blue" : "text-gray-400"
             )}
           >
