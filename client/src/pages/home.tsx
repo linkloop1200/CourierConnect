@@ -4,7 +4,7 @@ import { useLocation } from "wouter";
 import { Package, Mail, Home as HomeIcon, Building } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import AppHeader from "@/components/app-header";
-import GoogleMapFixed from "@/components/google-map-fixed";
+import MapAlternative from "@/components/map-alternative";
 import BottomNavigation from "@/components/bottom-navigation";
 import type { Address } from "@shared/schema";
 
@@ -30,7 +30,8 @@ export default function Home() {
     <>
       <AppHeader />
       
-      <GoogleMapFixed 
+      <MapAlternative 
+        height="384px"
         showDrivers={true} 
         showPackages={true} 
         userLocation={{ lat: 52.3676, lng: 4.9041 }}

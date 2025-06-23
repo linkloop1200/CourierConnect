@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { geocodeAddress } from "@/lib/geocoding";
+// Removed geocoding dependency - using mock data instead
 
 interface AddressSuggestion {
   id: string;
@@ -142,16 +142,20 @@ export default function AddressAutocomplete({
         addr.postalCode.toLowerCase().includes(searchQuery.toLowerCase())
       );
 
-      // Add coordinates using geocoding if not present
-      const addressesWithCoords = await Promise.all(
-        filteredAddresses.map(async (addr) => {
-          if (!addr.coordinates) {
-            const coords = await geocodeAddress(`${addr.address}, ${addr.city}`);
-            return { ...addr, coordinates: coords };
-          }
-          return addr;
-        })
-      );
+      // Add mock coordinates for Amsterdam area
+      const addressesWithCoords = filteredAddresses.map((addr) => {
+        if (!addr.coordinates) {
+          // Generate realistic Amsterdam coordinates
+          return { 
+            ...addr, 
+            coordinates: { 
+              lat: 52.3676 + (Math.random() - 0.5) * 0.1, 
+              lng: 4.9041 + (Math.random() - 0.5) * 0.1 
+            } 
+          };
+        }
+        return addr;
+      });
 
       // Combine with recent addresses if they match
       const matchingRecent = recentAddresses.filter(addr =>

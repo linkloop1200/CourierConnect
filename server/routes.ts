@@ -167,11 +167,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Get environment config for frontend
-  app.get("/api/config", (req, res) => {
-    res.json({
-      GOOGLE_MAPS_API_KEY: process.env.GOOGLE_MAPS_API_KEY || null
-    });
+  // Health check endpoint
+  app.get("/api/health", (req, res) => {
+    res.json({ status: "ok", timestamp: new Date().toISOString() });
   });
 
   const httpServer = createServer(app);

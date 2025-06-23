@@ -192,28 +192,20 @@ export default function FeaturesOverview() {
           ))}
         </div>
 
-        {/* Google Maps Status */}
+        {/* Alternative Map Status */}
         <Card className="mt-6">
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
               <MapPin className="h-5 w-5" />
-              <span>Google Maps API Status</span>
+              <span>Kaart Systeem Status</span>
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="bg-yellow-50 p-4 rounded-lg border-l-4 border-yellow-500">
-              <h4 className="font-medium text-yellow-800">Setup Informatie</h4>
-              <p className="text-yellow-700 text-sm mt-1">
-                De Google Maps JavaScript API moet worden geactiveerd in Google Cloud Console voor volledige kaart functionaliteit.
+            <div className="bg-green-50 p-4 rounded-lg border-l-4 border-green-500">
+              <h4 className="font-medium text-green-800">Alternatieve Kaart Actief</h4>
+              <p className="text-green-700 text-sm mt-1">
+                Spoedpakketjes gebruikt nu een zelfgebouwde kaart oplossing zonder externe API afhankelijkheden.
               </p>
-              <Button 
-                variant="outline" 
-                size="sm" 
-                className="mt-3"
-                onClick={() => window.open('https://console.cloud.google.com/apis/library/maps-backend.googleapis.com', '_blank')}
-              >
-                Open Google Cloud Console
-              </Button>
             </div>
           </CardContent>
         </Card>
