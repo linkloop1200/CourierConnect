@@ -41,52 +41,41 @@ export default function EmbeddedOpenStreetMap({
   // Centreer op ophaallocatie als deze bestaat, anders Amsterdam centrum
   const mapCenter = pickupLocation ? pickupLocation : center;
   
-  // Eenvoudige marker positionering - vast centrum voor pickup
-  const getMarkerPosition = (location: { lat: number; lng: number }, isPickup: boolean) => {
-    if (isPickup && pickupLocation && location === pickupLocation) {
-      // Pickup is altijd in het centrum als kaart erop gefocust is
-      return { left: '50%', top: '50%' };
-    }
+  // Bereken exacte bounding box die de iframe gebruikt
+  const getBoundingBox = () => {
+    const baseLatDiff = 0.055;
+    const baseLngDiff = 0.10;
+    const zoomMultiplier = Math.pow(0.5, zoom - 13);
     
-    // Voor delivery en andere markers: relatieve positie ten opzichte van pickup
-    if (pickupLocation) {
-      const latDiff = location.lat - pickupLocation.lat;
-      const lngDiff = location.lng - pickupLocation.lng;
-      
-      // Verbeterde schaal factor voor Amsterdam gebied
-      const latScale = zoom >= 15 ? 400 : 250; // Meer gevoelig bij hogere zoom
-      const lngScale = zoom >= 15 ? 600 : 375; // Aangepast voor Nederlandse coördinaten
-      
-      const x = 50 + (lngDiff * lngScale);
-      const y = 50 - (latDiff * latScale); // Y omgekeerd
-      
-      return {
-        left: `${Math.max(10, Math.min(90, x))}%`,
-        top: `${Math.max(10, Math.min(90, y))}%`
-      };
-    }
-    
-    // Fallback posities
-    return { left: '50%', top: '50%' };
-  };
-
-  // Create OpenStreetMap iframe URL with dynamic zoom
-  const getOsmUrl = () => {
-    // Calculate bounding box based on zoom level
-    const baseLatDiff = 0.055; // Base latitude difference
-    const baseLngDiff = 0.10; // Base longitude difference
-    
-    // Higher zoom = smaller area visible
-    const zoomMultiplier = Math.pow(0.5, zoom - 13); // Exponential scaling
     const latDiff = baseLatDiff * zoomMultiplier;
     const lngDiff = baseLngDiff * zoomMultiplier;
     
-    const minLat = mapCenter.lat - latDiff;
-    const maxLat = mapCenter.lat + latDiff;
-    const minLng = mapCenter.lng - lngDiff;
-    const maxLng = mapCenter.lng + lngDiff;
+    return {
+      minLat: mapCenter.lat - latDiff,
+      maxLat: mapCenter.lat + latDiff,
+      minLng: mapCenter.lng - lngDiff,
+      maxLng: mapCenter.lng + lngDiff
+    };
+  };
+  
+  // Exacte GPS-naar-pixel conversie met dezelfde bounding box als iframe
+  const getMarkerPosition = (location: { lat: number; lng: number }) => {
+    const bbox = getBoundingBox();
     
-    return `https://www.openstreetmap.org/export/embed.html?bbox=${minLng}%2C${minLat}%2C${maxLng}%2C${maxLng}&layer=mapnik`;
+    // Converteer GPS coördinaten naar percentage binnen de exacte bounding box
+    const xPercent = ((location.lng - bbox.minLng) / (bbox.maxLng - bbox.minLng)) * 100;
+    const yPercent = ((bbox.maxLat - location.lat) / (bbox.maxLat - bbox.minLat)) * 100;
+    
+    return { 
+      left: `${Math.max(0, Math.min(100, xPercent))}%`, 
+      top: `${Math.max(0, Math.min(100, yPercent))}%` 
+    };
+  };
+
+  // Create OpenStreetMap iframe URL met exact dezelfde bounding box
+  const getOsmUrl = () => {
+    const bbox = getBoundingBox();
+    return `https://www.openstreetmap.org/export/embed.html?bbox=${bbox.minLng}%2C${bbox.minLat}%2C${bbox.maxLng}%2C${bbox.maxLat}&layer=mapnik`;
   };
 
   const handleZoomIn = () => {
@@ -132,7 +121,7 @@ export default function EmbeddedOpenStreetMap({
         {pickupLocation && (
           <div 
             className="absolute w-10 h-10 bg-green-500 rounded-full border-3 border-white shadow-lg flex items-center justify-center transform -translate-x-1/2 -translate-y-1/2 pointer-events-auto cursor-pointer hover:scale-110 transition-transform z-20"
-            style={getMarkerPosition(pickupLocation, true)}
+            style={getMarkerPosition(pickupLocation)}
             title={pickupLocation.address || "Ophaallocatie"}
           >
             <Home className="h-5 w-5 text-white" />
@@ -143,7 +132,7 @@ export default function EmbeddedOpenStreetMap({
         {deliveryLocation && (
           <div 
             className="absolute w-10 h-10 bg-red-500 rounded-full border-3 border-white shadow-lg flex items-center justify-center transform -translate-x-1/2 -translate-y-1/2 pointer-events-auto cursor-pointer hover:scale-110 transition-transform z-20"
-            style={getMarkerPosition(deliveryLocation, false)}
+            style={getMarkerPosition(deliveryLocation)}
             title={deliveryLocation.address || "Bezorglocatie"}
           >
             <Package className="h-5 w-5 text-white" />
@@ -154,7 +143,7 @@ export default function EmbeddedOpenStreetMap({
         {driverLocation && (
           <div 
             className={`absolute w-10 h-10 bg-purple-500 rounded-full border-3 border-white shadow-lg flex items-center justify-center transform -translate-x-1/2 -translate-y-1/2 pointer-events-auto cursor-pointer hover:scale-110 transition-transform z-20 ${enableRealTimeTracking ? 'animate-pulse' : ''}`}
-            style={getMarkerPosition(driverLocation, false)}
+            style={getMarkerPosition(driverLocation)}
             title="Bezorger onderweg"
           >
             <span className="text-white text-lg">🛴</span>
