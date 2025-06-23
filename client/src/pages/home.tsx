@@ -86,12 +86,14 @@ export default function Home() {
         className={`floating-panel bg-white rounded-t-3xl absolute bottom-0 left-0 right-0 z-10 overflow-hidden transition-all duration-300 ease-in-out`}
         style={{ height: bottomSheetHeight }}
       >
-        {/* Handle Bar - Clickable and Swipeable */}
+        {/* Handle Bar - Clickable Arrow */}
         <div 
-          className="w-12 h-1 bg-gray-300 rounded-full mx-auto mt-3 mb-6 cursor-pointer hover:bg-gray-400 transition-colors"
+          className="flex justify-center py-2 cursor-pointer hover:bg-gray-50 transition-colors"
           onClick={toggleBottomSheet}
           onTouchStart={handleTouchStart}
-        ></div>
+        >
+          <ChevronUp className="h-6 w-6 text-gray-400 hover:text-brand-blue transition-colors" />
+        </div>
 
         {/* Collapsed Header */}
         {!isBottomSheetOpen && (
