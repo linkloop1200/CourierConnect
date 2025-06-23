@@ -62,6 +62,14 @@ export default function EmbeddedOpenStreetMap({
         key={zoom}
       />
       
+      {/* Subtle overlay to hide zoom text without blocking map */}
+      <div 
+        className="absolute top-0 left-0 w-32 h-8 z-30 pointer-events-none"
+        style={{
+          background: 'linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.8) 70%, transparent 100%)'
+        }}
+      ></div>
+      
       {/* Overlay markers */}
       <div className="absolute inset-0 pointer-events-none">
         {/* User location marker */}
