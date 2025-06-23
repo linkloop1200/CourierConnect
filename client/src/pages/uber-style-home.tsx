@@ -229,16 +229,17 @@ export default function UberStyleHome() {
       coordinates: suggestion.coordinates
     };
     
-    // Always set as pickup location for now
+    // Set as pickup location
     setPickup(location);
     
-    setSearchValue(suggestion.name);
+    // Set the full address in the search field
+    setSearchValue(suggestion.address);
     setShowSuggestions(false);
     
-    // Calculate estimate if we have both locations
-    if (delivery?.coordinates) {
-      calculateEstimate(location.coordinates, delivery.coordinates);
-    }
+    // Automatically proceed to delivery location picker
+    setTimeout(() => {
+      setShowLocationPicker('delivery');
+    }, 100);
   };
 
   // Get current location (Uber-style)
@@ -339,7 +340,7 @@ export default function UberStyleHome() {
               }}
               onBlur={() => {
                 // Delay hiding suggestions to allow clicking
-                setTimeout(() => setShowSuggestions(false), 200);
+                setTimeout(() => setShowSuggestions(false), 300);
               }}
             />
             
