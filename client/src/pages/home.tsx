@@ -29,8 +29,9 @@ export default function Home() {
   };
 
   const toggleBottomSheet = () => {
-    setIsBottomSheetOpen(!isBottomSheetOpen);
-    setBottomSheetHeight(isBottomSheetOpen ? '80px' : 'calc(100vh - 384px)');
+    const newState = !isBottomSheetOpen;
+    setIsBottomSheetOpen(newState);
+    setBottomSheetHeight(newState ? 'calc(100vh - 384px)' : '80px');
   };
 
   const handleTouchStart = (e: React.TouchEvent) => {
@@ -70,7 +71,7 @@ export default function Home() {
       <AppHeader />
       
       <EmbeddedOpenStreetMap 
-        height="384px"
+        height={isBottomSheetOpen ? "384px" : "calc(100vh - 160px)"}
         showDrivers={true} 
         showPackages={true} 
         userLocation={{ lat: 52.3676, lng: 4.9041 }}
@@ -95,7 +96,8 @@ export default function Home() {
         {/* Collapsed Header */}
         {!isBottomSheetOpen && (
           <div 
-            className="px-6 py-3 text-center border-b border-gray-100"
+            className="px-6 py-3 text-center border-b border-gray-100 cursor-pointer hover:bg-gray-50 transition-colors"
+            onClick={toggleBottomSheet}
           >
             <div className="flex items-center justify-center space-x-2">
               <span className="text-sm text-gray-600">Bezorgopties</span>

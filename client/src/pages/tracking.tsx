@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useLocation } from "wouter";
 import { ArrowLeft, Check, Truck, Home, Phone, MessageCircle, Star } from "lucide-react";
@@ -18,6 +19,8 @@ interface TrackingProps {
 
 export default function Tracking({ params }: TrackingProps) {
   const [, setLocation] = useLocation();
+  const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(true);
+  const [bottomSheetHeight, setBottomSheetHeight] = useState("calc(100vh - 256px)");
   const deliveryId = parseInt(params.id);
 
   const { data: deliveryData, isLoading } = useQuery<Delivery & { driver: Driver | null }>({
@@ -27,6 +30,12 @@ export default function Tracking({ params }: TrackingProps) {
 
   const handleBack = () => {
     setLocation("/");
+  };
+
+  const toggleBottomSheet = () => {
+    const newState = !isBottomSheetOpen;
+    setIsBottomSheetOpen(newState);
+    setBottomSheetHeight(newState ? 'calc(100vh - 256px)' : '80px');
   };
 
   const getStatusSteps = (status: string) => {
@@ -75,7 +84,7 @@ export default function Tracking({ params }: TrackingProps) {
       <AppHeader />
       
       <EmbeddedOpenStreetMap 
-        height="256px" 
+        height={isBottomSheetOpen ? "256px" : "calc(100vh - 160px)"} 
         showDrivers={true}
         pickupLocation={parseCoordinates(deliveryData?.pickupLatitude, deliveryData?.pickupLongitude) || undefined}
         deliveryLocation={parseCoordinates(deliveryData?.deliveryLatitude, deliveryData?.deliveryLongitude) || undefined}
@@ -84,11 +93,31 @@ export default function Tracking({ params }: TrackingProps) {
       />
       
       {/* Tracking Bottom Sheet */}
-      <div className="floating-panel bg-white rounded-t-3xl absolute bottom-0 left-0 right-0 z-10 overflow-hidden" style={{ height: "calc(100vh - 256px)" }}>
+      <div 
+        className="floating-panel bg-white rounded-t-3xl absolute bottom-0 left-0 right-0 z-10 overflow-hidden transition-all duration-300 ease-in-out" 
+        style={{ height: bottomSheetHeight }}
+      >
         {/* Handle Bar */}
-        <div className="w-12 h-1 bg-gray-300 rounded-full mx-auto mt-3 mb-6"></div>
+        <div 
+          className="w-12 h-1 bg-gray-300 rounded-full mx-auto mt-3 mb-6 cursor-pointer hover:bg-gray-400 transition-colors"
+          onClick={toggleBottomSheet}
+        ></div>
 
-        <div className="px-6 pb-32 overflow-y-auto" style={{ height: "calc(100% - 40px)" }}>
+        {/* Collapsed Header */}
+        {!isBottomSheetOpen && (
+          <div 
+            className="px-6 py-3 text-center border-b border-gray-100 cursor-pointer hover:bg-gray-50 transition-colors"
+            onClick={toggleBottomSheet}
+          >
+            <div className="flex items-center justify-center space-x-2">
+              <span className="text-sm text-gray-600">Bezorging #{deliveryId}</span>
+              <div className="w-4 h-0.5 bg-gray-400 rounded"></div>
+              <span className="text-xs text-blue-600 font-medium">Tik om te openen</span>
+            </div>
+          </div>
+        )}
+
+        <div className={`panel-scroll px-6 pb-32 overflow-y-auto ${!isBottomSheetOpen ? 'hidden' : ''}`} style={{ height: "calc(100% - 40px)" }}>
           <div className="flex items-center justify-between mb-4">
             <Button
               variant="ghost"
