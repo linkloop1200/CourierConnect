@@ -7,10 +7,12 @@ import AppHeader from "@/components/app-header";
 import MapView from "@/components/map-view";
 import GoogleMap from "@/components/google-map";
 import BottomNavigation from "@/components/bottom-navigation";
+import { useConfig } from "@/hooks/use-config";
 import type { Address } from "@shared/schema";
 
 export default function Home() {
   const [, setLocation] = useLocation();
+  const { data: config } = useConfig();
   
   // Mock user ID for demo
   const userId = 1;
@@ -31,7 +33,7 @@ export default function Home() {
     <>
       <AppHeader />
       
-      {import.meta.env.VITE_GOOGLE_MAPS_API_KEY ? (
+      {config?.GOOGLE_MAPS_API_KEY ? (
         <GoogleMap showDrivers={true} showPackages={true} />
       ) : (
         <MapView />

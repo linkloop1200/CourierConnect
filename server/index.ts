@@ -6,6 +6,12 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
+// Make Google Maps API key available to frontend
+app.use((req, res, next) => {
+  res.locals.GOOGLE_MAPS_API_KEY = process.env.GOOGLE_MAPS_API_KEY;
+  next();
+});
+
 app.use((req, res, next) => {
   const start = Date.now();
   const path = req.path;

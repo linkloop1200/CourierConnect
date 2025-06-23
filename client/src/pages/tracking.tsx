@@ -7,6 +7,7 @@ import AppHeader from "@/components/app-header";
 import MapView from "@/components/map-view";
 import GoogleMap from "@/components/google-map";
 import BottomNavigation from "@/components/bottom-navigation";
+import { useConfig } from "@/hooks/use-config";
 import { parseCoordinates } from "@/lib/geocoding";
 import { formatPrice, formatDateTime } from "@/lib/utils";
 import type { Delivery, Driver } from "@shared/schema";
@@ -19,6 +20,7 @@ interface TrackingProps {
 
 export default function Tracking({ params }: TrackingProps) {
   const [, setLocation] = useLocation();
+  const { data: config } = useConfig();
   const deliveryId = parseInt(params.id);
 
   const { data: deliveryData, isLoading } = useQuery<Delivery & { driver: Driver | null }>({
@@ -75,7 +77,7 @@ export default function Tracking({ params }: TrackingProps) {
     <>
       <AppHeader />
       
-      {import.meta.env.VITE_GOOGLE_MAPS_API_KEY ? (
+      {config?.GOOGLE_MAPS_API_KEY ? (
         <GoogleMap 
           height="h-64" 
           showDrivers={true}

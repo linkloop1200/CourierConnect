@@ -15,6 +15,7 @@ import AppHeader from "@/components/app-header";
 import MapView from "@/components/map-view";
 import GoogleMap from "@/components/google-map";
 import BottomNavigation from "@/components/bottom-navigation";
+import { useConfig } from "@/hooks/use-config";
 
 const deliveryTypes = [
   { id: "package", label: "Pakket", icon: Package },
@@ -25,6 +26,7 @@ const deliveryTypes = [
 export default function DeliveryForm() {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
+  const { data: config } = useConfig();
   const [selectedType, setSelectedType] = useState<string>("package");
   const [estimate, setEstimate] = useState<{ estimatedPrice: string; estimatedTime: number } | null>(null);
 
@@ -112,7 +114,7 @@ export default function DeliveryForm() {
     <>
       <AppHeader />
       
-      {import.meta.env.VITE_GOOGLE_MAPS_API_KEY ? (
+      {config?.GOOGLE_MAPS_API_KEY ? (
         <GoogleMap height="h-64" showDrivers={false} />
       ) : (
         <MapView height="h-64" showDrivers={false} />

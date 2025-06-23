@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Loader } from "@googlemaps/js-api-loader";
 import { Button } from "@/components/ui/button";
 import { Navigation } from "lucide-react";
+import { useConfig } from "@/hooks/use-config";
 
 interface GoogleMapProps {
   height?: string;
@@ -26,18 +27,21 @@ export default function GoogleMap({
   const mapInstanceRef = useRef<google.maps.Map | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { data: config } = useConfig();
 
   const defaultCenter = { lat: 52.3676, lng: 4.9041 }; // Amsterdam center
 
   useEffect(() => {
-    if (!import.meta.env.VITE_GOOGLE_MAPS_API_KEY) {
-      setError("Google Maps API key not configured");
-      setIsLoading(false);
+    if (!config?.GOOGLE_MAPS_API_KEY) {
+      if (config !== undefined) {
+        setError("Google Maps API key not configured");
+        setIsLoading(false);
+      }
       return;
     }
 
     const loader = new Loader({
-      apiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY,
+      apiKey: config.GOOGLE_MAPS_API_KEY,
       version: "weekly",
       libraries: ["maps", "marker"]
     });
@@ -160,7 +164,7 @@ export default function GoogleMap({
       setError("Failed to load Google Maps");
       setIsLoading(false);
     });
-  }, [userLocation, pickupLocation, deliveryLocation, driverLocation, showDrivers]);
+  }, [config?.GOOGLE_MAPS_API_KEY, userLocation, pickupLocation, deliveryLocation, driverLocation, showDrivers]);
 
   const handleCurrentLocation = () => {
     if (navigator.geolocation && mapInstanceRef.current) {
@@ -184,8 +188,8 @@ export default function GoogleMap({
     return (
       <div className={`${height} relative bg-gradient-to-br from-blue-100 to-blue-200 flex items-center justify-center`}>
         <div className="text-center p-6">
-          <p className="text-gray-600 mb-2">Kaart niet beschikbaar</p>
-          <p className="text-sm text-gray-500">{error}</p>
+          <p className="text-gray-600 mb-2">Google Maps configuratie vereist</p>
+          <p className="text-sm text-gray-500">Zorg ervoor dat de Maps JavaScript API is ingeschakeld voor uw API key</p>
         </div>
       </div>
     );

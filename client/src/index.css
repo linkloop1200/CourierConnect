@@ -78,6 +78,14 @@
   
   .floating-panel {
     box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.15);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  .floating-panel .scroll-container {
+    max-height: calc(100vh - 200px);
+    overflow-y: auto;
+    padding-bottom: 100px; /* Space for bottom navigation */
   }
   
   .status-active { 
