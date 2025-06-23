@@ -96,13 +96,15 @@ export default function Home() {
         {/* Collapsed Header */}
         {!isBottomSheetOpen && (
           <div 
-            className="px-6 py-3 text-center border-b border-gray-100 cursor-pointer hover:bg-gray-50 transition-colors"
+            className="px-6 py-4 text-center border-b border-gray-100 cursor-pointer hover:bg-gray-50 transition-colors"
             onClick={toggleBottomSheet}
           >
-            <div className="flex items-center justify-center space-x-2">
-              <span className="text-sm text-gray-600">Bezorgopties</span>
-              <ChevronUp className="h-5 w-5 text-brand-blue animate-bounce" />
-              <span className="text-xs text-brand-blue font-medium">Tik om te openen</span>
+            <div className="flex flex-col items-center space-y-2">
+              <ChevronUp className="h-6 w-6 text-brand-blue animate-bounce" />
+              <div className="flex items-center space-x-2">
+                <span className="text-sm text-gray-600">Bezorgopties</span>
+                <span className="text-xs text-brand-blue font-medium">Tik om te openen</span>
+              </div>
             </div>
           </div>
         )}
