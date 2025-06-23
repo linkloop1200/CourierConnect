@@ -24,6 +24,7 @@ export default function UberStyleHome() {
   const { currentRole, isCustomer, isDriver, isAdmin } = useUserRole();
   const [pickup, setPickup] = useState<UberStyleLocation | null>(null);
   const [delivery, setDelivery] = useState<UberStyleLocation | null>(null);
+  const [driverLocation, setDriverLocation] = useState<{ lat: number; lng: number } | undefined>(undefined);
   const [showLocationPicker, setShowLocationPicker] = useState<'pickup' | 'delivery' | null>(null);
   const [estimate, setEstimate] = useState<{ price: string; time: string } | null>(null);
   const [selectedService, setSelectedService] = useState<string>('standard');
@@ -62,6 +63,63 @@ export default function UberStyleHome() {
     { id: '2', name: 'Werk', address: 'Zuidas 456, Amsterdam', type: 'recent', coordinates: { lat: 52.3676, lng: 4.9041 } },
     { id: '3', name: 'Centraal Station', address: 'Stationsplein 1, Amsterdam', type: 'recent', coordinates: { lat: 52.3676, lng: 4.9041 } }
   ];
+
+  // Start GPS tracking for driver location
+  useEffect(() => {
+    if (isDriver && navigator.geolocation) {
+      const watchId = navigator.geolocation.watchPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          setDriverLocation({ lat: latitude, lng: longitude });
+        },
+        (error) => {
+          console.error('GPS error:', error);
+        },
+        { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 }
+      );
+
+      return () => navigator.geolocation.clearWatch(watchId);
+    }
+  }, [isDriver]);
+
+  // Geocode address to coordinates
+  const geocodeAddress = async (address: string): Promise<{ lat: number; lng: number } | null> => {
+    try {
+      const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address + ', Amsterdam, Netherlands')}&limit=1`);
+      const data = await response.json();
+      if (data.length > 0) {
+        return {
+          lat: parseFloat(data[0].lat),
+          lng: parseFloat(data[0].lon)
+        };
+      }
+    } catch (error) {
+      console.error('Geocoding error:', error);
+    }
+    return null;
+  };
+
+  // Handle address input with geocoding
+  const handleAddressInput = async (address: string, type: 'pickup' | 'delivery') => {
+    if (address.length > 3) {
+      const coordinates = await geocodeAddress(address);
+      if (coordinates) {
+        const location: UberStyleLocation = {
+          id: `${type}-${Date.now()}`,
+          name: address,
+          address: address,
+          type: 'recent',
+          coordinates
+        };
+        
+        if (type === 'pickup') {
+          setPickup(location);
+        } else {
+          setDelivery(location);
+        }
+      }
+    }
+  };
 
   // Get current location (Uber-style)
   const getCurrentLocation = () => {
@@ -152,6 +210,19 @@ export default function UberStyleHome() {
             <Input
               placeholder="Zoek een adres..."
               className="pl-10 h-12 bg-gray-50 border-none"
+              onChange={(e) => {
+                const address = e.target.value;
+                if (address.length > 3) {
+                  handleAddressInput(address, showLocationPicker!);
+                }
+              }}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  const address = e.currentTarget.value;
+                  handleAddressInput(address, showLocationPicker!);
+                  setShowLocationPicker(null);
+                }
+              }}
             />
           </div>
         </div>
@@ -214,7 +285,8 @@ export default function UberStyleHome() {
           height="100vh"
           pickupLocation={pickup?.coordinates}
           deliveryLocation={delivery?.coordinates}
-          enableRealTimeTracking={false}
+          driverLocation={driverLocation}
+          enableRealTimeTracking={isDriver}
         />
       </div>
 
