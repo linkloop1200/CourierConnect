@@ -9,6 +9,7 @@ import Tracking from "@/pages/tracking";
 import Activity from "@/pages/activity";
 import Account from "@/pages/account";
 import NotFound from "@/pages/not-found";
+import FeaturesDemo from "@/pages/features-demo";
 
 function Router() {
   return (
@@ -18,6 +19,7 @@ function Router() {
       <Route path="/tracking/:id" component={Tracking} />
       <Route path="/activity" component={Activity} />
       <Route path="/account" component={Account} />
+      <Route path="/features" component={FeaturesDemo} />
       <Route component={NotFound} />
     </Switch>
   );
