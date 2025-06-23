@@ -13,7 +13,7 @@
   --card-foreground: hsl(20, 14.3%, 4.1%);
   --border: hsl(20, 5.9%, 90%);
   --input: hsl(20, 5.9%, 90%);
-  --primary: hsl(219, 78%, 58%);
+  --primary: hsl(215, 84%, 35%);
   --primary-foreground: hsl(210, 100%, 98%);
   --secondary: hsl(60, 4.8%, 95.9%);
   --secondary-foreground: hsl(24, 9.8%, 10%);
@@ -24,11 +24,11 @@
   --ring: hsl(20, 14.3%, 4.1%);
   --radius: 0.5rem;
   
-  /* Brand colors */
-  --brand-blue: hsl(219, 78%, 58%);
-  --brand-blue-dark: hsl(219, 78%, 48%);
-  --brand-blue-light: hsl(219, 78%, 93%);
-  --brand-accent: hsl(217, 91%, 60%);
+  /* Brand colors - Dark Blue Theme */
+  --brand-blue: hsl(215, 84%, 35%);
+  --brand-blue-dark: hsl(215, 84%, 25%);
+  --brand-blue-light: hsl(215, 84%, 95%);
+  --brand-accent: hsl(215, 91%, 45%);
 }
 
 .dark {
@@ -42,7 +42,7 @@
   --card-foreground: hsl(0, 0%, 98%);
   --border: hsl(240, 3.7%, 15.9%);
   --input: hsl(240, 3.7%, 15.9%);
-  --primary: hsl(219, 78%, 58%);
+  --primary: hsl(215, 84%, 50%);
   --primary-foreground: hsl(210, 100%, 98%);
   --secondary: hsl(240, 3.7%, 15.9%);
   --secondary-foreground: hsl(0, 0%, 98%);
@@ -53,11 +53,11 @@
   --ring: hsl(240, 4.9%, 83.9%);
   --radius: 0.5rem;
   
-  /* Brand colors for dark mode */
-  --brand-blue: hsl(219, 78%, 58%);
-  --brand-blue-dark: hsl(219, 78%, 48%);
-  --brand-blue-light: hsl(219, 78%, 15%);
-  --brand-accent: hsl(217, 91%, 60%);
+  /* Brand colors for dark mode - Dark Blue Theme */
+  --brand-blue: hsl(215, 84%, 50%);
+  --brand-blue-dark: hsl(215, 84%, 40%);
+  --brand-blue-light: hsl(215, 84%, 15%);
+  --brand-accent: hsl(215, 91%, 55%);
 }
 
 @layer base {
@@ -72,7 +72,7 @@
 
 @layer utilities {
   .map-container {
-    background: linear-gradient(135deg, hsl(219, 78%, 93%) 0%, hsl(219, 78%, 88%) 100%);
+    background: linear-gradient(135deg, hsl(215, 84%, 95%) 0%, hsl(215, 84%, 90%) 100%);
     position: relative;
   }
   
@@ -130,26 +130,26 @@
   }
   
   .brand-blue {
-    color: hsl(219, 78%, 58%);
+    color: hsl(215, 84%, 35%);
   }
   
   .bg-brand-blue {
-    background-color: hsl(219, 78%, 58%);
+    background-color: hsl(215, 84%, 35%);
   }
   
   .bg-brand-blue-dark {
-    background-color: hsl(219, 78%, 48%);
+    background-color: hsl(215, 84%, 25%);
   }
   
   .bg-brand-blue-light {
-    background-color: hsl(219, 78%, 93%);
+    background-color: hsl(215, 84%, 95%);
   }
   
   .border-brand-blue {
-    border-color: hsl(219, 78%, 58%);
+    border-color: hsl(215, 84%, 35%);
   }
   
   .text-brand-blue {
-    color: hsl(219, 78%, 58%);
+    color: hsl(215, 84%, 35%);
   }
 }
