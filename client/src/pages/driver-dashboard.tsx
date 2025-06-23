@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import EmbeddedOpenStreetMap from "@/components/embedded-openstreetmap";
+import BottomNavigation from "@/components/bottom-navigation";
 import type { Delivery } from "@shared/schema";
 
 interface DriverStats {
@@ -341,6 +342,8 @@ export default function DriverDashboard() {
           </div>
         </div>
       )}
+
+      <BottomNavigation onNavigate={setLocation} />
     </div>
   );
 }

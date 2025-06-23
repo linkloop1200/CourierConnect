@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import EmbeddedOpenStreetMap from "@/components/embedded-openstreetmap";
+import BottomNavigation from "@/components/bottom-navigation";
 import type { Address, Driver } from "@shared/schema";
 
 interface UberStyleLocation {
@@ -374,6 +375,8 @@ export default function UberStyleHome() {
           </div>
         </div>
       )}
+
+      <BottomNavigation onNavigate={setLocation} />
     </div>
   );
 }

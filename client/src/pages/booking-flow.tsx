@@ -9,6 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import EmbeddedOpenStreetMap from "@/components/embedded-openstreetmap";
+import BottomNavigation from "@/components/bottom-navigation";
 import type { InsertDelivery } from "@shared/schema";
 
 interface BookingFlowProps {
@@ -317,6 +318,8 @@ export default function BookingFlow({ params }: BookingFlowProps) {
             </Button>
           </div>
         </div>
+        
+        <BottomNavigation onNavigate={setLocation} />
       </div>
     );
   }

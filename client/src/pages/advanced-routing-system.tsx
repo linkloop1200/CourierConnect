@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import EmbeddedOpenStreetMap from "@/components/embedded-openstreetmap";
+import BottomNavigation from "@/components/bottom-navigation";
 
 interface RouteOptimization {
   id: string;
@@ -422,6 +423,8 @@ export default function AdvancedRoutingSystem() {
           </Button>
         </div>
       </div>
+
+      <BottomNavigation onNavigate={setLocation} />
     </div>
   );
 }

@@ -7,6 +7,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import EmbeddedOpenStreetMap from "@/components/embedded-openstreetmap";
+import BottomNavigation from "@/components/bottom-navigation";
 
 interface TrackingProps {
   params: {
@@ -278,6 +279,8 @@ export default function RealTimeTracking({ params }: TrackingProps) {
           </div>
         )}
       </div>
+
+      <BottomNavigation onNavigate={setLocation} />
     </div>
   );
 }

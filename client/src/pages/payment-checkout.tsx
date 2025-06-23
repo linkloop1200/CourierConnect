@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
+import BottomNavigation from "@/components/bottom-navigation";
 
 interface PaymentMethod {
   id: string;
@@ -307,6 +308,8 @@ export default function PaymentCheckout() {
           <span className="text-brand-blue underline">Privacybeleid</span>
         </p>
       </div>
+
+      <BottomNavigation onNavigate={setLocation} />
     </div>
   );
 }
