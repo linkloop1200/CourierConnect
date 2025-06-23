@@ -13,6 +13,11 @@ import AutomatedDeliveryStatus from "@/components/automated-delivery-status";
 import AddressAutocomplete from "@/components/address-autocomplete";
 import MultilingualSupport from "@/components/multilingual-support";
 import GamifiedRewards from "@/components/gamified-rewards";
+import AnimatedPackageMovement from "@/components/animated-package-movement";
+import InteractiveMilestoneCelebrations from "@/components/interactive-milestone-celebrations";
+import PersonalizedDeliveryPreferences from "@/components/personalized-delivery-preferences";
+import CommunityDeliveryFeedback from "@/components/community-delivery-feedback";
+import SmartArrivalPredictor from "@/components/smart-arrival-predictor";
 
 export default function FeaturesDemo() {
   const [selectedFeature, setSelectedFeature] = useState("tracking");
@@ -29,37 +34,52 @@ export default function FeaturesDemo() {
       <div className="container mx-auto px-4 py-6">
         <div className="mb-6">
           <h1 className="text-2xl font-bold text-gray-900">Spoedpakketjes Live Demo</h1>
-          <p className="text-gray-600">Interactieve demonstratie van alle 9 functies</p>
+          <p className="text-gray-600">Interactieve demonstratie van alle 14 geavanceerde functies</p>
         </div>
 
         <Tabs value={selectedFeature} onValueChange={setSelectedFeature} className="space-y-6">
-          <TabsList className="grid grid-cols-3 lg:grid-cols-5 gap-2 h-auto p-2">
-            <TabsTrigger value="tracking" className="text-xs">
+          <TabsList className="grid grid-cols-3 lg:grid-cols-7 gap-1 h-auto p-2">
+            <TabsTrigger value="tracking" className="text-xs p-2">
               GPS Tracking
             </TabsTrigger>
-            <TabsTrigger value="payment" className="text-xs">
+            <TabsTrigger value="payment" className="text-xs p-2">
               Betaling
             </TabsTrigger>
-            <TabsTrigger value="driver" className="text-xs">
-              Chauffeur App
+            <TabsTrigger value="driver" className="text-xs p-2">
+              Chauffeur
             </TabsTrigger>
-            <TabsTrigger value="routing" className="text-xs">
+            <TabsTrigger value="routing" className="text-xs p-2">
               Route Opt.
             </TabsTrigger>
-            <TabsTrigger value="heatmap" className="text-xs">
+            <TabsTrigger value="heatmap" className="text-xs p-2">
               Heat Map
             </TabsTrigger>
-            <TabsTrigger value="automation" className="text-xs">
-              Automatisering
+            <TabsTrigger value="automation" className="text-xs p-2">
+              Status
             </TabsTrigger>
-            <TabsTrigger value="autocomplete" className="text-xs">
+            <TabsTrigger value="autocomplete" className="text-xs p-2">
               Adres
             </TabsTrigger>
-            <TabsTrigger value="multilingual" className="text-xs">
+            <TabsTrigger value="multilingual" className="text-xs p-2">
               Talen
             </TabsTrigger>
-            <TabsTrigger value="rewards" className="text-xs">
-              Beloningen
+            <TabsTrigger value="rewards" className="text-xs p-2">
+              Rewards
+            </TabsTrigger>
+            <TabsTrigger value="animation" className="text-xs p-2">
+              Animatie
+            </TabsTrigger>
+            <TabsTrigger value="milestones" className="text-xs p-2">
+              Mijlpalen
+            </TabsTrigger>
+            <TabsTrigger value="preferences" className="text-xs p-2">
+              Voorkeuren
+            </TabsTrigger>
+            <TabsTrigger value="feedback" className="text-xs p-2">
+              Feedback
+            </TabsTrigger>
+            <TabsTrigger value="predictor" className="text-xs p-2">
+              AI Predictor
             </TabsTrigger>
           </TabsList>
 
@@ -202,6 +222,76 @@ export default function FeaturesDemo() {
               </CardHeader>
               <CardContent>
                 <GamifiedRewards />
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="animation" className="space-y-4">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center space-x-2">
+                  <Badge className="bg-indigo-500">10</Badge>
+                  <span>Animated Package Movement</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <AnimatedPackageMovement deliveryId={1} />
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="milestones" className="space-y-4">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center space-x-2">
+                  <Badge className="bg-purple-500">11</Badge>
+                  <span>Interactive Milestone Celebrations</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <InteractiveMilestoneCelebrations />
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="preferences" className="space-y-4">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center space-x-2">
+                  <Badge className="bg-cyan-500">12</Badge>
+                  <span>Personalized Delivery Preferences</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <PersonalizedDeliveryPreferences />
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="feedback" className="space-y-4">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center space-x-2">
+                  <Badge className="bg-emerald-500">13</Badge>
+                  <span>Community Delivery Feedback</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <CommunityDeliveryFeedback />
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="predictor" className="space-y-4">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center space-x-2">
+                  <Badge className="bg-violet-500">14</Badge>
+                  <span>Smart Arrival Time Predictor</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <SmartArrivalPredictor />
               </CardContent>
             </Card>
           </TabsContent>
