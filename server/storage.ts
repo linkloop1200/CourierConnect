@@ -1,4 +1,6 @@
 import { users, addresses, drivers, deliveries, type User, type InsertUser, type Address, type InsertAddress, type Driver, type InsertDriver, type Delivery, type InsertDelivery } from "@shared/schema";
+import { db } from "./db";
+import { eq } from "drizzle-orm";
 
 export interface IStorage {
   // Users
@@ -291,4 +293,127 @@ export class MemStorage implements IStorage {
   }
 }
 
-export const storage = new MemStorage();
+// Database storage implementation
+export class DatabaseStorage implements IStorage {
+  async getUser(id: number): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.id, id));
+    return user || undefined;
+  }
+
+  async getUserByUsername(username: string): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.username, username));
+    return user || undefined;
+  }
+
+  async createUser(insertUser: InsertUser): Promise<User> {
+    const [user] = await db
+      .insert(users)
+      .values(insertUser)
+      .returning();
+    return user;
+  }
+
+  async getAddress(id: number): Promise<Address | undefined> {
+    const [address] = await db.select().from(addresses).where(eq(addresses.id, id));
+    return address || undefined;
+  }
+
+  async getAddressesByUserId(userId: number): Promise<Address[]> {
+    return await db.select().from(addresses).where(eq(addresses.userId, userId));
+  }
+
+  async createAddress(insertAddress: InsertAddress): Promise<Address> {
+    const [address] = await db
+      .insert(addresses)
+      .values(insertAddress)
+      .returning();
+    return address;
+  }
+
+  async getDriver(id: number): Promise<Driver | undefined> {
+    const [driver] = await db.select().from(drivers).where(eq(drivers.id, id));
+    return driver || undefined;
+  }
+
+  async getAvailableDrivers(): Promise<Driver[]> {
+    return await db.select().from(drivers).where(eq(drivers.isActive, true));
+  }
+
+  async createDriver(insertDriver: InsertDriver): Promise<Driver> {
+    const [driver] = await db
+      .insert(drivers)
+      .values(insertDriver)
+      .returning();
+    return driver;
+  }
+
+  async updateDriverLocation(id: number, latitude: string, longitude: string): Promise<Driver | undefined> {
+    const [driver] = await db
+      .update(drivers)
+      .set({ currentLatitude: latitude, currentLongitude: longitude })
+      .where(eq(drivers.id, id))
+      .returning();
+    return driver || undefined;
+  }
+
+  async getDelivery(id: number): Promise<Delivery | undefined> {
+    const [delivery] = await db.select().from(deliveries).where(eq(deliveries.id, id));
+    return delivery || undefined;
+  }
+
+  async getDeliveriesByUserId(userId: number): Promise<Delivery[]> {
+    return await db.select().from(deliveries).where(eq(deliveries.userId, userId));
+  }
+
+  async getDeliveriesByDriverId(driverId: number): Promise<Delivery[]> {
+    return await db.select().from(deliveries).where(eq(deliveries.driverId, driverId));
+  }
+
+  async createDelivery(insertDelivery: InsertDelivery): Promise<Delivery> {
+    const orderNumber = `SP${new Date().getFullYear()}-${String(Math.floor(Math.random() * 1000)).padStart(3, '0')}`;
+    
+    const [delivery] = await db
+      .insert(deliveries)
+      .values({
+        ...insertDelivery,
+        orderNumber,
+        status: "pending"
+      })
+      .returning();
+    return delivery;
+  }
+
+  async updateDeliveryStatus(id: number, status: string, driverId?: number): Promise<Delivery | undefined> {
+    const updateData: any = { status };
+    if (driverId) {
+      updateData.driverId = driverId;
+    }
+    
+    const [delivery] = await db
+      .update(deliveries)
+      .set(updateData)
+      .where(eq(deliveries.id, id))
+      .returning();
+    return delivery || undefined;
+  }
+
+  async updateDeliveryPickupTime(id: number): Promise<Delivery | undefined> {
+    const [delivery] = await db
+      .update(deliveries)
+      .set({ pickedUpAt: new Date() })
+      .where(eq(deliveries.id, id))
+      .returning();
+    return delivery || undefined;
+  }
+
+  async updateDeliveryDeliveredTime(id: number): Promise<Delivery | undefined> {
+    const [delivery] = await db
+      .update(deliveries)
+      .set({ deliveredAt: new Date() })
+      .where(eq(deliveries.id, id))
+      .returning();
+    return delivery || undefined;
+  }
+}
+
+export const storage = new DatabaseStorage();
