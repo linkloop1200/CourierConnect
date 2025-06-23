@@ -108,6 +108,65 @@ export class MemStorage implements IStorage {
     
     this.drivers.set(1, testDriver);
     this.currentDriverId = 2;
+
+    // Create sample deliveries for testing
+    const sampleDelivery1: Delivery = {
+      id: 1,
+      userId: 1,
+      driverId: 1,
+      orderNumber: "SP2025-001",
+      type: "package",
+      status: "delivered",
+      pickupAddressId: null,
+      pickupStreet: "Keizersgracht 123",
+      pickupCity: "Amsterdam",
+      pickupPostalCode: "1015 CJ",
+      pickupLatitude: "52.3676",
+      pickupLongitude: "4.9041",
+      deliveryAddressId: null,
+      deliveryStreet: "Vondelpark 45",
+      deliveryCity: "Amsterdam",
+      deliveryPostalCode: "1071 AA",
+      deliveryLatitude: "52.3580",
+      deliveryLongitude: "4.8690",
+      estimatedPrice: "12.50",
+      finalPrice: "12.50",
+      estimatedDeliveryTime: 45,
+      createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2 hours ago
+      pickedUpAt: new Date(Date.now() - 90 * 60 * 1000), // 90 minutes ago
+      deliveredAt: new Date(Date.now() - 30 * 60 * 1000), // 30 minutes ago
+    };
+
+    const sampleDelivery2: Delivery = {
+      id: 2,
+      userId: 1,
+      driverId: 1,
+      orderNumber: "SP2025-002",
+      type: "letter",
+      status: "in_transit",
+      pickupAddressId: null,
+      pickupStreet: "Vondelpark 45",
+      pickupCity: "Amsterdam",
+      pickupPostalCode: "1071 AA",
+      pickupLatitude: "52.3580",
+      pickupLongitude: "4.8690",
+      deliveryAddressId: null,
+      deliveryStreet: "Damrak 1",
+      deliveryCity: "Amsterdam",
+      deliveryPostalCode: "1012 LG",
+      deliveryLatitude: "52.3738",
+      deliveryLongitude: "4.8909",
+      estimatedPrice: "8.50",
+      finalPrice: null,
+      estimatedDeliveryTime: 30,
+      createdAt: new Date(Date.now() - 45 * 60 * 1000), // 45 minutes ago
+      pickedUpAt: new Date(Date.now() - 20 * 60 * 1000), // 20 minutes ago
+      deliveredAt: null,
+    };
+
+    this.deliveries.set(1, sampleDelivery1);
+    this.deliveries.set(2, sampleDelivery2);
+    this.currentDeliveryId = 3;
   }
 
   // Users

@@ -6,6 +6,8 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import Home from "@/pages/home";
 import DeliveryForm from "@/pages/delivery-form";
 import Tracking from "@/pages/tracking";
+import Activity from "@/pages/activity";
+import Account from "@/pages/account";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -14,6 +16,8 @@ function Router() {
       <Route path="/" component={Home} />
       <Route path="/delivery" component={DeliveryForm} />
       <Route path="/tracking/:id" component={Tracking} />
+      <Route path="/activity" component={Activity} />
+      <Route path="/account" component={Account} />
       <Route component={NotFound} />
     </Switch>
   );

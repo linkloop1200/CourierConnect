@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery } from "@tanstack/react-query";
@@ -82,6 +82,22 @@ export default function DeliveryForm() {
     form.setValue("type", type as "package" | "letter" | "express");
     getEstimateMutation.mutate({ type });
   };
+
+  // Auto-calculate estimate when form fields change
+  useEffect(() => {
+    const subscription = form.watch((value, { name, type }) => {
+      if (name === "pickupPostalCode" || name === "deliveryPostalCode") {
+        const pickup = form.getValues("pickupPostalCode");
+        const delivery = form.getValues("deliveryPostalCode");
+        const currentType = form.getValues("type");
+        
+        if (pickup && delivery && pickup.length >= 6 && delivery.length >= 6) {
+          getEstimateMutation.mutate({ type: currentType });
+        }
+      }
+    });
+    return () => subscription.unsubscribe();
+  }, [form, getEstimateMutation]);
 
   const onSubmit = (data: InsertDelivery) => {
     createDeliveryMutation.mutate(data);
@@ -225,8 +241,17 @@ export default function DeliveryForm() {
               />
 
               {/* Price Estimate */}
-              {estimate && (
-                <div className="bg-brand-blue-light p-4 rounded-xl">
+              {getEstimateMutation.isPending && (
+                <div className="bg-gray-50 p-4 rounded-xl">
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-600">Berekenen prijs...</span>
+                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-brand-blue"></div>
+                  </div>
+                </div>
+              )}
+              
+              {estimate && !getEstimateMutation.isPending && (
+                <div className="bg-brand-blue-light p-4 rounded-xl border border-brand-blue/20">
                   <div className="flex justify-between items-center">
                     <span className="text-brand-blue font-medium">Geschatte prijs</span>
                     <span className="text-brand-blue font-bold text-lg">{formatPrice(estimate.estimatedPrice)}</span>
