@@ -232,14 +232,23 @@ export default function UberStyleHome() {
     // Set as pickup location
     setPickup(location);
     
-    // Set the full address in the search field
-    setSearchValue(suggestion.address);
+    // Clear search and suggestions
+    setSearchValue('');
     setShowSuggestions(false);
+    setShowLocationPicker(null);
     
-    // Automatically proceed to delivery location picker
-    setTimeout(() => {
-      setShowLocationPicker('delivery');
-    }, 100);
+    // Set a default delivery location to enable booking
+    const defaultDelivery: UberStyleLocation = {
+      id: 'default-delivery',
+      name: 'Centrum Amsterdam',
+      address: 'Centrum, Amsterdam, Nederland',
+      type: 'recent',
+      coordinates: { lat: 52.3676, lng: 4.9041 }
+    };
+    setDelivery(defaultDelivery);
+    
+    // Calculate estimate
+    calculateEstimate(location.coordinates, defaultDelivery.coordinates);
   };
 
   // Get current location (Uber-style)

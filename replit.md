@@ -142,6 +142,7 @@ This is a comprehensive full-stack web application for express package delivery 
 - June 23, 2025. Bottom navigation toegevoegd aan alle pagina's voor consistente gebruikerservaring
 - June 23, 2025. Role-switching systeem geïmplementeerd met klant/bezorger/beheerder weergaves en geoptimaliseerde menu breedte
 - June 23, 2025. Donkerblauw thema geïmplementeerd voor consistente Nederlandse corporate identity
+- June 23, 2025. Autocomplete adressysteem geïmplementeerd met OpenStreetMap Nominatim API - Nederlandse adressen met directe doorschakeling naar hoofdscherm
 
 ## User Preferences
 
