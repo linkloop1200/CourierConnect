@@ -5,6 +5,7 @@ import { Package, Mail, Home as HomeIcon, Building } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import AppHeader from "@/components/app-header";
 import MapView from "@/components/map-view";
+import GoogleMap from "@/components/google-map";
 import BottomNavigation from "@/components/bottom-navigation";
 import type { Address } from "@shared/schema";
 
@@ -30,7 +31,11 @@ export default function Home() {
     <>
       <AppHeader />
       
-      <MapView />
+      {import.meta.env.VITE_GOOGLE_MAPS_API_KEY ? (
+        <GoogleMap showDrivers={true} showPackages={true} />
+      ) : (
+        <MapView />
+      )}
       
       {/* Delivery Bottom Sheet */}
       <div className="floating-panel bg-white rounded-t-3xl absolute bottom-0 left-0 right-0 z-10 overflow-hidden" style={{ height: "calc(100vh - 384px)" }}>

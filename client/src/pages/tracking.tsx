@@ -79,9 +79,9 @@ export default function Tracking({ params }: TrackingProps) {
         <GoogleMap 
           height="h-64" 
           showDrivers={true}
-          pickupLocation={parseCoordinates(deliveryData?.pickupLatitude, deliveryData?.pickupLongitude)}
-          deliveryLocation={parseCoordinates(deliveryData?.deliveryLatitude, deliveryData?.deliveryLongitude)}
-          driverLocation={deliveryData?.driver ? parseCoordinates(deliveryData.driver.currentLatitude, deliveryData.driver.currentLongitude) : undefined}
+          pickupLocation={parseCoordinates(deliveryData?.pickupLatitude, deliveryData?.pickupLongitude) || undefined}
+          deliveryLocation={parseCoordinates(deliveryData?.deliveryLatitude, deliveryData?.deliveryLongitude) || undefined}
+          driverLocation={deliveryData?.driver ? parseCoordinates(deliveryData.driver.currentLatitude, deliveryData.driver.currentLongitude) || undefined : undefined}
         />
       ) : (
         <MapView height="h-64" showDrivers={true} />

@@ -13,6 +13,7 @@ import { insertDeliverySchema, type InsertDelivery } from "@shared/schema";
 import { formatPrice } from "@/lib/utils";
 import AppHeader from "@/components/app-header";
 import MapView from "@/components/map-view";
+import GoogleMap from "@/components/google-map";
 import BottomNavigation from "@/components/bottom-navigation";
 
 const deliveryTypes = [
@@ -111,7 +112,11 @@ export default function DeliveryForm() {
     <>
       <AppHeader />
       
-      <MapView height="h-64" showDrivers={false} />
+      {import.meta.env.VITE_GOOGLE_MAPS_API_KEY ? (
+        <GoogleMap height="h-64" showDrivers={false} />
+      ) : (
+        <MapView height="h-64" showDrivers={false} />
+      )}
       
       {/* Delivery Form Bottom Sheet */}
       <div className="floating-panel bg-white rounded-t-3xl absolute bottom-0 left-0 right-0 z-10 overflow-hidden" style={{ height: "calc(100vh - 256px)" }}>
