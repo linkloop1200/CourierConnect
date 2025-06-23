@@ -146,7 +146,7 @@ export default function EmbeddedOpenStreetMap({
       </div>
       
       {/* Map controls overlay */}
-      <div className="absolute top-4 right-4 flex flex-col space-y-2 z-30">
+      <div className="absolute bottom-32 right-4 flex flex-col space-y-2 z-30">
         <Button
           size="sm"
           variant="outline"
