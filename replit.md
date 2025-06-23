@@ -102,6 +102,7 @@ This is a full-stack web application for express package delivery services in th
 
 ## Changelog
 - June 23, 2025. Initial setup
+- June 23, 2025. LocationIQ API integratie en OpenStreetMap implementatie voltooid
 
 ## User Preferences
 

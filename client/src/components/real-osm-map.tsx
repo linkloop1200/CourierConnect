@@ -28,6 +28,7 @@ export default function RealOSMMap({
   const [zoom, setZoom] = useState(13);
   const [mapImages, setMapImages] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadingProgress, setLoadingProgress] = useState(0);
   const [error, setError] = useState<string | null>(null);
 
   // Amsterdam center coordinates
@@ -61,21 +62,34 @@ export default function RealOSMMap({
           }
         }
 
-        // Test if we can load at least one tile
-        const testImage = new Image();
-        testImage.crossOrigin = 'anonymous';
+        // Track loading progress for better UX
+        let loadedCount = 0;
+        const totalTiles = tileUrls.length;
         
-        testImage.onload = () => {
+        const imagePromises = tileUrls.map(url => {
+          return new Promise<string>((resolve, reject) => {
+            const img = new Image();
+            img.crossOrigin = 'anonymous';
+            img.onload = () => {
+              loadedCount++;
+              setLoadingProgress(Math.round((loadedCount / totalTiles) * 100));
+              resolve(url);
+            };
+            img.onerror = () => {
+              loadedCount++;
+              setLoadingProgress(Math.round((loadedCount / totalTiles) * 100));
+              resolve(url); // Still include failed tiles
+            };
+            img.src = url;
+          });
+        });
+
+        // Complete when all tiles are processed
+        Promise.allSettled(imagePromises).then((results) => {
           setMapImages(tileUrls);
           setLoading(false);
-        };
-        
-        testImage.onerror = () => {
-          setError('Kan OpenStreetMap tiles niet laden');
-          setLoading(false);
-        };
-        
-        testImage.src = tileUrls[4]; // Center tile
+          setLoadingProgress(100);
+        });
         
       } catch (error) {
         setError('Fout bij laden kaart');
@@ -110,10 +124,17 @@ export default function RealOSMMap({
     <div className="relative w-full rounded-lg overflow-hidden border border-gray-300 bg-gray-100" style={{ height }}>
       {/* Loading state */}
       {loading && (
-        <div className="absolute inset-0 flex items-center justify-center bg-gray-100 z-50">
-          <div className="text-center">
-            <Loader2 className="h-8 w-8 animate-spin text-blue-500 mx-auto mb-2" />
-            <div className="text-sm text-gray-600">OpenStreetMap laden...</div>
+        <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-blue-50 to-green-50 z-50">
+          <div className="text-center bg-white/90 p-6 rounded-lg shadow-lg">
+            <Loader2 className="h-8 w-8 animate-spin text-blue-500 mx-auto mb-3" />
+            <div className="text-sm text-gray-700 mb-2">OpenStreetMap tiles laden...</div>
+            <div className="w-32 bg-gray-200 rounded-full h-2 mb-2">
+              <div 
+                className="bg-blue-500 h-2 rounded-full transition-all duration-300 ease-out"
+                style={{ width: `${loadingProgress}%` }}
+              ></div>
+            </div>
+            <div className="text-xs text-gray-500">{loadingProgress}% voltooid</div>
           </div>
         </div>
       )}
