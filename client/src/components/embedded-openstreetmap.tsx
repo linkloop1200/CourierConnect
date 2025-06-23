@@ -29,11 +29,11 @@ export default function EmbeddedOpenStreetMap({
   // Auto-zoom op ophaallocatie
   useEffect(() => {
     if (pickupLocation) {
-      setZoom(15); // Zoom in naar niveau 15 voor betere detail
+      setZoom(16); // Hoger zoom niveau voor betere detail
     } else {
       setZoom(13); // Terug naar overzicht niveau
     }
-  }, [pickupLocation]);
+  }, [pickupLocation?.lat, pickupLocation?.lng]);
   
   // Amsterdam center coordinates - altijd gefocust op Amsterdam
   const center = { lat: 52.3676, lng: 4.9041 };
@@ -41,32 +41,33 @@ export default function EmbeddedOpenStreetMap({
   // Centreer op ophaallocatie als deze bestaat, anders Amsterdam centrum
   const mapCenter = pickupLocation ? pickupLocation : center;
   
-  // Functie om echte coördinaten om te zetten naar kaart percentages
-  const coordsToMapPosition = (lat: number, lng: number) => {
-    // Gebruik exact dezelfde bounding box berekening als in getOsmUrl()
-    const baseLatDiff = 0.055;
-    const baseLngDiff = 0.10;
-    const zoomMultiplier = Math.pow(0.5, zoom - 13);
-    const latDiff = baseLatDiff * zoomMultiplier;
-    const lngDiff = baseLngDiff * zoomMultiplier;
+  // Eenvoudige marker positionering - vast centrum voor pickup
+  const getMarkerPosition = (location: { lat: number; lng: number }, isPickup: boolean) => {
+    if (isPickup && pickupLocation && location === pickupLocation) {
+      // Pickup is altijd in het centrum als kaart erop gefocust is
+      return { left: '50%', top: '50%' };
+    }
     
-    const minLat = mapCenter.lat - latDiff;
-    const maxLat = mapCenter.lat + latDiff;
-    const minLng = mapCenter.lng - lngDiff;
-    const maxLng = mapCenter.lng + lngDiff;
+    // Voor delivery en andere markers: relatieve positie ten opzichte van pickup
+    if (pickupLocation) {
+      const latDiff = location.lat - pickupLocation.lat;
+      const lngDiff = location.lng - pickupLocation.lng;
+      
+      // Verbeterde schaal factor voor Amsterdam gebied
+      const latScale = zoom >= 15 ? 400 : 250; // Meer gevoelig bij hogere zoom
+      const lngScale = zoom >= 15 ? 600 : 375; // Aangepast voor Nederlandse coördinaten
+      
+      const x = 50 + (lngDiff * lngScale);
+      const y = 50 - (latDiff * latScale); // Y omgekeerd
+      
+      return {
+        left: `${Math.max(10, Math.min(90, x))}%`,
+        top: `${Math.max(10, Math.min(90, y))}%`
+      };
+    }
     
-    // Converteer naar percentages (identiek aan iframe bounds)
-    const x = ((lng - minLng) / (maxLng - minLng)) * 100;
-    const y = ((maxLat - lat) / (maxLat - minLat)) * 100;
-    
-    // Beperk tot kaart gebied
-    const clampedX = Math.max(5, Math.min(95, x));
-    const clampedY = Math.max(5, Math.min(95, y));
-    
-    return {
-      left: `${clampedX}%`,
-      top: `${clampedY}%`
-    };
+    // Fallback posities
+    return { left: '50%', top: '50%' };
   };
 
   // Create OpenStreetMap iframe URL with dynamic zoom
@@ -111,7 +112,7 @@ export default function EmbeddedOpenStreetMap({
         style={{ border: 'none' }}
         title="OpenStreetMap van Amsterdam"
         loading="lazy"
-        key={`osm-${zoom}-${pickupLocation?.lat}-${deliveryLocation?.lat}`}
+        key={`osm-${zoom}-${mapCenter.lat.toFixed(4)}-${mapCenter.lng.toFixed(4)}`}
       />
       
       {/* Overlay markers */}
@@ -127,47 +128,33 @@ export default function EmbeddedOpenStreetMap({
           </div>
         )}
         
-        {/* Pickup location - Huis icoon - Altijd in centrum wanneer gefocust */}
+        {/* Pickup location - Huis icoon - Altijd centrum */}
         {pickupLocation && (
           <div 
             className="absolute w-10 h-10 bg-green-500 rounded-full border-3 border-white shadow-lg flex items-center justify-center transform -translate-x-1/2 -translate-y-1/2 pointer-events-auto cursor-pointer hover:scale-110 transition-transform z-20"
-            style={{ left: '50%', top: '50%' }}
+            style={getMarkerPosition(pickupLocation, true)}
             title={pickupLocation.address || "Ophaallocatie"}
           >
             <Home className="h-5 w-5 text-white" />
           </div>
         )}
         
-        {/* Delivery location - Rood pakket icoon - Relatieve positie ten opzichte van pickup */}
-        {deliveryLocation && pickupLocation && (
+        {/* Delivery location - Rood pakket icoon - Relatief tot pickup */}
+        {deliveryLocation && (
           <div 
             className="absolute w-10 h-10 bg-red-500 rounded-full border-3 border-white shadow-lg flex items-center justify-center transform -translate-x-1/2 -translate-y-1/2 pointer-events-auto cursor-pointer hover:scale-110 transition-transform z-20"
-            style={{ 
-              left: `${50 + (deliveryLocation.lng - pickupLocation.lng) * 1000}%`, 
-              top: `${50 - (deliveryLocation.lat - pickupLocation.lat) * 1000}%`
-            }}
+            style={getMarkerPosition(deliveryLocation, false)}
             title={deliveryLocation.address || "Bezorglocatie"}
           >
             <Package className="h-5 w-5 text-white" />
           </div>
         )}
         
-        {/* Delivery location - Alleen delivery zonder pickup */}
-        {deliveryLocation && !pickupLocation && (
-          <div 
-            className="absolute w-10 h-10 bg-red-500 rounded-full border-3 border-white shadow-lg flex items-center justify-center transform -translate-x-1/2 -translate-y-1/2 pointer-events-auto cursor-pointer hover:scale-110 transition-transform z-20"
-            style={{ left: '60%', top: '60%' }}
-            title={deliveryLocation.address || "Bezorglocatie"}
-          >
-            <Package className="h-5 w-5 text-white" />
-          </div>
-        )}
-        
-        {/* Driver location - Paarse scooter icoon - Tussen pickup en delivery */}
+        {/* Driver location - Paarse scooter icoon - Relatief gepositioneerd */}
         {driverLocation && (
           <div 
             className={`absolute w-10 h-10 bg-purple-500 rounded-full border-3 border-white shadow-lg flex items-center justify-center transform -translate-x-1/2 -translate-y-1/2 pointer-events-auto cursor-pointer hover:scale-110 transition-transform z-20 ${enableRealTimeTracking ? 'animate-pulse' : ''}`}
-            style={{ left: '45%', top: '40%' }}
+            style={getMarkerPosition(driverLocation, false)}
             title="Bezorger onderweg"
           >
             <span className="text-white text-lg">🛴</span>
