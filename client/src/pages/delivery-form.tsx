@@ -26,6 +26,7 @@ export default function DeliveryForm() {
   const { toast } = useToast();
   const [selectedType, setSelectedType] = useState<string>("package");
   const [estimate, setEstimate] = useState<{ estimatedPrice: string; estimatedTime: number } | null>(null);
+  const [isAdmin] = useState<boolean>(false); // Voor nu false, later uit user context
 
   const form = useForm<InsertDelivery>({
     resolver: zodResolver(insertDeliverySchema),
@@ -174,9 +175,32 @@ export default function DeliveryForm() {
                         <div className="w-3 h-3 bg-green-500 rounded-full"></div>
                         <Input
                           {...field}
-                          placeholder="Voer ophaaladres in"
+                          placeholder="Ingegeven locatie"
                           className="flex-1 bg-transparent border-none outline-none shadow-none focus-visible:ring-0"
                         />
+                        {isAdmin && (
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            className="text-xs text-brand-blue hover:text-brand-blue-dark"
+                            onClick={() => {
+                              if (navigator.geolocation) {
+                                navigator.geolocation.getCurrentPosition(
+                                  (position) => {
+                                    const { latitude, longitude } = position.coords;
+                                    form.setValue("pickupStreet", `${latitude.toFixed(4)}, ${longitude.toFixed(4)}`);
+                                  },
+                                  () => {
+                                    form.setValue("pickupStreet", "Huidige locatie");
+                                  }
+                                );
+                              }
+                            }}
+                          >
+                            Jouw locatie
+                          </Button>
+                        )}
                       </div>
                     </FormControl>
                     <FormMessage />
@@ -242,8 +266,8 @@ export default function DeliveryForm() {
                 )}
               />
 
-              {/* Price Estimate */}
-              {getEstimateMutation.isPending && (
+              {/* Price Estimate - Alleen voor beheerders */}
+              {isAdmin && getEstimateMutation.isPending && (
                 <div className="bg-gray-50 p-4 rounded-xl">
                   <div className="flex justify-between items-center">
                     <span className="text-gray-600">Berekenen prijs...</span>
@@ -252,7 +276,7 @@ export default function DeliveryForm() {
                 </div>
               )}
               
-              {estimate && !getEstimateMutation.isPending && (
+              {isAdmin && estimate && !getEstimateMutation.isPending && (
                 <div className="bg-brand-blue-light p-4 rounded-xl border border-brand-blue/20">
                   <div className="flex justify-between items-center">
                     <span className="text-brand-blue font-medium">Geschatte prijs</span>
