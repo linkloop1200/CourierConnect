@@ -45,11 +45,17 @@ export default function LocationIQProfessionalMap({
         const response = await fetch('/api/locationiq-key');
         if (response.ok) {
           const data = await response.json();
-          setApiKey(data.key);
+          console.log('API key loaded:', data.key ? 'Yes' : 'No');
+          if (data.key && data.key.length > 0) {
+            setApiKey(data.key);
+          } else {
+            setError('Lege API key ontvangen');
+          }
         } else {
           setError('API key niet beschikbaar');
         }
       } catch (error) {
+        console.error('API key fetch error:', error);
         setError('Kan API key niet ophalen');
       }
     };
@@ -73,53 +79,22 @@ export default function LocationIQProfessionalMap({
         const width = Math.min(container.clientWidth, 1280);
         const height = Math.min(container.clientHeight, 1280);
         
-        // Build markers parameter for LocationIQ
-        const markers: string[] = [];
+        // Correct LocationIQ static map API format
+        const mapUrl = `https://staticmap.locationiq.com/v2/map?key=${apiKey}&center=${center.lat},${center.lng}&zoom=${zoom}&size=${width}x${height}&format=png&maptype=osm&style=osm-bright`;
         
-        if (userLocation) {
-          markers.push(`icon:large-blue-cutout|${userLocation.lat},${userLocation.lng}`);
-        }
+        console.log('Loading LocationIQ map:', mapUrl.replace(apiKey, 'API_KEY'));
         
-        if (pickupLocation) {
-          markers.push(`icon:large-green-cutout|${pickupLocation.lat},${pickupLocation.lng}`);
-        }
+        // Test the URL first
+        const testResponse = await fetch(mapUrl);
+        console.log('LocationIQ API response status:', testResponse.status);
         
-        if (deliveryLocation) {
-          markers.push(`icon:large-red-cutout|${deliveryLocation.lat},${deliveryLocation.lng}`);
+        if (!testResponse.ok) {
+          const errorText = await testResponse.text();
+          console.error('LocationIQ API error:', errorText);
+          setError(`API fout: ${testResponse.status}`);
+          setLoading(false);
+          return;
         }
-        
-        if (driverLocation) {
-          markers.push(`icon:large-yellow-cutout|${driverLocation.lat},${driverLocation.lng}`);
-        }
-
-        // Mock drivers for Amsterdam
-        if (showDrivers) {
-          const mockDrivers = [
-            { lat: 52.370216, lng: 4.895168 },
-            { lat: 52.373056, lng: 4.892222 },
-            { lat: 52.367584, lng: 4.904139 }
-          ];
-          
-          mockDrivers.forEach(driver => {
-            markers.push(`icon:small-blue-blank|${driver.lat},${driver.lng}`);
-          });
-        }
-
-        // Build LocationIQ static map URL
-        const params = new URLSearchParams({
-          key: apiKey,
-          center: `${center.lat},${center.lng}`,
-          zoom: zoom.toString(),
-          size: `${width}x${height}`,
-          format: 'png',
-          maptype: 'roads'
-        });
-
-        if (markers.length > 0) {
-          params.append('markers', markers.join('|'));
-        }
-
-        const mapUrl = `https://maps.locationiq.com/v3/static/map?${params.toString()}`;
         
         // Load the map image
         const img = new Image();
@@ -130,8 +105,9 @@ export default function LocationIQProfessionalMap({
           setLoading(false);
         };
         
-        img.onerror = () => {
-          setError('Kaart laden mislukt');
+        img.onerror = (e) => {
+          console.error('Image load error:', e);
+          setError('Afbeelding laden mislukt');
           setLoading(false);
         };
         
