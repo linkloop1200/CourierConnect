@@ -78,14 +78,26 @@
   
   .floating-panel {
     box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.15);
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
+    touch-action: pan-y;
   }
   
-  .floating-panel .scroll-container {
-    max-height: calc(100vh - 200px);
+  .floating-panel .scroll-content {
     overflow-y: auto;
-    padding-bottom: 100px; /* Space for bottom navigation */
+    -webkit-overflow-scrolling: touch;
+    height: 100%;
+    padding-bottom: 120px; /* Space for bottom navigation */
+  }
+  
+  /* Fix iOS scroll momentum */
+  .floating-panel .scroll-content::-webkit-scrollbar {
+    display: none;
+  }
+  
+  /* Ensure proper touch scrolling */
+  .scroll-area {
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-y;
   }
   
   .status-active { 

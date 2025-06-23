@@ -33,19 +33,16 @@ export default function Home() {
     <>
       <AppHeader />
       
-      {config?.GOOGLE_MAPS_API_KEY ? (
-        <GoogleMap showDrivers={true} showPackages={true} />
-      ) : (
-        <MapView />
-      )}
+      <MapView showDrivers={true} showPackages={true} />
       
       {/* Delivery Bottom Sheet */}
       <div className="floating-panel bg-white rounded-t-3xl absolute bottom-0 left-0 right-0 z-10 overflow-hidden" style={{ height: "calc(100vh - 384px)" }}>
         {/* Handle Bar */}
         <div className="w-12 h-1 bg-gray-300 rounded-full mx-auto mt-3 mb-6"></div>
 
-        <div className="px-6 pb-32 overflow-y-auto" style={{ height: "calc(100% - 40px)" }}>
-          <h2 className="text-xl font-bold text-gray-900 mb-4">Waar wil je iets versturen?</h2>
+        <div className="scroll-content">
+          <div className="px-6 py-4">
+            <h2 className="text-xl font-bold text-gray-900 mb-4">Waar wil je iets versturen?</h2>
           
           {/* Quick Actions */}
           <div className="grid grid-cols-2 gap-3 mb-6">
@@ -122,6 +119,7 @@ export default function Home() {
           >
             Nieuwe bezorging
           </Button>
+          </div>
         </div>
       </div>
 

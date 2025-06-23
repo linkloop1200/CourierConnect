@@ -77,17 +77,7 @@ export default function Tracking({ params }: TrackingProps) {
     <>
       <AppHeader />
       
-      {config?.GOOGLE_MAPS_API_KEY ? (
-        <GoogleMap 
-          height="h-64" 
-          showDrivers={true}
-          pickupLocation={parseCoordinates(deliveryData?.pickupLatitude, deliveryData?.pickupLongitude) || undefined}
-          deliveryLocation={parseCoordinates(deliveryData?.deliveryLatitude, deliveryData?.deliveryLongitude) || undefined}
-          driverLocation={deliveryData?.driver ? parseCoordinates(deliveryData.driver.currentLatitude, deliveryData.driver.currentLongitude) || undefined : undefined}
-        />
-      ) : (
-        <MapView height="h-64" showDrivers={true} />
-      )}
+      <MapView height="h-64" showDrivers={true} />
       
       {/* Tracking Bottom Sheet */}
       <div className="floating-panel bg-white rounded-t-3xl absolute bottom-0 left-0 right-0 z-10 overflow-hidden" style={{ height: "calc(100vh - 256px)" }}>

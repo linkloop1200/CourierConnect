@@ -114,11 +114,7 @@ export default function DeliveryForm() {
     <>
       <AppHeader />
       
-      {config?.GOOGLE_MAPS_API_KEY ? (
-        <GoogleMap height="h-64" showDrivers={false} />
-      ) : (
-        <MapView height="h-64" showDrivers={false} />
-      )}
+      <MapView height="h-64" showDrivers={false} />
       
       {/* Delivery Form Bottom Sheet */}
       <div className="floating-panel bg-white rounded-t-3xl absolute bottom-0 left-0 right-0 z-10 overflow-hidden" style={{ height: "calc(100vh - 256px)" }}>
