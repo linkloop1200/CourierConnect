@@ -235,20 +235,9 @@ export default function UberStyleHome() {
     // Clear search and suggestions
     setSearchValue('');
     setShowSuggestions(false);
-    setShowLocationPicker(null);
     
-    // Set a default delivery location to enable booking
-    const defaultDelivery: UberStyleLocation = {
-      id: 'default-delivery',
-      name: 'Centrum Amsterdam',
-      address: 'Centrum, Amsterdam, Nederland',
-      type: 'recent',
-      coordinates: { lat: 52.3676, lng: 4.9041 }
-    };
-    setDelivery(defaultDelivery);
-    
-    // Calculate estimate
-    calculateEstimate(location.coordinates, defaultDelivery.coordinates);
+    // Go to delivery location picker instead of setting default
+    setShowLocationPicker('delivery');
   };
 
   // Get current location (Uber-style)
@@ -307,6 +296,10 @@ export default function UberStyleHome() {
       setPickup(location);
     } else if (showLocationPicker === 'delivery') {
       setDelivery(location);
+      // Calculate estimate only when both locations are set
+      if (pickup?.coordinates) {
+        calculateEstimate(pickup.coordinates, location.coordinates);
+      }
     }
     setShowLocationPicker(null);
   };
@@ -378,51 +371,9 @@ export default function UberStyleHome() {
           </div>
         </div>
 
-        {/* Current location */}
-        <div className="px-4 pb-2">
-          <Button
-            variant="ghost"
-            className="w-full justify-start h-auto p-4 text-left"
-            onClick={() => {
-              getCurrentLocation();
-              setShowLocationPicker(null);
-            }}
-          >
-            <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
-                <MapPin className="h-4 w-4 text-white" />
-              </div>
-              <div>
-                <p className="font-medium">Gebruik huidige locatie</p>
-                <p className="text-sm text-gray-500">GPS locatie</p>
-              </div>
-            </div>
-          </Button>
-        </div>
-
-        {/* Recent locations */}
-        <div className="px-4">
-          <h3 className="text-sm font-medium text-gray-700 mb-3">Recente locaties</h3>
-          <div className="space-y-1">
-            {recentLocations.map((location) => (
-              <Button
-                key={location.id}
-                variant="ghost"
-                className="w-full justify-start h-auto p-4 text-left"
-                onClick={() => handleLocationSelect(location)}
-              >
-                <div className="flex items-center space-x-3">
-                  <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
-                    <Clock className="h-4 w-4 text-gray-600" />
-                  </div>
-                  <div>
-                    <p className="font-medium">{location.name}</p>
-                    <p className="text-sm text-gray-500">{location.address}</p>
-                  </div>
-                </div>
-              </Button>
-            ))}
-          </div>
+        {/* Instructions */}
+        <div className="p-6 text-center">
+          <p className="text-gray-500">Typ een adres om suggesties te zien</p>
         </div>
       </div>
     );
