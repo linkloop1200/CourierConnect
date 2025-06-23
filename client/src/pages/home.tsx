@@ -10,6 +10,8 @@ import type { Address } from "@shared/schema";
 
 export default function Home() {
   const [, setLocation] = useLocation();
+  const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(true);
+  const [bottomSheetHeight, setBottomSheetHeight] = useState('calc(100vh - 384px)');
   
   // Mock user ID for demo
   const userId = 1;
@@ -24,6 +26,35 @@ export default function Home() {
 
   const handleNewDelivery = () => {
     setLocation("/delivery");
+  };
+
+  const toggleBottomSheet = () => {
+    setIsBottomSheetOpen(!isBottomSheetOpen);
+    setBottomSheetHeight(isBottomSheetOpen ? '80px' : 'calc(100vh - 384px)');
+  };
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    const touch = e.touches[0];
+    const startY = touch.clientY;
+    
+    const handleTouchMove = (e: TouchEvent) => {
+      const touch = e.touches[0];
+      const deltaY = touch.clientY - startY;
+      
+      if (deltaY > 50 && isBottomSheetOpen) {
+        toggleBottomSheet();
+      } else if (deltaY < -50 && !isBottomSheetOpen) {
+        toggleBottomSheet();
+      }
+    };
+
+    const handleTouchEnd = () => {
+      document.removeEventListener('touchmove', handleTouchMove);
+      document.removeEventListener('touchend', handleTouchEnd);
+    };
+
+    document.addEventListener('touchmove', handleTouchMove);
+    document.addEventListener('touchend', handleTouchEnd);
   };
 
   return (
@@ -41,11 +72,25 @@ export default function Home() {
       />
       
       {/* Delivery Bottom Sheet */}
-      <div className="floating-panel bg-white rounded-t-3xl absolute bottom-0 left-0 right-0 z-10 overflow-hidden" style={{ height: "calc(100vh - 384px)" }}>
-        {/* Handle Bar */}
-        <div className="w-12 h-1 bg-gray-300 rounded-full mx-auto mt-3 mb-6"></div>
+      <div 
+        className="floating-panel bg-white rounded-t-3xl absolute bottom-0 left-0 right-0 z-10 overflow-hidden transition-all duration-300 ease-in-out" 
+        style={{ height: bottomSheetHeight }}
+      >
+        {/* Handle Bar - Clickable and Swipeable */}
+        <div 
+          className="w-12 h-1 bg-gray-300 rounded-full mx-auto mt-3 mb-6 cursor-pointer hover:bg-gray-400 transition-colors"
+          onClick={toggleBottomSheet}
+          onTouchStart={handleTouchStart}
+        ></div>
 
-        <div className="panel-scroll">
+        {/* Collapsed Header */}
+        {!isBottomSheetOpen && (
+          <div className="px-6 py-2 text-center border-b border-gray-100">
+            <p className="text-sm text-gray-600">Tik om menu te openen</p>
+          </div>
+        )}
+
+        <div className={`panel-scroll ${!isBottomSheetOpen ? 'hidden' : ''}`}>
           <div className="px-6 py-4">
             <h2 className="text-xl font-bold text-gray-900 mb-4">Waar wil je iets versturen?</h2>
           
