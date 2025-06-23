@@ -31,7 +31,7 @@ export default function Home() {
   const toggleBottomSheet = () => {
     const newState = !isBottomSheetOpen;
     setIsBottomSheetOpen(newState);
-    setBottomSheetHeight(newState ? 'calc(100vh - 384px)' : '80px');
+    setBottomSheetHeight(newState ? 'calc(100vh - 384px)' : '140px');
   };
 
   const handleTouchStart = (e: React.TouchEvent) => {
@@ -83,8 +83,11 @@ export default function Home() {
       
       {/* Delivery Bottom Sheet */}
       <div 
-        className={`floating-panel bg-white rounded-t-3xl absolute bottom-0 left-0 right-0 z-10 overflow-hidden transition-all duration-300 ease-in-out`}
-        style={{ height: bottomSheetHeight }}
+        className={`floating-panel bg-white rounded-t-3xl fixed left-0 right-0 z-20 overflow-hidden transition-all duration-300 ease-in-out`}
+        style={{ 
+          height: bottomSheetHeight,
+          bottom: isBottomSheetOpen ? '0px' : '80px'
+        }}
       >
         {/* Handle Bar - Clickable and Swipeable */}
         <div 
@@ -96,14 +99,13 @@ export default function Home() {
         {/* Collapsed Header - Large and Prominent */}
         {!isBottomSheetOpen && (
           <div 
-            className="px-6 py-6 text-center border-b border-gray-200 cursor-pointer hover:bg-brand-blue-light transition-all duration-200 bg-white shadow-sm"
+            className="px-6 py-3 text-center cursor-pointer hover:bg-brand-blue-light transition-all duration-200 bg-white"
             onClick={toggleBottomSheet}
           >
-            <div className="flex flex-col items-center space-y-2">
-              <ChevronUp className="h-8 w-8 text-brand-blue animate-bounce" />
+            <div className="flex flex-col items-center space-y-1">
+              <ChevronUp className="h-5 w-5 text-brand-blue animate-bounce" />
               <div className="flex flex-col items-center">
-                <span className="text-lg font-semibold text-gray-800">Bezorgopties</span>
-                <span className="text-sm text-brand-blue font-medium">Tik hier om menu te openen</span>
+                <span className="text-sm font-semibold text-gray-800">Menu openen</span>
               </div>
             </div>
           </div>
