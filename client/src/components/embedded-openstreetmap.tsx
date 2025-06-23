@@ -62,6 +62,9 @@ export default function EmbeddedOpenStreetMap({
         key={zoom}
       />
       
+      {/* Hide zoom indicator overlay */}
+      <div className="absolute top-0 left-0 w-full h-12 bg-white z-25 pointer-events-none"></div>
+      
       {/* Overlay markers */}
       <div className="absolute inset-0 pointer-events-none">
         {/* User location marker */}
@@ -174,12 +177,8 @@ export default function EmbeddedOpenStreetMap({
       </div>
 
       {/* Legend */}
-      <div className="absolute bottom-4 left-4 bg-white/95 p-3 rounded-lg shadow-lg text-xs z-30">
+      <div className="absolute bottom-20 left-4 bg-white/95 p-3 rounded-lg shadow-lg text-xs z-30">
         <div className="space-y-2">
-          <div className="flex items-center space-x-2">
-            <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
-            <span>Jouw locatie</span>
-          </div>
           <div className="flex items-center space-x-2">
             <div className="w-3 h-3 bg-green-500 rounded-full"></div>
             <span>Ophalen</span>
@@ -188,18 +187,10 @@ export default function EmbeddedOpenStreetMap({
             <div className="w-3 h-3 bg-red-500 rounded-full"></div>
             <span>Bezorgen</span>
           </div>
-          {driverLocation && (
-            <div className="flex items-center space-x-2">
-              <div className="w-3 h-3 bg-purple-500 rounded-full"></div>
-              <span>Chauffeur</span>
-            </div>
-          )}
-          {showDrivers && (
-            <div className="flex items-center space-x-2">
-              <div className="w-3 h-3 bg-green-400 rounded-full"></div>
-              <span>Beschikbaar</span>
-            </div>
-          )}
+          <div className="flex items-center space-x-2">
+            <div className="w-3 h-3 bg-purple-500 rounded-full"></div>
+            <span>Bezorger locatie</span>
+          </div>
         </div>
       </div>
 
