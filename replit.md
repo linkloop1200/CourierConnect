@@ -145,6 +145,7 @@ This is a comprehensive full-stack web application for express package delivery 
 - June 23, 2025. Autocomplete adressysteem geïmplementeerd met OpenStreetMap Nominatim API - Nederlandse adressen met directe doorschakeling naar hoofdscherm
 - June 23, 2025. Optimale bestelflow geïmplementeerd: adressen invoeren → bereken knop → service selectie aangesloten op navigatiebalk
 - June 23, 2025. Onthoud functie voor adressen geïmplementeerd - automatische opslag in localStorage met recente adressen lijst
+- June 23, 2025. Kaart gefocust op Amsterdam met dynamische iconen - ophaal (groen huis), bezorg (rood pakket), bezorger (paarse scooter) met optimale route weergave
 
 ## User Preferences
 

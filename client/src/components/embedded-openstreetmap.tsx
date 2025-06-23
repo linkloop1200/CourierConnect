@@ -26,24 +26,11 @@ export default function EmbeddedOpenStreetMap({
 }: EmbeddedOpenStreetMapProps) {
   const [zoom, setZoom] = useState(13);
   
-  // Amsterdam center coordinates
+  // Amsterdam center coordinates - altijd gefocust op Amsterdam
   const center = { lat: 52.3676, lng: 4.9041 };
   
-  // Calculate map center based on available locations
-  const getMapCenter = () => {
-    if (pickupLocation && deliveryLocation) {
-      return {
-        lat: (pickupLocation.lat + deliveryLocation.lat) / 2,
-        lng: (pickupLocation.lng + deliveryLocation.lng) / 2
-      };
-    }
-    if (pickupLocation) return pickupLocation;
-    if (deliveryLocation) return deliveryLocation;
-    if (userLocation) return userLocation;
-    return center;
-  };
-  
-  const mapCenter = getMapCenter();
+  // Altijd Amsterdam centrum - geen automatische centrering op locaties
+  const mapCenter = center;
 
   // Create OpenStreetMap iframe URL with dynamic zoom
   const getOsmUrl = () => {
@@ -103,33 +90,33 @@ export default function EmbeddedOpenStreetMap({
           </div>
         )}
         
-        {/* Pickup location - Huis icoon */}
+        {/* Pickup location - Huis icoon - Amsterdam Noord */}
         {pickupLocation && (
           <div 
             className="absolute w-10 h-10 bg-green-500 rounded-full border-3 border-white shadow-lg flex items-center justify-center transform -translate-x-1/2 -translate-y-1/2 pointer-events-auto cursor-pointer hover:scale-110 transition-transform z-20"
-            style={{ left: '30%', top: '35%' }}
+            style={{ left: '40%', top: '25%' }}
             title={pickupLocation.address || "Ophaallocatie"}
           >
             <Home className="h-5 w-5 text-white" />
           </div>
         )}
         
-        {/* Delivery location - Rood pakket icoon */}
+        {/* Delivery location - Rood pakket icoon - Amsterdam Zuid */}
         {deliveryLocation && (
           <div 
             className="absolute w-10 h-10 bg-red-500 rounded-full border-3 border-white shadow-lg flex items-center justify-center transform -translate-x-1/2 -translate-y-1/2 pointer-events-auto cursor-pointer hover:scale-110 transition-transform z-20"
-            style={{ left: '75%', top: '70%' }}
+            style={{ left: '65%', top: '75%' }}
             title={deliveryLocation.address || "Bezorglocatie"}
           >
             <Package className="h-5 w-5 text-white" />
           </div>
         )}
         
-        {/* Driver location - Paarse scooter icoon */}
+        {/* Driver location - Paarse scooter icoon - Amsterdam Centrum */}
         {driverLocation && (
           <div 
             className={`absolute w-10 h-10 bg-purple-500 rounded-full border-3 border-white shadow-lg flex items-center justify-center transform -translate-x-1/2 -translate-y-1/2 pointer-events-auto cursor-pointer hover:scale-110 transition-transform z-20 ${enableRealTimeTracking ? 'animate-pulse' : ''}`}
-            style={{ left: '55%', top: '50%' }}
+            style={{ left: '50%', top: '50%' }}
             title="Bezorger onderweg"
           >
             <span className="text-white text-lg">🛴</span>
@@ -156,12 +143,12 @@ export default function EmbeddedOpenStreetMap({
           </>
         )}
         
-        {/* Optimale route weergave - vloeiende lijn */}
+        {/* Optimale route weergave - Amsterdam route */}
         {pickupLocation && deliveryLocation && (
           <svg className="absolute inset-0 w-full h-full pointer-events-none z-10">
-            {/* Hoofdroute lijn */}
+            {/* Hoofdroute lijn - van Noord naar Zuid Amsterdam */}
             <path
-              d="M 30% 35% Q 52% 25% 75% 70%"
+              d="M 40% 25% Q 50% 45% 65% 75%"
               stroke="#4f46e5"
               strokeWidth="5"
               fill="none"
@@ -170,7 +157,7 @@ export default function EmbeddedOpenStreetMap({
             />
             {/* Geanimeerde overlay voor beweging effect */}
             <path
-              d="M 30% 35% Q 52% 25% 75% 70%"
+              d="M 40% 25% Q 50% 45% 65% 75%"
               stroke="#818cf8"
               strokeWidth="3"
               fill="none"
@@ -186,15 +173,15 @@ export default function EmbeddedOpenStreetMap({
             </path>
             {/* Route richtingspijl */}
             <polygon
-              points="70,60 75,65 70,70"
+              points="-3,-6 3,0 -3,6"
               fill="#4f46e5"
               opacity="0.8"
-              transform="translate(52%, 42%)"
+              transform="translate(52%, 50%) rotate(45)"
             >
               <animateTransform
                 attributeName="transform"
                 type="translate"
-                values="30% 35%; 52% 30%; 75% 70%"
+                values="40% 25%; 50% 45%; 65% 75%"
                 dur="4s"
                 repeatCount="indefinite"
               />
@@ -236,39 +223,31 @@ export default function EmbeddedOpenStreetMap({
         </Button>
       </div>
 
-      {/* Legend */}
+      {/* Legend - Altijd alle iconen tonen */}
       <div className="absolute bottom-20 left-4 bg-white/95 p-3 rounded-lg shadow-lg text-xs z-10">
         <div className="space-y-2">
-          {pickupLocation && (
-            <div className="flex items-center space-x-2">
-              <div className="w-4 h-4 bg-green-500 rounded-full flex items-center justify-center">
-                <Home className="h-2.5 w-2.5 text-white" />
-              </div>
-              <span>Ophaallocatie</span>
+          <div className="flex items-center space-x-2">
+            <div className="w-4 h-4 bg-green-500 rounded-full flex items-center justify-center">
+              <Home className="h-2.5 w-2.5 text-white" />
             </div>
-          )}
-          {deliveryLocation && (
-            <div className="flex items-center space-x-2">
-              <div className="w-4 h-4 bg-red-500 rounded-full flex items-center justify-center">
-                <Package className="h-2.5 w-2.5 text-white" />
-              </div>
-              <span>Bezorglocatie</span>
+            <span>Ophaallocatie</span>
+          </div>
+          <div className="flex items-center space-x-2">
+            <div className="w-4 h-4 bg-red-500 rounded-full flex items-center justify-center">
+              <Package className="h-2.5 w-2.5 text-white" />
             </div>
-          )}
-          {driverLocation && (
-            <div className="flex items-center space-x-2">
-              <div className="w-4 h-4 bg-purple-500 rounded-full flex items-center justify-center">
-                <span className="text-white text-xs">🛴</span>
-              </div>
-              <span>Bezorger</span>
+            <span>Bezorglocatie</span>
+          </div>
+          <div className="flex items-center space-x-2">
+            <div className="w-4 h-4 bg-purple-500 rounded-full flex items-center justify-center">
+              <span className="text-white text-xs">🛴</span>
             </div>
-          )}
-          {pickupLocation && deliveryLocation && (
-            <div className="flex items-center space-x-2">
-              <div className="w-4 h-1 bg-indigo-500 rounded"></div>
-              <span>Optimale route</span>
-            </div>
-          )}
+            <span>Bezorger</span>
+          </div>
+          <div className="flex items-center space-x-2">
+            <div className="w-4 h-1 bg-indigo-500 rounded"></div>
+            <span>Optimale route</span>
+          </div>
         </div>
       </div>
 
