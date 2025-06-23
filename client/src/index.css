@@ -13,7 +13,7 @@
   --card-foreground: hsl(20, 14.3%, 4.1%);
   --border: hsl(20, 5.9%, 90%);
   --input: hsl(20, 5.9%, 90%);
-  --primary: hsl(215, 84%, 35%);
+  --primary: hsl(215, 84%, 25%);
   --primary-foreground: hsl(210, 100%, 98%);
   --secondary: hsl(60, 4.8%, 95.9%);
   --secondary-foreground: hsl(24, 9.8%, 10%);
@@ -25,10 +25,10 @@
   --radius: 0.5rem;
   
   /* Brand colors - Dark Blue Theme */
-  --brand-blue: hsl(215, 84%, 35%);
-  --brand-blue-dark: hsl(215, 84%, 25%);
+  --brand-blue: hsl(215, 84%, 25%);
+  --brand-blue-dark: hsl(215, 84%, 15%);
   --brand-blue-light: hsl(215, 84%, 95%);
-  --brand-accent: hsl(215, 91%, 45%);
+  --brand-accent: hsl(215, 91%, 35%);
 }
 
 .dark {
