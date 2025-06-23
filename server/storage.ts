@@ -182,7 +182,11 @@ export class MemStorage implements IStorage {
 
   async createUser(insertUser: InsertUser): Promise<User> {
     const id = this.currentUserId++;
-    const user: User = { ...insertUser, id };
+    const user: User = { 
+      ...insertUser, 
+      id,
+      phone: insertUser.phone ?? null
+    };
     this.users.set(id, user);
     return user;
   }
@@ -198,7 +202,14 @@ export class MemStorage implements IStorage {
 
   async createAddress(insertAddress: InsertAddress): Promise<Address> {
     const id = this.currentAddressId++;
-    const address: Address = { ...insertAddress, id };
+    const address: Address = { 
+      ...insertAddress, 
+      id,
+      userId: insertAddress.userId ?? null,
+      country: insertAddress.country ?? "Nederland",
+      latitude: insertAddress.latitude ?? null,
+      longitude: insertAddress.longitude ?? null
+    };
     this.addresses.set(id, address);
     return address;
   }
@@ -214,7 +225,14 @@ export class MemStorage implements IStorage {
 
   async createDriver(insertDriver: InsertDriver): Promise<Driver> {
     const id = this.currentDriverId++;
-    const driver: Driver = { ...insertDriver, id };
+    const driver: Driver = { 
+      ...insertDriver, 
+      id,
+      rating: insertDriver.rating ?? null,
+      isActive: insertDriver.isActive ?? null,
+      currentLatitude: insertDriver.currentLatitude ?? null,
+      currentLongitude: insertDriver.currentLongitude ?? null
+    };
     this.drivers.set(id, driver);
     return driver;
   }
@@ -249,10 +267,22 @@ export class MemStorage implements IStorage {
     const delivery: Delivery = { 
       ...insertDelivery, 
       id, 
+      userId: insertDelivery.userId ?? null,
+      driverId: insertDelivery.driverId ?? null,
+      pickupAddressId: insertDelivery.pickupAddressId ?? null,
+      deliveryAddressId: insertDelivery.deliveryAddressId ?? null,
+      status: insertDelivery.status ?? "pending",
       orderNumber,
       createdAt: new Date(),
       pickedUpAt: null,
-      deliveredAt: null
+      deliveredAt: null,
+      estimatedPrice: insertDelivery.estimatedPrice ?? null,
+      estimatedDeliveryTime: insertDelivery.estimatedDeliveryTime ?? null,
+      pickupLatitude: insertDelivery.pickupLatitude ?? null,
+      pickupLongitude: insertDelivery.pickupLongitude ?? null,
+      deliveryLatitude: insertDelivery.deliveryLatitude ?? null,
+      deliveryLongitude: insertDelivery.deliveryLongitude ?? null,
+      finalPrice: insertDelivery.finalPrice ?? null
     };
     
     this.deliveries.set(id, delivery);

@@ -97,6 +97,7 @@ export const insertDeliverySchema = createInsertSchema(deliveries).omit({
   deliveryCity: z.string().min(1, "Delivery city is required"),
   deliveryPostalCode: z.string().min(1, "Delivery postal code is required"),
   type: z.enum(["package", "letter", "express"]),
+  status: z.string().default("pending"),
 });
 
 export type User = typeof users.$inferSelect;

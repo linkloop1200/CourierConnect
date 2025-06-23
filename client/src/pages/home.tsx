@@ -4,15 +4,12 @@ import { useLocation } from "wouter";
 import { Package, Mail, Home as HomeIcon, Building } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import AppHeader from "@/components/app-header";
-import MapView from "@/components/map-view";
-import GoogleMap from "@/components/google-map";
+import EnhancedMap from "@/components/enhanced-map";
 import BottomNavigation from "@/components/bottom-navigation";
-import { useConfig } from "@/hooks/use-config";
 import type { Address } from "@shared/schema";
 
 export default function Home() {
   const [, setLocation] = useLocation();
-  const { data: config } = useConfig();
   
   // Mock user ID for demo
   const userId = 1;
@@ -33,14 +30,14 @@ export default function Home() {
     <>
       <AppHeader />
       
-      <MapView showDrivers={true} showPackages={true} />
+      <EnhancedMap showDrivers={true} showPackages={true} />
       
       {/* Delivery Bottom Sheet */}
       <div className="floating-panel bg-white rounded-t-3xl absolute bottom-0 left-0 right-0 z-10 overflow-hidden" style={{ height: "calc(100vh - 384px)" }}>
         {/* Handle Bar */}
         <div className="w-12 h-1 bg-gray-300 rounded-full mx-auto mt-3 mb-6"></div>
 
-        <div className="scroll-content">
+        <div className="panel-scroll">
           <div className="px-6 py-4">
             <h2 className="text-xl font-bold text-gray-900 mb-4">Waar wil je iets versturen?</h2>
           
