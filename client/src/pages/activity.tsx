@@ -60,7 +60,7 @@ export default function Activity() {
     <>
       <AppHeader title="Activiteit" showNotifications={false} />
       
-      <div className="bg-gray-50 min-h-screen pb-20">
+      <div className="bg-gray-50 min-h-screen pb-20 overflow-y-auto">
         <div className="px-6 pt-6">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-xl font-bold text-gray-900">Je bezorgingen</h2>

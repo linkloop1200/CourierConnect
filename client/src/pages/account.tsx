@@ -31,7 +31,7 @@ export default function Account() {
     <>
       <AppHeader title="Account" showNotifications={false} />
       
-      <div className="bg-gray-50 min-h-screen pb-20">
+      <div className="bg-gray-50 min-h-screen pb-20 overflow-y-auto">
         <div className="px-6 pt-6">
           {/* User Profile Card */}
           <Card className="mb-6">

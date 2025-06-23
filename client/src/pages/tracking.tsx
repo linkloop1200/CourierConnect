@@ -76,11 +76,11 @@ export default function Tracking({ params }: TrackingProps) {
       <MapView height="h-64" showDrivers={true} />
       
       {/* Tracking Bottom Sheet */}
-      <div className="floating-panel bg-white rounded-t-3xl absolute bottom-0 left-0 right-0 z-10" style={{ height: "calc(100vh - 256px)" }}>
+      <div className="floating-panel bg-white rounded-t-3xl absolute bottom-0 left-0 right-0 z-10 overflow-hidden" style={{ height: "calc(100vh - 256px)" }}>
         {/* Handle Bar */}
         <div className="w-12 h-1 bg-gray-300 rounded-full mx-auto mt-3 mb-6"></div>
 
-        <div className="px-6 pb-20">
+        <div className="px-6 pb-32 overflow-y-auto" style={{ height: "calc(100% - 40px)" }}>
           <div className="flex items-center justify-between mb-4">
             <Button
               variant="ghost"
