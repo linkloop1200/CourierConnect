@@ -172,6 +172,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
     res.json({ status: "ok", timestamp: new Date().toISOString() });
   });
 
+  // LocationIQ API key endpoint
+  app.get("/api/locationiq-key", (req, res) => {
+    res.json({ key: process.env.LOCATIONIQ_API_KEY || '' });
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }

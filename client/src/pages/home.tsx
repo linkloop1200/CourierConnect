@@ -4,7 +4,7 @@ import { useLocation } from "wouter";
 import { Package, Mail, Home as HomeIcon, Building } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import AppHeader from "@/components/app-header";
-import LeafletMap from "@/components/leaflet-map";
+import LocationIQProfessionalMap from "@/components/locationiq-professional-map";
 import BottomNavigation from "@/components/bottom-navigation";
 import type { Address } from "@shared/schema";
 
@@ -69,7 +69,7 @@ export default function Home() {
     <>
       <AppHeader />
       
-      <LeafletMap 
+      <LocationIQProfessionalMap 
         height="384px"
         showDrivers={true} 
         showPackages={true} 
@@ -77,6 +77,7 @@ export default function Home() {
         pickupLocation={{ lat: 52.3700, lng: 4.8950 }}
         deliveryLocation={{ lat: 52.3650, lng: 4.9150 }}
         driverLocation={{ lat: 52.3680, lng: 4.9000 }}
+        enableRealTimeTracking={true}
       />
       
       {/* Delivery Bottom Sheet */}
