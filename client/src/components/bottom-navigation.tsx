@@ -68,7 +68,7 @@ export default function BottomNavigation({ onNavigate }: BottomNavigationProps) 
             key={path}
             onClick={() => handleNavigation(path)}
             className={cn(
-              "flex flex-col items-center space-y-1 py-3 px-4 transition-colors",
+              "flex flex-col items-center space-y-1 py-3 px-1 transition-colors",
               isActive(path) ? "text-brand-blue" : "text-gray-400"
             )}
           >
