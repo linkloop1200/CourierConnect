@@ -29,8 +29,19 @@ export default function EmbeddedOpenStreetMap({
   // Amsterdam center coordinates
   const center = { lat: 52.3676, lng: 4.9041 };
 
-  // Create OpenStreetMap iframe URL
-  const osmUrl = `https://www.openstreetmap.org/export/embed.html?bbox=4.8550%2C52.3400%2C4.9550%2C52.3950&amp;layer=mapnik&amp;marker=${center.lat}%2C${center.lng}`;
+  // Create OpenStreetMap iframe URL with dynamic zoom
+  const getOsmUrl = () => {
+    const zoomFactor = zoom / 13; // Base zoom level
+    const latDiff = 0.0275 / zoomFactor; // Smaller area for higher zoom
+    const lngDiff = 0.05 / zoomFactor;
+    
+    const minLat = center.lat - latDiff;
+    const maxLat = center.lat + latDiff;
+    const minLng = center.lng - lngDiff;
+    const maxLng = center.lng + lngDiff;
+    
+    return `https://www.openstreetmap.org/export/embed.html?bbox=${minLng}%2C${minLat}%2C${maxLng}%2C${maxLat}&amp;layer=mapnik&amp;marker=${center.lat}%2C${center.lng}`;
+  };
 
   const handleZoomIn = () => setZoom(Math.min(zoom + 1, 18));
   const handleZoomOut = () => setZoom(Math.max(zoom - 1, 8));
@@ -43,11 +54,12 @@ export default function EmbeddedOpenStreetMap({
     <div className="relative w-full rounded-lg overflow-hidden border border-gray-300 bg-white" style={{ height }}>
       {/* OpenStreetMap iframe */}
       <iframe
-        src={osmUrl}
+        src={getOsmUrl()}
         className="w-full h-full"
         style={{ border: 'none' }}
         title="OpenStreetMap van Amsterdam"
         loading="lazy"
+        key={zoom}
       />
       
       {/* Overlay markers */}
