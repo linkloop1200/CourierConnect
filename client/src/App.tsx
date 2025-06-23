@@ -21,18 +21,18 @@ import AdvancedRoutingSystem from "@/pages/advanced-routing-system";
 function Router() {
   return (
     <Switch>
-      <Route path="/" component={Home} />
-      <Route path="/uber" component={UberStyleHome} />
+      <Route path="/" component={UberStyleHome} />
       <Route path="/book" component={BookingFlow} />
       <Route path="/driver" component={DriverDashboard} />
       <Route path="/live/:id" component={RealTimeTracking} />
       <Route path="/payment" component={PaymentCheckout} />
       <Route path="/ideal" component={IdealPayment} />
       <Route path="/routing" component={AdvancedRoutingSystem} />
-      <Route path="/delivery" component={DeliveryForm} />
-      <Route path="/tracking/:id" component={Tracking} />
       <Route path="/activity" component={Activity} />
       <Route path="/account" component={Account} />
+      <Route path="/legacy" component={Home} />
+      <Route path="/delivery" component={DeliveryForm} />
+      <Route path="/tracking/:id" component={Tracking} />
       <Route path="/features" component={FeaturesOverview} />
       <Route component={NotFound} />
     </Switch>

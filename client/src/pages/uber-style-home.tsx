@@ -300,6 +300,77 @@ export default function UberStyleHome() {
             >
               Boek bezorging {estimate?.price && `• ${estimate.price}`}
             </Button>
+
+            {/* Quick Access Features */}
+            <div className="mt-6 pt-4 border-t border-gray-200">
+              <h4 className="text-sm font-medium text-gray-700 mb-3">Andere diensten</h4>
+              <div className="grid grid-cols-2 gap-3">
+                <Button 
+                  variant="outline"
+                  className="h-16 flex flex-col space-y-1 border-green-200 hover:bg-green-50"
+                  onClick={() => setLocation("/driver")}
+                >
+                  <div className="text-xl">👨‍💼</div>
+                  <span className="text-xs">Bezorger</span>
+                </Button>
+                <Button 
+                  variant="outline"
+                  className="h-16 flex flex-col space-y-1 border-purple-200 hover:bg-purple-50"
+                  onClick={() => setLocation("/payment")}
+                >
+                  <div className="text-xl">💳</div>
+                  <span className="text-xs">Betaling</span>
+                </Button>
+                <Button 
+                  variant="outline"
+                  className="h-16 flex flex-col space-y-1 border-orange-200 hover:bg-orange-50"
+                  onClick={() => setLocation("/routing")}
+                >
+                  <div className="text-xl">🗺️</div>
+                  <span className="text-xs">Routes</span>
+                </Button>
+                <Button 
+                  variant="outline"
+                  className="h-16 flex flex-col space-y-1 border-red-200 hover:bg-red-50"
+                  onClick={() => setLocation("/activity")}
+                >
+                  <div className="text-xl">📊</div>
+                  <span className="text-xs">Activiteit</span>
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Floating Menu When No Route Selected */}
+      {(!pickup || !delivery) && (
+        <div className="absolute bottom-6 right-6 z-30">
+          <div className="bg-white rounded-2xl shadow-lg p-4 space-y-3">
+            <Button 
+              size="sm"
+              variant="outline"
+              className="w-full justify-start"
+              onClick={() => setLocation("/driver")}
+            >
+              👨‍💼 Bezorger Dashboard
+            </Button>
+            <Button 
+              size="sm"
+              variant="outline"
+              className="w-full justify-start"
+              onClick={() => setLocation("/activity")}
+            >
+              📊 Mijn Activiteit
+            </Button>
+            <Button 
+              size="sm"
+              variant="outline"
+              className="w-full justify-start"
+              onClick={() => setLocation("/account")}
+            >
+              👤 Account
+            </Button>
           </div>
         </div>
       )}

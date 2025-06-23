@@ -1,13 +1,17 @@
 import { useQuery } from "@tanstack/react-query";
-import { User, MapPin, Phone, Mail, Settings, HelpCircle, LogOut } from "lucide-react";
+import { useLocation } from "wouter";
+import { User, MapPin, Phone, Mail, Settings, HelpCircle, LogOut, Package, CreditCard, Star, Bell, Shield, Truck } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import AppHeader from "@/components/app-header";
 import BottomNavigation from "@/components/bottom-navigation";
-import type { Address } from "@shared/schema";
+import type { Address, Delivery, User as UserType } from "@shared/schema";
 
 export default function Account() {
+  const [, setLocation] = useLocation();
+  
   // Mock user data
   const user = {
     fullName: "Jan Smit",
@@ -21,10 +25,44 @@ export default function Account() {
     queryKey: [`/api/addresses/${userId}`],
   });
 
+  const { data: deliveries } = useQuery<Delivery[]>({
+    queryKey: [`/api/deliveries/user/${userId}`],
+  });
+
+  // Calculate user statistics
+  const userStats = deliveries ? {
+    totalDeliveries: deliveries.length,
+    completedDeliveries: deliveries.filter(d => d.status === 'delivered').length,
+    totalSpent: deliveries.reduce((sum, d) => sum + parseFloat(d.finalPrice || d.estimatedPrice || '0'), 0),
+    averageRating: 4.8, // Would come from ratings table
+    memberSince: '2024',
+    favoriteService: deliveries.length > 0 ? 
+      deliveries.reduce((prev, curr) => 
+        deliveries.filter(d => d.type === curr.type).length > 
+        deliveries.filter(d => d.type === prev.type).length ? curr : prev
+      ).type : 'express'
+  } : {
+    totalDeliveries: 0,
+    completedDeliveries: 0,
+    totalSpent: 0,
+    averageRating: 0,
+    memberSince: '2024',
+    favoriteService: 'express'
+  };
+
+  const quickActions = [
+    { icon: Package, label: "Nieuwe bezorging", action: () => setLocation("/"), color: "blue" },
+    { icon: Truck, label: "Word bezorger", action: () => setLocation("/driver"), color: "green" },
+    { icon: CreditCard, label: "Betalingen", action: () => setLocation("/payment"), color: "purple" },
+    { icon: MapPin, label: "Route planning", action: () => setLocation("/routing"), color: "orange" },
+  ];
+
   const menuItems = [
-    { icon: MapPin, label: "Mijn adressen", count: addresses?.length || 0 },
-    { icon: Settings, label: "Instellingen" },
-    { icon: HelpCircle, label: "Help & Support" },
+    { icon: MapPin, label: "Mijn adressen", count: addresses?.length || 0, action: () => {} },
+    { icon: Bell, label: "Meldingen", action: () => {} },
+    { icon: Shield, label: "Privacy & Veiligheid", action: () => {} },
+    { icon: Settings, label: "Instellingen", action: () => {} },
+    { icon: HelpCircle, label: "Help & Support", action: () => {} },
   ];
 
   return (
@@ -43,16 +81,76 @@ export default function Account() {
                   </span>
                 </div>
                 <div className="flex-1">
-                  <h2 className="text-xl font-bold text-gray-900">{user.fullName}</h2>
+                  <div className="flex items-center space-x-2">
+                    <h2 className="text-xl font-bold text-gray-900">{user.fullName}</h2>
+                    <Badge variant="secondary" className="text-xs">
+                      Lid sinds {userStats.memberSince}
+                    </Badge>
+                  </div>
                   <div className="flex items-center space-x-2 text-gray-600 mt-1">
                     <Mail className="h-4 w-4" />
                     <span className="text-sm">{user.email}</span>
                   </div>
                   <div className="flex items-center space-x-2 text-gray-600 mt-1">
-                    <Phone className="h-4 w-4" />
-                    <span className="text-sm">{user.phone}</span>
+                    <Star className="h-4 w-4 text-yellow-500" />
+                    <span className="text-sm">{userStats.averageRating.toFixed(1)} beoordeling</span>
                   </div>
                 </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* User Statistics */}
+          <Card className="mb-6">
+            <CardHeader>
+              <CardTitle className="flex items-center space-x-2">
+                <Package className="h-5 w-5" />
+                <span>Statistieken</span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="text-center">
+                  <p className="text-2xl font-bold text-brand-blue">{userStats.totalDeliveries}</p>
+                  <p className="text-sm text-gray-500">Totaal bezorgd</p>
+                </div>
+                <div className="text-center">
+                  <p className="text-2xl font-bold text-green-600">{userStats.completedDeliveries}</p>
+                  <p className="text-sm text-gray-500">Succesvol</p>
+                </div>
+                <div className="text-center">
+                  <p className="text-2xl font-bold text-purple-600">€{userStats.totalSpent.toFixed(2)}</p>
+                  <p className="text-sm text-gray-500">Uitgegeven</p>
+                </div>
+                <div className="text-center">
+                  <p className="text-2xl font-bold text-orange-600 capitalize">{userStats.favoriteService}</p>
+                  <p className="text-sm text-gray-500">Favoriete service</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Quick Actions */}
+          <Card className="mb-6">
+            <CardHeader>
+              <CardTitle>Snelle acties</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-2 gap-3">
+                {quickActions.map((action, index) => {
+                  const Icon = action.icon;
+                  return (
+                    <Button
+                      key={index}
+                      variant="outline"
+                      className="h-16 flex flex-col space-y-1"
+                      onClick={action.action}
+                    >
+                      <Icon className="h-5 w-5" />
+                      <span className="text-xs">{action.label}</span>
+                    </Button>
+                  );
+                })}
               </div>
             </CardContent>
           </Card>
