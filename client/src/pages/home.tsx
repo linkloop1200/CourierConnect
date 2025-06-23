@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useLocation } from "wouter";
-import { Package, Mail, Home as HomeIcon, Building } from "lucide-react";
+import { Package, Mail, Home as HomeIcon, Building, ChevronUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import AppHeader from "@/components/app-header";
 import EmbeddedOpenStreetMap from "@/components/embedded-openstreetmap";
@@ -93,16 +93,18 @@ export default function Home() {
           onTouchStart={handleTouchStart}
         ></div>
 
-        {/* Collapsed Header */}
+        {/* Collapsed Header - Large and Prominent */}
         {!isBottomSheetOpen && (
           <div 
-            className="px-6 py-3 text-center border-b border-gray-100 cursor-pointer hover:bg-gray-50 transition-colors"
+            className="px-6 py-6 text-center border-b border-gray-200 cursor-pointer hover:bg-brand-blue-light transition-all duration-200 bg-white shadow-sm"
             onClick={toggleBottomSheet}
           >
-            <div className="flex items-center justify-center space-x-2">
-              <span className="text-sm text-gray-600">Bezorgopties</span>
-              <div className="w-4 h-0.5 bg-gray-400 rounded"></div>
-              <span className="text-xs text-blue-600 font-medium">Tik om te openen</span>
+            <div className="flex flex-col items-center space-y-2">
+              <ChevronUp className="h-8 w-8 text-brand-blue animate-bounce" />
+              <div className="flex flex-col items-center">
+                <span className="text-lg font-semibold text-gray-800">Bezorgopties</span>
+                <span className="text-sm text-brand-blue font-medium">Tik hier om menu te openen</span>
+              </div>
             </div>
           </div>
         )}
