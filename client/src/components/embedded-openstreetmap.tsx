@@ -62,9 +62,8 @@ export default function EmbeddedOpenStreetMap({
         key={zoom}
       />
       
-      {/* Hide zoom indicator overlay - covers the "Amsterdam • Zoom: 13" text */}
-      <div className="absolute top-0 left-0 w-full h-24 bg-white z-40 pointer-events-none"></div>
-      <div className="absolute top-20 left-0 w-full h-8 bg-gradient-to-b from-white to-transparent z-40 pointer-events-none"></div>
+      {/* Hide zoom indicator overlay - covers only the "Amsterdam • Zoom: 13" text */}
+      <div className="absolute top-2 left-2 w-40 h-6 bg-white z-40 pointer-events-none"></div>
       
       {/* Overlay markers */}
       <div className="absolute inset-0 pointer-events-none">
