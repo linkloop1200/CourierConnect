@@ -407,7 +407,7 @@ export default function UberStyleHome() {
       </div>
 
       {/* Location Inputs */}
-      <div className="absolute top-20 left-4 right-4 z-20">
+      <div className="absolute top-24 left-4 right-4 z-20">
         <Card className="shadow-lg">
           <CardContent className="p-4 space-y-3">
             {/* Pickup */}
