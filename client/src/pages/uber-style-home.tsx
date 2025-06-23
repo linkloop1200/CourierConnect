@@ -198,6 +198,27 @@ export default function UberStyleHome() {
     }
   };
 
+  // Calculate price estimate based on distance
+  const calculateEstimate = (pickup?: { lat: number; lng: number }, delivery?: { lat: number; lng: number }) => {
+    if (pickup && delivery) {
+      // Simple distance calculation (Haversine formula)
+      const R = 6371; // Earth's radius in km
+      const dLat = (delivery.lat - pickup.lat) * Math.PI / 180;
+      const dLon = (delivery.lng - pickup.lng) * Math.PI / 180;
+      const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                Math.cos(pickup.lat * Math.PI / 180) * Math.cos(delivery.lat * Math.PI / 180) *
+                Math.sin(dLon/2) * Math.sin(dLon/2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+      const distance = R * c;
+      
+      // Calculate price (base €5 + €2 per km)
+      const price = (5 + distance * 2).toFixed(2);
+      const time = Math.max(15, Math.round(distance * 3 + 10)); // minimum 15 min
+      
+      setEstimate({ price: `€${price}`, time: `${time} min` });
+    }
+  };
+
   // Handle suggestion selection
   const handleSuggestionSelect = (suggestion: any) => {
     const location: UberStyleLocation = {
@@ -214,8 +235,10 @@ export default function UberStyleHome() {
     setSearchValue(suggestion.name);
     setShowSuggestions(false);
     
-    // Calculate estimate if we have pickup
-    calculateEstimate(location.coordinates, delivery?.coordinates);
+    // Calculate estimate if we have both locations
+    if (delivery?.coordinates) {
+      calculateEstimate(location.coordinates, delivery.coordinates);
+    }
   };
 
   // Get current location (Uber-style)
