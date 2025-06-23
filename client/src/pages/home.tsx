@@ -82,9 +82,8 @@ export default function Home() {
       
       {/* Delivery Bottom Sheet */}
       <div 
-        className={`floating-panel bg-white rounded-t-3xl absolute bottom-0 left-0 right-0 z-10 overflow-hidden transition-all duration-300 ease-in-out ${!isBottomSheetOpen ? 'cursor-pointer' : ''}`}
+        className={`floating-panel bg-white rounded-t-3xl absolute bottom-0 left-0 right-0 z-10 overflow-hidden transition-all duration-300 ease-in-out`}
         style={{ height: bottomSheetHeight }}
-        onClick={!isBottomSheetOpen ? toggleBottomSheet : undefined}
       >
         {/* Handle Bar - Clickable and Swipeable */}
         <div 
@@ -96,8 +95,7 @@ export default function Home() {
         {/* Collapsed Header */}
         {!isBottomSheetOpen && (
           <div 
-            className="px-6 py-3 text-center border-b border-gray-100 cursor-pointer hover:bg-gray-50 transition-colors"
-            onClick={toggleBottomSheet}
+            className="px-6 py-3 text-center border-b border-gray-100"
           >
             <div className="flex items-center justify-center space-x-2">
               <span className="text-sm text-gray-600">Bezorgopties</span>

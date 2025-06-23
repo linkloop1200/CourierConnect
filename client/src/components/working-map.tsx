@@ -35,7 +35,7 @@ export default function WorkingMap({
   };
 
   return (
-    <div className="relative w-full rounded-lg overflow-hidden border border-gray-300 bg-gray-50" style={{ height }}>
+    <div className="relative w-full rounded-lg overflow-hidden border border-gray-300 bg-gray-50 z-0" style={{ height }}>
       {/* Base map layer - Amsterdam style */}
       <div className="w-full h-full relative">
         {/* Background gradient */}
