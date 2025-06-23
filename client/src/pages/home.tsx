@@ -188,12 +188,32 @@ export default function Home() {
           </div>
 
           {/* Main CTA */}
-          <Button 
-            className="w-full bg-brand-blue text-white py-4 h-auto text-lg font-semibold hover:bg-brand-blue-dark transition-colors"
-            onClick={handleNewDelivery}
-          >
-            Nieuwe bezorging
-          </Button>
+          <div className="space-y-3">
+            <Button 
+              className="w-full bg-brand-blue text-white py-4 h-auto text-lg font-semibold hover:bg-brand-blue-dark transition-colors"
+              onClick={handleNewDelivery}
+            >
+              Nieuwe bezorging
+            </Button>
+            
+            {/* Uber-style interface */}
+            <Button 
+              variant="outline"
+              className="w-full border-brand-blue text-brand-blue py-4 h-auto text-lg font-semibold hover:bg-brand-blue hover:text-white transition-colors"
+              onClick={() => setLocation("/uber")}
+            >
+              🚀 Probeer Uber-style interface
+            </Button>
+            
+            {/* Driver interface */}
+            <Button 
+              variant="outline"
+              className="w-full border-green-500 text-green-600 py-3 h-auto font-medium hover:bg-green-500 hover:text-white transition-colors"
+              onClick={() => setLocation("/driver")}
+            >
+              👨‍💼 Bezorger Dashboard
+            </Button>
+          </div>
           </div>
         </div>
       </div>

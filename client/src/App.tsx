@@ -10,11 +10,19 @@ import Activity from "@/pages/activity";
 import Account from "@/pages/account";
 import NotFound from "@/pages/not-found";
 import FeaturesOverview from "@/pages/features-overview";
+import UberStyleHome from "@/pages/uber-style-home";
+import BookingFlow from "@/pages/booking-flow";
+import DriverDashboard from "@/pages/driver-dashboard";
+import RealTimeTracking from "@/pages/real-time-tracking";
 
 function Router() {
   return (
     <Switch>
       <Route path="/" component={Home} />
+      <Route path="/uber" component={UberStyleHome} />
+      <Route path="/book" component={BookingFlow} />
+      <Route path="/driver" component={DriverDashboard} />
+      <Route path="/live/:id" component={RealTimeTracking} />
       <Route path="/delivery" component={DeliveryForm} />
       <Route path="/tracking/:id" component={Tracking} />
       <Route path="/activity" component={Activity} />
