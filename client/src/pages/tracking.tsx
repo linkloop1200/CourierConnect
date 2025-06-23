@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useLocation } from "wouter";
-import { ArrowLeft, Check, Truck, Home, Phone, MessageCircle, Star, ChevronUp } from "lucide-react";
+import { ArrowLeft, Check, Truck, Home, Phone, MessageCircle, Star, ChevronUp, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import AppHeader from "@/components/app-header";
@@ -102,7 +102,11 @@ export default function Tracking({ params }: TrackingProps) {
           className="flex justify-center py-2 cursor-pointer hover:bg-gray-50 transition-colors"
           onClick={toggleBottomSheet}
         >
-          <ChevronUp className="h-6 w-6 text-gray-400 hover:text-brand-blue transition-colors" />
+          {isBottomSheetOpen ? (
+            <ChevronDown className="h-6 w-6 text-gray-400 hover:text-brand-blue transition-colors" />
+          ) : (
+            <ChevronUp className="h-6 w-6 text-gray-400 hover:text-brand-blue transition-colors" />
+          )}
         </div>
 
         {/* Collapsed Header - Large and Prominent */}

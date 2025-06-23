@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useLocation } from "wouter";
-import { Package, Mail, Home as HomeIcon, Building, ChevronUp } from "lucide-react";
+import { Package, Mail, Home as HomeIcon, Building, ChevronUp, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import AppHeader from "@/components/app-header";
 import EmbeddedOpenStreetMap from "@/components/embedded-openstreetmap";
@@ -92,7 +92,11 @@ export default function Home() {
           onClick={toggleBottomSheet}
           onTouchStart={handleTouchStart}
         >
-          <ChevronUp className="h-6 w-6 text-gray-400 hover:text-brand-blue transition-colors" />
+          {isBottomSheetOpen ? (
+            <ChevronDown className="h-6 w-6 text-gray-400 hover:text-brand-blue transition-colors" />
+          ) : (
+            <ChevronUp className="h-6 w-6 text-gray-400 hover:text-brand-blue transition-colors" />
+          )}
         </div>
 
         {/* Collapsed Header */}
