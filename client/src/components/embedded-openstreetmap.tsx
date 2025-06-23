@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { MapPin, Plus, Minus, Navigation, ExternalLink } from "lucide-react";
+import { useState, useEffect } from "react";
+import { MapPin, Plus, Minus, Navigation, ExternalLink, Home, Package } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
@@ -28,6 +28,22 @@ export default function EmbeddedOpenStreetMap({
   
   // Amsterdam center coordinates
   const center = { lat: 52.3676, lng: 4.9041 };
+  
+  // Calculate map center based on available locations
+  const getMapCenter = () => {
+    if (pickupLocation && deliveryLocation) {
+      return {
+        lat: (pickupLocation.lat + deliveryLocation.lat) / 2,
+        lng: (pickupLocation.lng + deliveryLocation.lng) / 2
+      };
+    }
+    if (pickupLocation) return pickupLocation;
+    if (deliveryLocation) return deliveryLocation;
+    if (userLocation) return userLocation;
+    return center;
+  };
+  
+  const mapCenter = getMapCenter();
 
   // Create OpenStreetMap iframe URL with dynamic zoom
   const getOsmUrl = () => {
@@ -40,12 +56,12 @@ export default function EmbeddedOpenStreetMap({
     const latDiff = baseLatDiff * zoomMultiplier;
     const lngDiff = baseLngDiff * zoomMultiplier;
     
-    const minLat = center.lat - latDiff;
-    const maxLat = center.lat + latDiff;
-    const minLng = center.lng - lngDiff;
-    const maxLng = center.lng + lngDiff;
+    const minLat = mapCenter.lat - latDiff;
+    const maxLat = mapCenter.lat + latDiff;
+    const minLng = mapCenter.lng - lngDiff;
+    const maxLng = mapCenter.lng + lngDiff;
     
-    return `https://www.openstreetmap.org/export/embed.html?bbox=${minLng}%2C${minLat}%2C${maxLng}%2C${maxLat}&layer=mapnik&marker=${center.lat}%2C${center.lng}`;
+    return `https://www.openstreetmap.org/export/embed.html?bbox=${minLng}%2C${minLat}%2C${maxLng}%2C${maxLng}&layer=mapnik`;
   };
 
   const handleZoomIn = () => {
@@ -79,44 +95,44 @@ export default function EmbeddedOpenStreetMap({
         {/* User location marker */}
         {userLocation && (
           <div 
-            className="absolute w-8 h-8 bg-blue-500 rounded-full border-3 border-white shadow-lg flex items-center justify-center transform -translate-x-1/2 -translate-y-1/2 pointer-events-auto cursor-pointer hover:scale-110 transition-transform z-20"
+            className="absolute w-10 h-10 bg-blue-500 rounded-full border-3 border-white shadow-lg flex items-center justify-center transform -translate-x-1/2 -translate-y-1/2 pointer-events-auto cursor-pointer hover:scale-110 transition-transform z-20"
             style={{ left: '50%', top: '50%' }}
             title="Jouw locatie"
           >
-            <span className="text-white text-sm">🏠</span>
+            <Home className="h-5 w-5 text-white" />
           </div>
         )}
         
-        {/* Pickup location */}
+        {/* Pickup location - Huis icoon */}
         {pickupLocation && (
           <div 
-            className="absolute w-8 h-8 bg-green-500 rounded-full border-3 border-white shadow-lg flex items-center justify-center transform -translate-x-1/2 -translate-y-1/2 pointer-events-auto cursor-pointer hover:scale-110 transition-transform z-20"
-            style={{ left: '35%', top: '40%' }}
+            className="absolute w-10 h-10 bg-green-500 rounded-full border-3 border-white shadow-lg flex items-center justify-center transform -translate-x-1/2 -translate-y-1/2 pointer-events-auto cursor-pointer hover:scale-110 transition-transform z-20"
+            style={{ left: '30%', top: '35%' }}
             title={pickupLocation.address || "Ophaallocatie"}
           >
-            <span className="text-white text-sm">📦</span>
+            <Home className="h-5 w-5 text-white" />
           </div>
         )}
         
-        {/* Delivery location */}
+        {/* Delivery location - Rood pakket icoon */}
         {deliveryLocation && (
           <div 
-            className="absolute w-8 h-8 bg-red-500 rounded-full border-3 border-white shadow-lg flex items-center justify-center transform -translate-x-1/2 -translate-y-1/2 pointer-events-auto cursor-pointer hover:scale-110 transition-transform z-20"
-            style={{ left: '70%', top: '65%' }}
+            className="absolute w-10 h-10 bg-red-500 rounded-full border-3 border-white shadow-lg flex items-center justify-center transform -translate-x-1/2 -translate-y-1/2 pointer-events-auto cursor-pointer hover:scale-110 transition-transform z-20"
+            style={{ left: '75%', top: '70%' }}
             title={deliveryLocation.address || "Bezorglocatie"}
           >
-            <span className="text-white text-sm">🎯</span>
+            <Package className="h-5 w-5 text-white" />
           </div>
         )}
         
-        {/* Driver location */}
+        {/* Driver location - Paarse scooter icoon */}
         {driverLocation && (
           <div 
-            className={`absolute w-8 h-8 bg-purple-500 rounded-full border-3 border-white shadow-lg flex items-center justify-center transform -translate-x-1/2 -translate-y-1/2 pointer-events-auto cursor-pointer hover:scale-110 transition-transform z-20 ${enableRealTimeTracking ? 'animate-pulse' : ''}`}
-            style={{ left: '55%', top: '45%' }}
-            title="Chauffeur onderweg"
+            className={`absolute w-10 h-10 bg-purple-500 rounded-full border-3 border-white shadow-lg flex items-center justify-center transform -translate-x-1/2 -translate-y-1/2 pointer-events-auto cursor-pointer hover:scale-110 transition-transform z-20 ${enableRealTimeTracking ? 'animate-pulse' : ''}`}
+            style={{ left: '55%', top: '50%' }}
+            title="Bezorger onderweg"
           >
-            <span className="text-white text-sm">🚐</span>
+            <span className="text-white text-lg">🛴</span>
           </div>
         )}
         
@@ -140,19 +156,49 @@ export default function EmbeddedOpenStreetMap({
           </>
         )}
         
-        {/* Route visualization */}
+        {/* Optimale route weergave - vloeiende lijn */}
         {pickupLocation && deliveryLocation && (
           <svg className="absolute inset-0 w-full h-full pointer-events-none z-10">
-            <line 
-              x1="35%" y1="40%" 
-              x2="70%" y2="65%" 
-              stroke="#8b5cf6" 
-              strokeWidth="4" 
-              strokeDasharray="8,4" 
-              opacity="0.8"
+            {/* Hoofdroute lijn */}
+            <path
+              d="M 30% 35% Q 52% 25% 75% 70%"
+              stroke="#4f46e5"
+              strokeWidth="5"
+              fill="none"
+              opacity="0.7"
+              strokeLinecap="round"
+            />
+            {/* Geanimeerde overlay voor beweging effect */}
+            <path
+              d="M 30% 35% Q 52% 25% 75% 70%"
+              stroke="#818cf8"
+              strokeWidth="3"
+              fill="none"
+              strokeDasharray="12,8"
+              strokeLinecap="round"
             >
-              <animate attributeName="stroke-dashoffset" values="0;-12" dur="2s" repeatCount="indefinite" />
-            </line>
+              <animate 
+                attributeName="stroke-dashoffset" 
+                values="0;-20" 
+                dur="3s" 
+                repeatCount="indefinite" 
+              />
+            </path>
+            {/* Route richtingspijl */}
+            <polygon
+              points="70,60 75,65 70,70"
+              fill="#4f46e5"
+              opacity="0.8"
+              transform="translate(52%, 42%)"
+            >
+              <animateTransform
+                attributeName="transform"
+                type="translate"
+                values="30% 35%; 52% 30%; 75% 70%"
+                dur="4s"
+                repeatCount="indefinite"
+              />
+            </polygon>
           </svg>
         )}
       </div>
@@ -193,18 +239,36 @@ export default function EmbeddedOpenStreetMap({
       {/* Legend */}
       <div className="absolute bottom-20 left-4 bg-white/95 p-3 rounded-lg shadow-lg text-xs z-10">
         <div className="space-y-2">
-          <div className="flex items-center space-x-2">
-            <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-            <span>Ophalen</span>
-          </div>
-          <div className="flex items-center space-x-2">
-            <div className="w-3 h-3 bg-red-500 rounded-full"></div>
-            <span>Bezorgen</span>
-          </div>
-          <div className="flex items-center space-x-2">
-            <div className="w-3 h-3 bg-purple-500 rounded-full"></div>
-            <span>Bezorger locatie</span>
-          </div>
+          {pickupLocation && (
+            <div className="flex items-center space-x-2">
+              <div className="w-4 h-4 bg-green-500 rounded-full flex items-center justify-center">
+                <Home className="h-2.5 w-2.5 text-white" />
+              </div>
+              <span>Ophaallocatie</span>
+            </div>
+          )}
+          {deliveryLocation && (
+            <div className="flex items-center space-x-2">
+              <div className="w-4 h-4 bg-red-500 rounded-full flex items-center justify-center">
+                <Package className="h-2.5 w-2.5 text-white" />
+              </div>
+              <span>Bezorglocatie</span>
+            </div>
+          )}
+          {driverLocation && (
+            <div className="flex items-center space-x-2">
+              <div className="w-4 h-4 bg-purple-500 rounded-full flex items-center justify-center">
+                <span className="text-white text-xs">🛴</span>
+              </div>
+              <span>Bezorger</span>
+            </div>
+          )}
+          {pickupLocation && deliveryLocation && (
+            <div className="flex items-center space-x-2">
+              <div className="w-4 h-1 bg-indigo-500 rounded"></div>
+              <span>Optimale route</span>
+            </div>
+          )}
         </div>
       </div>
 

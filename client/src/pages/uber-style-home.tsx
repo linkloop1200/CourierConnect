@@ -441,8 +441,16 @@ export default function UberStyleHome() {
       <div className="absolute inset-0">
         <EmbeddedOpenStreetMap 
           height="100vh"
-          pickupLocation={pickup?.coordinates}
-          deliveryLocation={delivery?.coordinates}
+          pickupLocation={pickup?.coordinates ? {
+            lat: pickup.coordinates.lat,
+            lng: pickup.coordinates.lng,
+            address: pickup.address
+          } : undefined}
+          deliveryLocation={delivery?.coordinates ? {
+            lat: delivery.coordinates.lat,
+            lng: delivery.coordinates.lng,
+            address: delivery.address
+          } : undefined}
           driverLocation={driverLocation}
           enableRealTimeTracking={isDriver}
         />
