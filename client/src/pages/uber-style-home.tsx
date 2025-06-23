@@ -85,13 +85,39 @@ export default function UberStyleHome() {
   // Geocode address to coordinates
   const geocodeAddress = async (address: string): Promise<{ lat: number; lng: number } | null> => {
     try {
-      const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address + ', Amsterdam, Netherlands')}&limit=1`);
+      const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address + ', Amsterdam, Netherlands')}&limit=1&addressdetails=1`, {
+        headers: {
+          'User-Agent': 'Spoedpakketjes/1.0'
+        }
+      });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+      
       const data = await response.json();
-      if (data.length > 0) {
+      if (data && data.length > 0) {
         return {
           lat: parseFloat(data[0].lat),
           lng: parseFloat(data[0].lon)
         };
+      }
+      
+      // Try without Amsterdam restriction if no results
+      const fallbackResponse = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}&limit=1&addressdetails=1`, {
+        headers: {
+          'User-Agent': 'Spoedpakketjes/1.0'
+        }
+      });
+      
+      if (fallbackResponse.ok) {
+        const fallbackData = await fallbackResponse.json();
+        if (fallbackData && fallbackData.length > 0) {
+          return {
+            lat: parseFloat(fallbackData[0].lat),
+            lng: parseFloat(fallbackData[0].lon)
+          };
+        }
       }
     } catch (error) {
       console.error('Geocoding error:', error);
@@ -99,25 +125,40 @@ export default function UberStyleHome() {
     return null;
   };
 
+  // Debounce for address input
+  const [addressTimeout, setAddressTimeout] = useState<NodeJS.Timeout | null>(null);
+
   // Handle address input with geocoding
-  const handleAddressInput = async (address: string, type: 'pickup' | 'delivery') => {
+  const handleAddressInput = (address: string, type: 'pickup' | 'delivery') => {
+    if (addressTimeout) {
+      clearTimeout(addressTimeout);
+    }
+
     if (address.length > 3) {
-      const coordinates = await geocodeAddress(address);
-      if (coordinates) {
-        const location: UberStyleLocation = {
-          id: `${type}-${Date.now()}`,
-          name: address,
-          address: address,
-          type: 'recent',
-          coordinates
-        };
-        
-        if (type === 'pickup') {
-          setPickup(location);
-        } else {
-          setDelivery(location);
+      const timeout = setTimeout(async () => {
+        try {
+          const coordinates = await geocodeAddress(address);
+          if (coordinates) {
+            const location: UberStyleLocation = {
+              id: `${type}-${Date.now()}`,
+              name: address,
+              address: address,
+              type: 'recent',
+              coordinates
+            };
+            
+            if (type === 'pickup') {
+              setPickup(location);
+            } else {
+              setDelivery(location);
+            }
+          }
+        } catch (error) {
+          console.error('Address input error:', error);
         }
-      }
+      }, 500); // 500ms debounce
+      
+      setAddressTimeout(timeout);
     }
   };
 
