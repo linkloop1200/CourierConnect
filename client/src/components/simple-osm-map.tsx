@@ -59,17 +59,10 @@ export default function SimpleOsmMap({
     };
   };
   
-  // Maak OpenStreetMap URL met alle markers
+  // Maak OpenStreetMap URL zonder markers - gebruik alleen de kaart
   const getMapUrl = () => {
     const bbox = getBoundingBox();
-    let url = `https://www.openstreetmap.org/export/embed.html?bbox=${bbox.minLng},${bbox.minLat},${bbox.maxLng},${bbox.maxLat}&layer=mapnik`;
-    
-    // Voeg markers toe - alleen de eerste marker wordt getoond door OSM
-    if (pickupLocation) {
-      url += `&marker=${pickupLocation.lat},${pickupLocation.lng}`;
-    }
-    
-    return url;
+    return `https://www.openstreetmap.org/export/embed.html?bbox=${bbox.minLng},${bbox.minLat},${bbox.maxLng},${bbox.maxLat}&layer=mapnik`;
   };
   
   const handleZoomIn = () => setZoom(Math.min(zoom + 1, 18));
@@ -92,153 +85,80 @@ export default function SimpleOsmMap({
         key={`map-${zoom}-${mapCenter.lat.toFixed(4)}-${mapCenter.lng.toFixed(4)}`}
       />
       
-      {/* Zoom controls - hoger gepositioneerd */}
-      <div className="absolute bottom-20 right-6 flex flex-col space-y-3 z-50">
+      {/* Zoom controls */}
+      <div className="absolute bottom-4 right-4 flex flex-col space-y-2 z-30">
         <Button
           variant="secondary"
           size="sm"
           onClick={handleZoomIn}
           disabled={zoom >= 18}
-          className="w-12 h-12 p-0 bg-white shadow-xl hover:bg-gray-50 border-2 border-gray-200"
+          className="w-10 h-10 p-0 bg-white shadow-lg hover:bg-gray-50"
         >
-          <ZoomIn className="h-5 w-5" />
+          <ZoomIn className="h-4 w-4" />
         </Button>
         <Button
           variant="secondary"
           size="sm"
           onClick={handleZoomOut}
           disabled={zoom <= 10}
-          className="w-12 h-12 p-0 bg-white shadow-xl hover:bg-gray-50 border-2 border-gray-200"
+          className="w-10 h-10 p-0 bg-white shadow-lg hover:bg-gray-50"
         >
-          <ZoomOut className="h-5 w-5" />
+          <ZoomOut className="h-4 w-4" />
         </Button>
         <Button
           variant="secondary"
           size="sm"
           onClick={openFullMap}
-          className="w-12 h-12 p-0 bg-white shadow-xl hover:bg-gray-50 border-2 border-gray-200"
+          className="w-10 h-10 p-0 bg-white shadow-lg hover:bg-gray-50"
           title="Open volledige kaart"
         >
-          <ExternalLink className="h-5 w-5" />
+          <ExternalLink className="h-4 w-4" />
         </Button>
       </div>
       
-      {/* Verbeterde legenda met iconen */}
+      {/* Locatie informatie rechtsboven */}
       {(pickupLocation || deliveryLocation || driverLocation) && (
-        <div className="absolute top-6 left-6 bg-white backdrop-blur-sm rounded-xl p-5 shadow-2xl max-w-sm z-50 border-2 border-gray-300">
-          <h3 className="font-bold text-gray-900 mb-4 text-base border-b border-gray-200 pb-2">📍 Locaties</h3>
-          <div className="space-y-4 text-sm">
+        <div className="absolute top-4 right-4 bg-white rounded-lg p-4 shadow-xl max-w-sm z-40 border border-gray-300">
+          <h3 className="font-semibold text-gray-900 mb-3 text-sm">Locaties</h3>
+          <div className="space-y-3 text-sm">
             {pickupLocation && (
-              <div className="flex items-start space-x-4 p-2 bg-green-50 rounded-lg">
-                <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center shadow-lg flex-shrink-0">
-                  <span className="text-white text-base">🏠</span>
+              <div className="flex items-start space-x-3">
+                <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0">
+                  <span className="text-white text-xs">🏠</span>
                 </div>
-                <div className="flex-1">
-                  <div className="font-semibold text-green-800 text-base">Ophalen</div>
-                  <div className="text-gray-700 text-sm leading-relaxed">{pickupLocation.address || `${pickupLocation.lat.toFixed(4)}, ${pickupLocation.lng.toFixed(4)}`}</div>
+                <div>
+                  <div className="font-medium text-green-700">Ophalen</div>
+                  <div className="text-gray-600 text-xs">{pickupLocation.address}</div>
                 </div>
               </div>
             )}
             {deliveryLocation && (
-              <div className="flex items-start space-x-4 p-2 bg-red-50 rounded-lg">
-                <div className="w-10 h-10 bg-red-500 rounded-full flex items-center justify-center shadow-lg flex-shrink-0">
-                  <span className="text-white text-base">📦</span>
+              <div className="flex items-start space-x-3">
+                <div className="w-6 h-6 bg-red-500 rounded-full flex items-center justify-center flex-shrink-0">
+                  <span className="text-white text-xs">📦</span>
                 </div>
-                <div className="flex-1">
-                  <div className="font-semibold text-red-800 text-base">Bezorgen naar</div>
-                  <div className="text-gray-700 text-sm leading-relaxed">{deliveryLocation.address || `${deliveryLocation.lat.toFixed(4)}, ${deliveryLocation.lng.toFixed(4)}`}</div>
+                <div>
+                  <div className="font-medium text-red-700">Bezorgen naar</div>
+                  <div className="text-gray-600 text-xs">{deliveryLocation.address}</div>
                 </div>
               </div>
             )}
             {driverLocation && (
-              <div className="flex items-start space-x-4 p-2 bg-purple-50 rounded-lg">
-                <div className="w-10 h-10 bg-purple-600 rounded-full flex items-center justify-center shadow-lg flex-shrink-0">
-                  <span className="text-white text-base">🛵</span>
+              <div className="flex items-start space-x-3">
+                <div className="w-6 h-6 bg-purple-600 rounded-full flex items-center justify-center flex-shrink-0">
+                  <span className="text-white text-xs">🛵</span>
                 </div>
-                <div className="flex-1">
-                  <div className="font-semibold text-purple-800 text-base">Bezorger onderweg</div>
-                  {enableRealTimeTracking && (
-                    <div className="text-sm text-purple-600 font-medium">● Live tracking actief</div>
-                  )}
+                <div>
+                  <div className="font-medium text-purple-700">Bezorger onderweg</div>
                 </div>
               </div>
             )}
           </div>
-          
-          {pickupLocation && deliveryLocation && (
-            <div className="mt-5 pt-4 border-t-2 border-gray-300">
-              <div className="flex items-center space-x-3 text-sm text-gray-800">
-                <div className="w-6 h-2 bg-gradient-to-r from-green-500 via-blue-500 to-red-500 rounded-full shadow-sm"></div>
-                <span className="font-semibold">Optimale route</span>
-              </div>
-            </div>
-          )}
         </div>
       )}
       
-      {/* Extra visuele markers overlay om duidelijkheid te bieden */}
-      <div className="absolute inset-0 pointer-events-none">
-        {/* Pickup locatie marker overlay */}
-        {pickupLocation && (
-          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-25">
-            <div className="w-12 h-12 bg-green-500 rounded-full border-4 border-white shadow-xl flex items-center justify-center animate-pulse">
-              <span className="text-white text-lg">🏠</span>
-            </div>
-            <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 bg-green-600 text-white text-xs px-2 py-1 rounded whitespace-nowrap">
-              Ophalen
-            </div>
-          </div>
-        )}
-        
-        {/* Delivery locatie marker overlay */}
-        {deliveryLocation && (
-          <div className="absolute top-1/3 right-1/3 transform -translate-x-1/2 -translate-y-1/2 z-25">
-            <div className="w-12 h-12 bg-red-500 rounded-full border-4 border-white shadow-xl flex items-center justify-center animate-pulse">
-              <span className="text-white text-lg">📦</span>
-            </div>
-            <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 bg-red-600 text-white text-xs px-2 py-1 rounded whitespace-nowrap">
-              Bezorgen naar
-            </div>
-          </div>
-        )}
-        
-        {/* Driver locatie marker overlay */}
-        {driverLocation && (
-          <div className="absolute top-2/3 left-2/3 transform -translate-x-1/2 -translate-y-1/2 z-25">
-            <div className={`w-10 h-10 bg-purple-600 rounded-full border-4 border-white shadow-xl flex items-center justify-center ${enableRealTimeTracking ? 'animate-bounce' : 'animate-pulse'}`}>
-              <span className="text-white text-sm">🛵</span>
-            </div>
-            <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 bg-purple-600 text-white text-xs px-2 py-1 rounded whitespace-nowrap">
-              Bezorger
-            </div>
-          </div>
-        )}
-        
-        {/* Route lijn tussen pickup en delivery */}
-        {pickupLocation && deliveryLocation && (
-          <svg className="absolute inset-0 w-full h-full z-5">
-            <defs>
-              <linearGradient id="routeGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="#10b981" stopOpacity="0.8"/>
-                <stop offset="50%" stopColor="#3b82f6" stopOpacity="0.6"/>
-                <stop offset="100%" stopColor="#dc2626" stopOpacity="0.8"/>
-              </linearGradient>
-            </defs>
-            <path
-              d="M 50% 50% Q 60% 30% 66% 33%"
-              fill="none"
-              stroke="url(#routeGradient)"
-              strokeWidth="4"
-              strokeDasharray="8,4"
-              strokeLinecap="round"
-              className="animate-pulse"
-            />
-          </svg>
-        )}
-      </div>
-      
       {/* Zoom level indicator */}
-      <div className="absolute bottom-6 left-6 bg-black/80 text-white px-3 py-2 rounded-lg text-sm font-medium z-50 shadow-lg">
+      <div className="absolute bottom-4 left-4 bg-black/70 text-white px-2 py-1 rounded text-xs z-30">
         Zoom: {zoom}
       </div>
     </div>
