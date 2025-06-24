@@ -85,8 +85,8 @@ export default function SimpleOsmMap({
         key={`map-${zoom}-${mapCenter.lat.toFixed(4)}-${mapCenter.lng.toFixed(4)}`}
       />
       
-      {/* Zoom controls */}
-      <div className="absolute bottom-4 right-4 flex flex-col space-y-2 z-30">
+      {/* Zoom controls - normale positie */}
+      <div className="absolute bottom-6 right-4 flex flex-col space-y-2 z-30">
         <Button
           variant="secondary"
           size="sm"
@@ -116,26 +116,26 @@ export default function SimpleOsmMap({
         </Button>
       </div>
       
-      {/* Eenvoudige legenda */}
+      {/* Legenda - maximale zichtbaarheid */}
       {(pickupLocation || deliveryLocation || driverLocation) && (
-        <div className="absolute top-4 left-4 bg-white/90 rounded-lg p-3 shadow-lg z-40 border">
+        <div className="absolute top-4 left-4 bg-white rounded-lg p-3 shadow-2xl z-[100] border-2 border-black min-w-[150px]">
           <div className="text-sm space-y-2">
             {pickupLocation && (
               <div className="flex items-center space-x-2">
-                <span className="text-green-600 font-bold">●</span>
-                <span className="text-gray-700">Ophalen: {pickupLocation.address}</span>
+                <div className="w-4 h-4 bg-green-500 rounded-full"></div>
+                <span className="text-black font-medium">Ophalen</span>
               </div>
             )}
             {deliveryLocation && (
               <div className="flex items-center space-x-2">
-                <span className="text-red-600 font-bold">●</span>
-                <span className="text-gray-700">Bezorgen: {deliveryLocation.address}</span>
+                <div className="w-4 h-4 bg-red-500 rounded-full"></div>
+                <span className="text-black font-medium">Bezorgen</span>
               </div>
             )}
             {driverLocation && (
               <div className="flex items-center space-x-2">
-                <span className="text-purple-600 font-bold">●</span>
-                <span className="text-gray-700">Bezorger onderweg</span>
+                <div className="w-4 h-4 bg-purple-600 rounded-full"></div>
+                <span className="text-black font-medium">Bezorger</span>
               </div>
             )}
           </div>

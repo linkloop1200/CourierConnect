@@ -346,33 +346,7 @@ export default function EmbeddedOpenStreetMap({
         </Button>
       </div>
 
-      {/* Legend - Altijd alle iconen tonen */}
-      <div className="absolute bottom-20 left-4 bg-white/95 p-3 rounded-lg shadow-lg text-xs z-10">
-        <div className="space-y-2">
-          <div className="flex items-center space-x-2">
-            <div className="w-4 h-4 bg-green-500 rounded-full flex items-center justify-center">
-              <Home className="h-2.5 w-2.5 text-white" />
-            </div>
-            <span>Ophaallocatie</span>
-          </div>
-          <div className="flex items-center space-x-2">
-            <div className="w-4 h-4 bg-red-500 rounded-full flex items-center justify-center">
-              <Package className="h-2.5 w-2.5 text-white" />
-            </div>
-            <span>Bezorglocatie</span>
-          </div>
-          <div className="flex items-center space-x-2">
-            <div className="w-4 h-4 bg-purple-500 rounded-full flex items-center justify-center">
-              <span className="text-white text-xs">🛴</span>
-            </div>
-            <span>Bezorger</span>
-          </div>
-          <div className="flex items-center space-x-2">
-            <div className="w-4 h-1 bg-indigo-500 rounded"></div>
-            <span>Optimale route</span>
-          </div>
-        </div>
-      </div>
+
 
       {/* Real-time tracking indicator */}
       {enableRealTimeTracking && (
@@ -389,12 +363,7 @@ export default function EmbeddedOpenStreetMap({
         © OpenStreetMap
       </div>
 
-      {/* Zoom indicator */}
-      <div className="absolute top-4 left-1/2 transform -translate-x-1/2 z-30">
-        <div className="bg-white/90 px-3 py-1 rounded-full text-xs text-gray-700 shadow-sm border">
-          {pickupLocation ? 'Ophaallocatie' : 'Amsterdam'} • Zoom: {zoom}/17
-        </div>
-      </div>
+
     </div>
   );
 }
