@@ -92,73 +92,73 @@ export default function SimpleOsmMap({
         key={`map-${zoom}-${mapCenter.lat.toFixed(4)}-${mapCenter.lng.toFixed(4)}`}
       />
       
-      {/* Zoom controls */}
-      <div className="absolute bottom-4 right-4 flex flex-col space-y-2 z-20">
+      {/* Zoom controls - hoger gepositioneerd */}
+      <div className="absolute bottom-20 right-6 flex flex-col space-y-3 z-50">
         <Button
           variant="secondary"
           size="sm"
           onClick={handleZoomIn}
           disabled={zoom >= 18}
-          className="w-10 h-10 p-0 bg-white shadow-lg hover:bg-gray-50"
+          className="w-12 h-12 p-0 bg-white shadow-xl hover:bg-gray-50 border-2 border-gray-200"
         >
-          <ZoomIn className="h-4 w-4" />
+          <ZoomIn className="h-5 w-5" />
         </Button>
         <Button
           variant="secondary"
           size="sm"
           onClick={handleZoomOut}
           disabled={zoom <= 10}
-          className="w-10 h-10 p-0 bg-white shadow-lg hover:bg-gray-50"
+          className="w-12 h-12 p-0 bg-white shadow-xl hover:bg-gray-50 border-2 border-gray-200"
         >
-          <ZoomOut className="h-4 w-4" />
+          <ZoomOut className="h-5 w-5" />
         </Button>
         <Button
           variant="secondary"
           size="sm"
           onClick={openFullMap}
-          className="w-10 h-10 p-0 bg-white shadow-lg hover:bg-gray-50"
+          className="w-12 h-12 p-0 bg-white shadow-xl hover:bg-gray-50 border-2 border-gray-200"
           title="Open volledige kaart"
         >
-          <ExternalLink className="h-4 w-4" />
+          <ExternalLink className="h-5 w-5" />
         </Button>
       </div>
       
       {/* Verbeterde legenda met iconen */}
       {(pickupLocation || deliveryLocation || driverLocation) && (
-        <div className="absolute top-4 left-4 bg-white/95 backdrop-blur-sm rounded-lg p-4 shadow-xl max-w-xs z-20 border border-gray-200">
-          <h3 className="font-semibold text-gray-800 mb-3 text-sm">Locaties</h3>
-          <div className="space-y-3 text-sm">
+        <div className="absolute top-6 left-6 bg-white backdrop-blur-sm rounded-xl p-5 shadow-2xl max-w-sm z-50 border-2 border-gray-300">
+          <h3 className="font-bold text-gray-900 mb-4 text-base border-b border-gray-200 pb-2">📍 Locaties</h3>
+          <div className="space-y-4 text-sm">
             {pickupLocation && (
-              <div className="flex items-start space-x-3">
-                <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center shadow-md flex-shrink-0">
-                  <span className="text-white text-sm">🏠</span>
+              <div className="flex items-start space-x-4 p-2 bg-green-50 rounded-lg">
+                <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center shadow-lg flex-shrink-0">
+                  <span className="text-white text-base">🏠</span>
                 </div>
                 <div className="flex-1">
-                  <div className="font-medium text-green-700">Ophalen</div>
-                  <div className="text-gray-600 text-xs leading-relaxed">{pickupLocation.address || `${pickupLocation.lat.toFixed(4)}, ${pickupLocation.lng.toFixed(4)}`}</div>
+                  <div className="font-semibold text-green-800 text-base">Ophalen</div>
+                  <div className="text-gray-700 text-sm leading-relaxed">{pickupLocation.address || `${pickupLocation.lat.toFixed(4)}, ${pickupLocation.lng.toFixed(4)}`}</div>
                 </div>
               </div>
             )}
             {deliveryLocation && (
-              <div className="flex items-start space-x-3">
-                <div className="w-8 h-8 bg-red-500 rounded-full flex items-center justify-center shadow-md flex-shrink-0">
-                  <span className="text-white text-sm">📦</span>
+              <div className="flex items-start space-x-4 p-2 bg-red-50 rounded-lg">
+                <div className="w-10 h-10 bg-red-500 rounded-full flex items-center justify-center shadow-lg flex-shrink-0">
+                  <span className="text-white text-base">📦</span>
                 </div>
                 <div className="flex-1">
-                  <div className="font-medium text-red-700">Bezorgen naar</div>
-                  <div className="text-gray-600 text-xs leading-relaxed">{deliveryLocation.address || `${deliveryLocation.lat.toFixed(4)}, ${deliveryLocation.lng.toFixed(4)}`}</div>
+                  <div className="font-semibold text-red-800 text-base">Bezorgen naar</div>
+                  <div className="text-gray-700 text-sm leading-relaxed">{deliveryLocation.address || `${deliveryLocation.lat.toFixed(4)}, ${deliveryLocation.lng.toFixed(4)}`}</div>
                 </div>
               </div>
             )}
             {driverLocation && (
-              <div className="flex items-start space-x-3">
-                <div className="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center shadow-md flex-shrink-0">
-                  <span className="text-white text-sm">🛵</span>
+              <div className="flex items-start space-x-4 p-2 bg-purple-50 rounded-lg">
+                <div className="w-10 h-10 bg-purple-600 rounded-full flex items-center justify-center shadow-lg flex-shrink-0">
+                  <span className="text-white text-base">🛵</span>
                 </div>
                 <div className="flex-1">
-                  <div className="font-medium text-purple-700">Bezorger onderweg</div>
+                  <div className="font-semibold text-purple-800 text-base">Bezorger onderweg</div>
                   {enableRealTimeTracking && (
-                    <div className="text-xs text-gray-500">● Live tracking actief</div>
+                    <div className="text-sm text-purple-600 font-medium">● Live tracking actief</div>
                   )}
                 </div>
               </div>
@@ -166,10 +166,10 @@ export default function SimpleOsmMap({
           </div>
           
           {pickupLocation && deliveryLocation && (
-            <div className="mt-4 pt-3 border-t border-gray-200">
-              <div className="flex items-center space-x-2 text-xs text-gray-700">
-                <div className="w-4 h-1 bg-gradient-to-r from-green-500 via-blue-500 to-red-500 rounded-full"></div>
-                <span className="font-medium">Optimale route</span>
+            <div className="mt-5 pt-4 border-t-2 border-gray-300">
+              <div className="flex items-center space-x-3 text-sm text-gray-800">
+                <div className="w-6 h-2 bg-gradient-to-r from-green-500 via-blue-500 to-red-500 rounded-full shadow-sm"></div>
+                <span className="font-semibold">Optimale route</span>
               </div>
             </div>
           )}
@@ -180,7 +180,7 @@ export default function SimpleOsmMap({
       <div className="absolute inset-0 pointer-events-none">
         {/* Pickup locatie marker overlay */}
         {pickupLocation && (
-          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10">
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-25">
             <div className="w-12 h-12 bg-green-500 rounded-full border-4 border-white shadow-xl flex items-center justify-center animate-pulse">
               <span className="text-white text-lg">🏠</span>
             </div>
@@ -192,7 +192,7 @@ export default function SimpleOsmMap({
         
         {/* Delivery locatie marker overlay */}
         {deliveryLocation && (
-          <div className="absolute top-1/3 right-1/3 transform -translate-x-1/2 -translate-y-1/2 z-10">
+          <div className="absolute top-1/3 right-1/3 transform -translate-x-1/2 -translate-y-1/2 z-25">
             <div className="w-12 h-12 bg-red-500 rounded-full border-4 border-white shadow-xl flex items-center justify-center animate-pulse">
               <span className="text-white text-lg">📦</span>
             </div>
@@ -204,7 +204,7 @@ export default function SimpleOsmMap({
         
         {/* Driver locatie marker overlay */}
         {driverLocation && (
-          <div className="absolute top-2/3 left-2/3 transform -translate-x-1/2 -translate-y-1/2 z-10">
+          <div className="absolute top-2/3 left-2/3 transform -translate-x-1/2 -translate-y-1/2 z-25">
             <div className={`w-10 h-10 bg-purple-600 rounded-full border-4 border-white shadow-xl flex items-center justify-center ${enableRealTimeTracking ? 'animate-bounce' : 'animate-pulse'}`}>
               <span className="text-white text-sm">🛵</span>
             </div>
@@ -238,7 +238,7 @@ export default function SimpleOsmMap({
       </div>
       
       {/* Zoom level indicator */}
-      <div className="absolute bottom-4 left-4 bg-black/70 text-white px-2 py-1 rounded text-xs z-20">
+      <div className="absolute bottom-6 left-6 bg-black/80 text-white px-3 py-2 rounded-lg text-sm font-medium z-50 shadow-lg">
         Zoom: {zoom}
       </div>
     </div>
