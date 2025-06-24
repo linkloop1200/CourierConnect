@@ -26,20 +26,30 @@ export default function EmbeddedOpenStreetMap({
 }: EmbeddedOpenStreetMapProps) {
   const [zoom, setZoom] = useState(13);
   
-  // Auto-zoom op ophaallocatie
+  // Auto-zoom en centrering
   useEffect(() => {
-    if (pickupLocation) {
-      setZoom(16); // Hoger zoom niveau voor betere detail
+    if (pickupLocation && deliveryLocation) {
+      setZoom(15); // Optimaal voor beide locaties
+    } else if (pickupLocation) {
+      setZoom(16); // Zoom in op einzelne locatie
     } else {
-      setZoom(13); // Terug naar overzicht niveau
+      setZoom(13); // Amsterdam overzicht
     }
-  }, [pickupLocation?.lat, pickupLocation?.lng]);
+  }, [pickupLocation?.lat, pickupLocation?.lng, deliveryLocation?.lat, deliveryLocation?.lng]);
   
   // Amsterdam center coordinates - altijd gefocust op Amsterdam
   const center = { lat: 52.3676, lng: 4.9041 };
   
-  // Centreer op ophaallocatie als deze bestaat, anders Amsterdam centrum
-  const mapCenter = pickupLocation ? pickupLocation : center;
+  // Slimme centrering: tussen pickup en delivery als beide bestaan
+  const mapCenter = (() => {
+    if (pickupLocation && deliveryLocation) {
+      return {
+        lat: (pickupLocation.lat + deliveryLocation.lat) / 2,
+        lng: (pickupLocation.lng + deliveryLocation.lng) / 2
+      };
+    }
+    return pickupLocation || center;
+  })();
   
   // Bereken exacte bounding box die de iframe gebruikt
   const getBoundingBox = () => {
@@ -117,36 +127,36 @@ export default function EmbeddedOpenStreetMap({
           </div>
         )}
         
-        {/* Pickup location - Huis icoon - Altijd centrum */}
+        {/* Pickup location - Groen huis icoon */}
         {pickupLocation && (
           <div 
-            className="absolute w-10 h-10 bg-green-500 rounded-full border-3 border-white shadow-lg flex items-center justify-center transform -translate-x-1/2 -translate-y-1/2 pointer-events-auto cursor-pointer hover:scale-110 transition-transform z-20"
+            className="absolute w-12 h-12 bg-green-500 rounded-full border-3 border-white shadow-xl flex items-center justify-center transform -translate-x-1/2 -translate-y-1/2 pointer-events-auto cursor-pointer hover:scale-110 transition-all duration-200 z-20"
             style={getMarkerPosition(pickupLocation)}
-            title={pickupLocation.address || "Ophaallocatie"}
+            title={`Ophalen: ${pickupLocation.address || "Onbekend adres"}`}
           >
-            <Home className="h-5 w-5 text-white" />
+            <Home className="h-6 w-6 text-white" />
           </div>
         )}
         
-        {/* Delivery location - Rood pakket icoon - Relatief tot pickup */}
+        {/* Delivery location - Rood pakket icoon */}
         {deliveryLocation && (
           <div 
-            className="absolute w-10 h-10 bg-red-500 rounded-full border-3 border-white shadow-lg flex items-center justify-center transform -translate-x-1/2 -translate-y-1/2 pointer-events-auto cursor-pointer hover:scale-110 transition-transform z-20"
+            className="absolute w-12 h-12 bg-red-500 rounded-full border-3 border-white shadow-xl flex items-center justify-center transform -translate-x-1/2 -translate-y-1/2 pointer-events-auto cursor-pointer hover:scale-110 transition-all duration-200 z-20"
             style={getMarkerPosition(deliveryLocation)}
-            title={deliveryLocation.address || "Bezorglocatie"}
+            title={`Bezorgen: ${deliveryLocation.address || "Onbekend adres"}`}
           >
-            <Package className="h-5 w-5 text-white" />
+            <Package className="h-6 w-6 text-white" />
           </div>
         )}
         
-        {/* Driver location - Paarse scooter icoon - Relatief gepositioneerd */}
+        {/* Driver location - Paarse scooter icoon */}
         {driverLocation && (
           <div 
-            className={`absolute w-10 h-10 bg-purple-500 rounded-full border-3 border-white shadow-lg flex items-center justify-center transform -translate-x-1/2 -translate-y-1/2 pointer-events-auto cursor-pointer hover:scale-110 transition-transform z-20 ${enableRealTimeTracking ? 'animate-pulse' : ''}`}
+            className={`absolute w-10 h-10 bg-purple-600 rounded-full border-3 border-white shadow-lg flex items-center justify-center transform -translate-x-1/2 -translate-y-1/2 pointer-events-auto cursor-pointer hover:scale-110 transition-all duration-200 z-20 ${enableRealTimeTracking ? 'animate-bounce' : ''}`}
             style={getMarkerPosition(driverLocation)}
             title="Bezorger onderweg"
           >
-            <span className="text-white text-lg">🛴</span>
+            <span className="text-white text-lg">🛵</span>
           </div>
         )}
         
@@ -170,10 +180,45 @@ export default function EmbeddedOpenStreetMap({
           </>
         )}
         
-        {/* Optimale route weergave - Vaste posities */}
+        {/* Optimale route tussen pickup en delivery */}
         {pickupLocation && deliveryLocation && (
           <svg className="absolute inset-0 w-full h-full pointer-events-none z-10">
-            {/* Hoofdroute lijn van pickup naar delivery */}
+            <defs>
+              <linearGradient id="routeGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#10b981" stopOpacity="0.9"/>
+                <stop offset="50%" stopColor="#3b82f6" stopOpacity="0.8"/>
+                <stop offset="100%" stopColor="#dc2626" stopOpacity="0.9"/>
+              </linearGradient>
+            </defs>
+            {(() => {
+              const pickupPos = getMarkerPosition(pickupLocation);
+              const deliveryPos = getMarkerPosition(deliveryLocation);
+              const startX = parseFloat(pickupPos.left as string);
+              const startY = parseFloat(pickupPos.top as string);
+              const endX = parseFloat(deliveryPos.left as string);
+              const endY = parseFloat(deliveryPos.top as string);
+              
+              // Create curved path between actual marker positions
+              const midX = (startX + endX) / 2;
+              const midY = Math.min(startY, endY) - 10; // Curve upward
+              
+              return (
+                <path
+                  d={`M ${startX}% ${startY}% Q ${midX}% ${midY}% ${endX}% ${endY}%`}
+                  fill="none"
+                  stroke="url(#routeGradient)"
+                  strokeWidth="4"
+                  strokeDasharray="6,3"
+                  className="animate-pulse"
+                />
+              );
+            })()}
+          </svg>
+        )}
+        
+        {/* Legacy route display - fallback */}
+        {pickupLocation && deliveryLocation && false && (
+          <svg className="absolute inset-0 w-full h-full pointer-events-none z-10">
             <path
               d="M 50% 50% Q 55% 45% 60% 60%"
               stroke="#4f46e5"

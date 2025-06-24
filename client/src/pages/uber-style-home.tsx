@@ -451,7 +451,7 @@ export default function UberStyleHome() {
             lng: delivery.coordinates.lng,
             address: delivery.address
           } : undefined}
-          driverLocation={driverLocation}
+          driverLocation={estimate ? { lat: 52.3676, lng: 4.9041 } : undefined}
           enableRealTimeTracking={isDriver}
         />
       </div>
