@@ -5,7 +5,7 @@ import { Package, Clock, MapPin, Search, Star, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
-import EmbeddedOpenStreetMap from "@/components/embedded-openstreetmap";
+import SimpleOsmMap from "@/components/simple-osm-map";
 import BottomNavigation from "@/components/bottom-navigation";
 import RoleSwitcher from "@/components/role-switcher";
 import { useUserRole } from "@/hooks/useUserRole";
@@ -439,7 +439,7 @@ export default function UberStyleHome() {
     <div className="h-screen bg-white relative overflow-hidden">
       {/* Map */}
       <div className="absolute inset-0">
-        <EmbeddedOpenStreetMap 
+        <SimpleOsmMap 
           height="100vh"
           pickupLocation={pickup?.coordinates ? {
             lat: pickup.coordinates.lat,

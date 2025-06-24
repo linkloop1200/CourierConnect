@@ -100,10 +100,17 @@ export default function EmbeddedOpenStreetMap({
     };
   };
 
-  // Create OpenStreetMap iframe URL met exact dezelfde bounding box
+  // Create OpenStreetMap iframe URL met markers IN de kaart
   const getOsmUrl = () => {
     const bbox = getBoundingBox();
-    return `https://www.openstreetmap.org/export/embed.html?bbox=${bbox.minLng}%2C${bbox.minLat}%2C${bbox.maxLng}%2C${bbox.maxLat}&layer=mapnik`;
+    let url = `https://www.openstreetmap.org/export/embed.html?bbox=${bbox.minLng}%2C${bbox.minLat}%2C${bbox.maxLng}%2C${bbox.maxLat}&layer=mapnik`;
+    
+    // Voeg pickup marker toe aan de URL
+    if (pickupLocation) {
+      url += `&marker=${pickupLocation.lat}%2C${pickupLocation.lng}`;
+    }
+    
+    return url;
   };
 
   const handleZoomIn = () => {
