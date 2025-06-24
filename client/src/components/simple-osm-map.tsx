@@ -116,46 +116,7 @@ export default function SimpleOsmMap({
         </Button>
       </div>
       
-      {/* Locatie informatie rechtsboven */}
-      {(pickupLocation || deliveryLocation || driverLocation) && (
-        <div className="absolute top-4 right-4 bg-white rounded-lg p-4 shadow-xl max-w-sm z-40 border border-gray-300">
-          <h3 className="font-semibold text-gray-900 mb-3 text-sm">Locaties</h3>
-          <div className="space-y-3 text-sm">
-            {pickupLocation && (
-              <div className="flex items-start space-x-3">
-                <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0">
-                  <span className="text-white text-xs">🏠</span>
-                </div>
-                <div>
-                  <div className="font-medium text-green-700">Ophalen</div>
-                  <div className="text-gray-600 text-xs">{pickupLocation.address}</div>
-                </div>
-              </div>
-            )}
-            {deliveryLocation && (
-              <div className="flex items-start space-x-3">
-                <div className="w-6 h-6 bg-red-500 rounded-full flex items-center justify-center flex-shrink-0">
-                  <span className="text-white text-xs">📦</span>
-                </div>
-                <div>
-                  <div className="font-medium text-red-700">Bezorgen naar</div>
-                  <div className="text-gray-600 text-xs">{deliveryLocation.address}</div>
-                </div>
-              </div>
-            )}
-            {driverLocation && (
-              <div className="flex items-start space-x-3">
-                <div className="w-6 h-6 bg-purple-600 rounded-full flex items-center justify-center flex-shrink-0">
-                  <span className="text-white text-xs">🛵</span>
-                </div>
-                <div>
-                  <div className="font-medium text-purple-700">Bezorger onderweg</div>
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
+
       
       {/* Zoom level indicator */}
       <div className="absolute bottom-4 left-4 bg-black/70 text-white px-2 py-1 rounded text-xs z-30">
