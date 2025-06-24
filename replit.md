@@ -147,6 +147,7 @@ This is a comprehensive full-stack web application for express package delivery 
 - June 23, 2025. Onthoud functie voor adressen geïmplementeerd - automatische opslag in localStorage met recente adressen lijst
 - June 23, 2025. Kaart gefocust op Amsterdam met dynamische iconen - ophaal (groen huis), bezorg (rood pakket), bezorger (paarse scooter) met optimale route weergave
 - June 23, 2025. GPS-naar-pixel synchronisatie probleem opgelost - kaart iframe en overlay markers gebruiken nu exact dezelfde bounding box voor perfecte coördinaat positionering
+- June 24, 2025. Stabiele marker positionering geïmplementeerd met vaste Amsterdam bounds - iconen blijven op GPS locaties bij zoom wijzigingen en prominente route visualisatie toegevoegd
 
 ## User Preferences
 
