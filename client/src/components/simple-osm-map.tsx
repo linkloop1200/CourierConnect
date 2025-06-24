@@ -116,8 +116,32 @@ export default function SimpleOsmMap({
         </Button>
       </div>
       
+      {/* Eenvoudige legenda */}
+      {(pickupLocation || deliveryLocation || driverLocation) && (
+        <div className="absolute top-4 left-4 bg-white/90 rounded-lg p-3 shadow-lg z-40 border">
+          <div className="text-sm space-y-2">
+            {pickupLocation && (
+              <div className="flex items-center space-x-2">
+                <span className="text-green-600 font-bold">●</span>
+                <span className="text-gray-700">Ophalen: {pickupLocation.address}</span>
+              </div>
+            )}
+            {deliveryLocation && (
+              <div className="flex items-center space-x-2">
+                <span className="text-red-600 font-bold">●</span>
+                <span className="text-gray-700">Bezorgen: {deliveryLocation.address}</span>
+              </div>
+            )}
+            {driverLocation && (
+              <div className="flex items-center space-x-2">
+                <span className="text-purple-600 font-bold">●</span>
+                <span className="text-gray-700">Bezorger onderweg</span>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
 
-      
       {/* Zoom level indicator */}
       <div className="absolute bottom-4 left-4 bg-black/70 text-white px-2 py-1 rounded text-xs z-30">
         Zoom: {zoom}
