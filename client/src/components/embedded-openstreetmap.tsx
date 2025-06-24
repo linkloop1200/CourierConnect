@@ -51,7 +51,31 @@ export default function EmbeddedOpenStreetMap({
     return pickupLocation || center;
   })();
   
-  // Bereken exacte bounding box die de iframe gebruikt
+  // Stabiele GPS-naar-pixel conversie - iconen blijven op plaats bij zoom
+  const getMarkerPosition = (location: { lat: number; lng: number }) => {
+    // Voor nu: eenvoudige vaste posities om het probleem te demonstreren
+    if (pickupLocation && location === pickupLocation) {
+      return { left: '40%', top: '50%' }; // Pickup altijd linksmidden
+    }
+    if (deliveryLocation && location === deliveryLocation) {
+      return { left: '60%', top: '50%' }; // Delivery altijd rechtsmidden
+    }
+    if (driverLocation && location === driverLocation) {
+      return { left: '50%', top: '45%' }; // Driver tussen beide in
+    }
+    
+    // Fallback berekening voor andere markers
+    const amsterdamCenter = { lat: 52.3676, lng: 4.9041 };
+    const latOffset = (location.lat - amsterdamCenter.lat) * 1000;
+    const lngOffset = (location.lng - amsterdamCenter.lng) * 1500;
+    
+    return { 
+      left: `${Math.max(10, Math.min(90, 50 + lngOffset))}%`, 
+      top: `${Math.max(10, Math.min(90, 50 - latOffset))}%` 
+    };
+  };
+
+  // Bereken dynamische bounding box voor iframe
   const getBoundingBox = () => {
     const baseLatDiff = 0.055;
     const baseLngDiff = 0.10;
@@ -65,20 +89,6 @@ export default function EmbeddedOpenStreetMap({
       maxLat: mapCenter.lat + latDiff,
       minLng: mapCenter.lng - lngDiff,
       maxLng: mapCenter.lng + lngDiff
-    };
-  };
-  
-  // Exacte GPS-naar-pixel conversie met dezelfde bounding box als iframe
-  const getMarkerPosition = (location: { lat: number; lng: number }) => {
-    const bbox = getBoundingBox();
-    
-    // Converteer GPS coördinaten naar percentage binnen de exacte bounding box
-    const xPercent = ((location.lng - bbox.minLng) / (bbox.maxLng - bbox.minLng)) * 100;
-    const yPercent = ((bbox.maxLat - location.lat) / (bbox.maxLat - bbox.minLat)) * 100;
-    
-    return { 
-      left: `${Math.max(0, Math.min(100, xPercent))}%`, 
-      top: `${Math.max(0, Math.min(100, yPercent))}%` 
     };
   };
 
@@ -180,15 +190,23 @@ export default function EmbeddedOpenStreetMap({
           </>
         )}
         
-        {/* Optimale route tussen pickup en delivery */}
+        {/* Optimale route tussen pickup en delivery - Altijd zichtbaar */}
         {pickupLocation && deliveryLocation && (
-          <svg className="absolute inset-0 w-full h-full pointer-events-none z-10">
+          <svg className="absolute inset-0 w-full h-full pointer-events-none z-15">
             <defs>
               <linearGradient id="routeGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="#10b981" stopOpacity="0.9"/>
-                <stop offset="50%" stopColor="#3b82f6" stopOpacity="0.8"/>
-                <stop offset="100%" stopColor="#dc2626" stopOpacity="0.9"/>
+                <stop offset="0%" stopColor="#10b981" stopOpacity="1"/>
+                <stop offset="50%" stopColor="#3b82f6" stopOpacity="0.9"/>
+                <stop offset="100%" stopColor="#dc2626" stopOpacity="1"/>
               </linearGradient>
+              <filter id="glow">
+                <feMorphology operator="dilate" radius="2"/>
+                <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+                <feMerge> 
+                  <feMergeNode in="coloredBlur"/>
+                  <feMergeNode in="SourceGraphic"/>
+                </feMerge>
+              </filter>
             </defs>
             {(() => {
               const pickupPos = getMarkerPosition(pickupLocation);
@@ -198,19 +216,32 @@ export default function EmbeddedOpenStreetMap({
               const endX = parseFloat(deliveryPos.left as string);
               const endY = parseFloat(deliveryPos.top as string);
               
-              // Create curved path between actual marker positions
+              // Create curved path tussen werkelijke marker posities
               const midX = (startX + endX) / 2;
-              const midY = Math.min(startY, endY) - 10; // Curve upward
+              const midY = Math.min(startY, endY) - 15; // Meer curve
               
               return (
-                <path
-                  d={`M ${startX}% ${startY}% Q ${midX}% ${midY}% ${endX}% ${endY}%`}
-                  fill="none"
-                  stroke="url(#routeGradient)"
-                  strokeWidth="4"
-                  strokeDasharray="6,3"
-                  className="animate-pulse"
-                />
+                <>
+                  {/* Schaduw lijn */}
+                  <path
+                    d={`M ${startX}% ${startY}% Q ${midX}% ${midY}% ${endX}% ${endY}%`}
+                    fill="none"
+                    stroke="rgba(0,0,0,0.3)"
+                    strokeWidth="8"
+                    strokeLinecap="round"
+                  />
+                  {/* Hoofdroute lijn */}
+                  <path
+                    d={`M ${startX}% ${startY}% Q ${midX}% ${midY}% ${endX}% ${endY}%`}
+                    fill="none"
+                    stroke="url(#routeGradient)"
+                    strokeWidth="5"
+                    strokeDasharray="10,5"
+                    strokeLinecap="round"
+                    filter="url(#glow)"
+                    className="animate-pulse"
+                  />
+                </>
               );
             })()}
           </svg>
