@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useLocation } from "wouter";
 import { Navigation, Phone, MessageCircle, CheckCircle, Clock, MapPin, Star, Package, User } from "lucide-react";
@@ -120,7 +120,7 @@ export default function DriverDashboard() {
         setActiveDelivery(null);
         toast({
           title: "Bezorging voltooid!",
-          description: `€${activeDelivery.estimatedEarnings} toegevoegd aan je verdiensten`,
+          description: `Ôé¼${activeDelivery.estimatedEarnings} toegevoegd aan je verdiensten`,
         });
       }
     }
@@ -167,7 +167,7 @@ export default function DriverDashboard() {
           <Card>
             <CardContent className="p-3">
               <p className="text-sm text-gray-600">Vandaag verdiend</p>
-              <p className="text-xl font-bold text-green-600">€{stats.todayEarnings}</p>
+              <p className="text-xl font-bold text-green-600">Ôé¼{stats.todayEarnings}</p>
             </CardContent>
           </Card>
           <Card>
@@ -267,7 +267,7 @@ export default function DriverDashboard() {
               <div className="bg-green-50 p-3 rounded-lg mb-4">
                 <div className="flex justify-between items-center">
                   <span className="text-green-800 font-medium">Verwachte verdiensten</span>
-                  <span className="text-green-600 font-bold text-lg">€{activeDelivery.estimatedEarnings}</span>
+                  <span className="text-green-600 font-bold text-lg">Ôé¼{activeDelivery.estimatedEarnings}</span>
                 </div>
               </div>
 

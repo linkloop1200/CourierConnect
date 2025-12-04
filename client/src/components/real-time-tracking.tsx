@@ -16,7 +16,7 @@ export default function RealTimeTracking({ deliveryId }: RealTimeTrackingProps) 
 
   // Real-time delivery tracking
   const { data: deliveryData, refetch } = useQuery<Delivery & { driver: Driver | null }>({
-    queryKey: ['/api/deliveries', deliveryId],
+    queryKey: [`/api/deliveries/${deliveryId}`],
     // Disabled automatic refresh to prevent infinite loading
     refetchInterval: false,
   });

@@ -50,7 +50,8 @@ app.use((req, res, next) => {
     const message = err.message || "Internal Server Error";
 
     res.status(status).json({ message });
-    throw err;
+    // Log the error instead of crashing the process so the server keeps running
+    log(`Unhandled error: ${message}`, "error");
   });
 
   // importantly only setup vite in development and after
@@ -66,11 +67,16 @@ app.use((req, res, next) => {
   // this serves both the API and the client.
   // It is the only port that is not firewalled.
   const port = 5000;
-  server.listen({
+  const listenOptions: Record<string, unknown> = {
     port,
     host: "0.0.0.0",
-    reusePort: true,
-  }, () => {
+  };
+  // reusePort is not supported on Windows and throws ENOTSUP
+  if (process.platform !== "win32") {
+    listenOptions.reusePort = true;
+  }
+
+  server.listen(listenOptions, () => {
     log(`serving on port ${port}`);
   });
 })();

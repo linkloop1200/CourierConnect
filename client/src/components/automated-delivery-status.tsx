@@ -29,7 +29,7 @@ export default function AutomatedDeliveryStatus({ deliveryId }: AutomatedDeliver
   const { toast } = useToast();
 
   const { data: delivery, refetch } = useQuery<Delivery & { driver: Driver | null }>({
-    queryKey: ['/api/deliveries', deliveryId],
+    queryKey: [`/api/deliveries/${deliveryId}`],
     refetchInterval: false, // Disabled automatic refresh
   });
 
@@ -37,12 +37,12 @@ export default function AutomatedDeliveryStatus({ deliveryId }: AutomatedDeliver
     mutationFn: async (status: string) => {
       return apiRequest({
         url: `/api/deliveries/${deliveryId}/status`,
-        method: "PUT",
+        method: "POST",
         body: { status }
       });
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/deliveries', deliveryId] });
+      queryClient.invalidateQueries({ queryKey: [`/api/deliveries/${deliveryId}`] });
       if (notifications) {
         toast({
           title: "Status automatisch bijgewerkt",

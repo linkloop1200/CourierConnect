@@ -21,13 +21,13 @@ export default function DriverMobileApp({ driverId }: DriverMobileAppProps) {
 
   // Get driver's assigned deliveries
   const { data: deliveries, isLoading } = useQuery<Delivery[]>({
-    queryKey: ['/api/drivers', driverId, 'deliveries'],
+    queryKey: [`/api/drivers/${driverId}/deliveries`],
     refetchInterval: false, // Disabled to prevent infinite loading
   });
 
   // Get driver info
   const { data: driver } = useQuery<Driver>({
-    queryKey: ['/api/drivers', driverId],
+    queryKey: [`/api/drivers/${driverId}`],
   });
 
   // Update driver location
@@ -43,21 +43,17 @@ export default function DriverMobileApp({ driverId }: DriverMobileAppProps) {
       });
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/drivers', driverId] });
+      queryClient.invalidateQueries({ queryKey: [`/api/drivers/${driverId}`] });
     }
   });
 
   // Update delivery status
   const updateDeliveryMutation = useMutation({
     mutationFn: async ({ deliveryId, status, notes }: { deliveryId: number; status: string; notes?: string }) => {
-      return apiRequest({
-        url: `/api/deliveries/${deliveryId}/status`,
-        method: "PUT",
-        body: { status, driverId, notes }
-      });
+      return apiRequest("POST", `/api/deliveries/${deliveryId}/status`, { status, driverId, notes });
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/drivers', driverId, 'deliveries'] });
+      queryClient.invalidateQueries({ queryKey: [`/api/drivers/${driverId}/deliveries`] });
       toast({
         title: "Status bijgewerkt",
         description: "Bezorgstatus is succesvol gewijzigd.",

@@ -7,15 +7,61 @@ async function throwIfResNotOk(res: Response) {
   }
 }
 
-export async function apiRequest(
-  method: string,
-  url: string,
-  data?: unknown | undefined,
-): Promise<Response> {
-  const res = await fetch(url, {
+type ApiRequestOptions = {
+  url: string;
+  method?: string;
+  body?: any;
+  headers?: HeadersInit;
+};
+
+export async function apiRequest(method: string, url: string, data?: unknown): Promise<Response>;
+export async function apiRequest(options: ApiRequestOptions): Promise<Response>;
+export async function apiRequest(url: string, init?: RequestInit): Promise<Response>;
+export async function apiRequest(methodOrOptions: string | ApiRequestOptions, urlOrInit?: string | RequestInit, data?: unknown): Promise<Response> {
+  let method: string;
+  let targetUrl: string;
+  let body: any;
+  let headers: HeadersInit | undefined;
+
+  if (typeof methodOrOptions === "string" && typeof urlOrInit === "string") {
+    // Signature: apiRequest("POST", "/api/x", data)
+    method = methodOrOptions;
+    targetUrl = urlOrInit;
+    body = data ? JSON.stringify(data) : undefined;
+    headers = data ? { "Content-Type": "application/json" } : undefined;
+  } else if (typeof methodOrOptions === "string" && typeof urlOrInit === "object") {
+    // Signature: apiRequest("/api/x", { method, body, headers })
+    targetUrl = methodOrOptions;
+    method = urlOrInit?.method || "GET";
+    const providedBody = (urlOrInit as RequestInit).body;
+    body =
+      typeof providedBody === "string" || providedBody === undefined
+        ? providedBody
+        : JSON.stringify(providedBody);
+    headers = urlOrInit?.headers;
+    if (body && !headers) {
+      headers = { "Content-Type": "application/json" };
+    }
+  } else {
+    // Signature: apiRequest({ url, method, body, headers })
+    const options = methodOrOptions as ApiRequestOptions;
+    method = options.method || "GET";
+    targetUrl = options.url;
+    const providedBody = options.body;
+    body =
+      typeof providedBody === "string" || providedBody === undefined
+        ? providedBody
+        : JSON.stringify(providedBody);
+    headers = options.headers;
+    if (body && !headers) {
+      headers = { "Content-Type": "application/json" };
+    }
+  }
+
+  const res = await fetch(targetUrl, {
     method,
-    headers: data ? { "Content-Type": "application/json" } : {},
-    body: data ? JSON.stringify(data) : undefined,
+    headers,
+    body,
     credentials: "include",
   });
 

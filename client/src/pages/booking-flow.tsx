@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useLocation } from "wouter";
 import { ArrowLeft, Package, User, Phone, MessageCircle, Star, Navigation } from "lucide-react";
@@ -137,7 +137,7 @@ export default function BookingFlow({ params }: BookingFlowProps) {
       <div className="h-screen bg-white">
         {/* Header */}
         <div className="bg-white p-4 border-b flex items-center space-x-3">
-          <Button variant="ghost" size="sm" onClick={() => setLocation("/uber")}>
+          <Button variant="ghost" size="sm" onClick={() => setLocation("/")}>
             <ArrowLeft className="h-4 w-4" />
           </Button>
           <h1 className="text-lg font-semibold">Pakket details</h1>
@@ -199,7 +199,7 @@ export default function BookingFlow({ params }: BookingFlowProps) {
                   <p className="font-medium text-brand-blue">Spoedpakket Express</p>
                   <p className="text-sm text-brand-blue/80">Binnen 30 minuten</p>
                 </div>
-                <p className="text-lg font-bold text-brand-blue">€12.50</p>
+                <p className="text-lg font-bold text-brand-blue">Ôé¼12.50</p>
               </div>
             </CardContent>
           </Card>
@@ -286,7 +286,7 @@ export default function BookingFlow({ params }: BookingFlowProps) {
                         <span className="text-sm font-medium">{assignedDriver.rating}</span>
                       </div>
                     </div>
-                    <p className="text-gray-600">{assignedDriver.vehicleType} • {assignedDriver.licensePlate}</p>
+                    <p className="text-gray-600">{assignedDriver.vehicleType} ÔÇó {assignedDriver.licensePlate}</p>
                     <p className="text-sm text-gray-500">{assignedDriver.completedDeliveries} bezorgingen</p>
                   </div>
                   <div className="text-right">

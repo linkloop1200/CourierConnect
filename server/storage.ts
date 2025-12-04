@@ -1,5 +1,5 @@
 import { users, addresses, drivers, deliveries, type User, type InsertUser, type Address, type InsertAddress, type Driver, type InsertDriver, type Delivery, type InsertDelivery } from "@shared/schema";
-import { db } from "./db";
+import { db, dbAvailable } from "./db";
 import { eq } from "drizzle-orm";
 
 export interface IStorage {
@@ -20,6 +20,7 @@ export interface IStorage {
   updateDriverLocation(id: number, latitude: string, longitude: string): Promise<Driver | undefined>;
   
   // Deliveries
+  getAllDeliveries(): Promise<Delivery[]>;
   getDelivery(id: number): Promise<Delivery | undefined>;
   getDeliveriesByUserId(userId: number): Promise<Delivery[]>;
   getDeliveriesByDriverId(driverId: number): Promise<Delivery[]>;
@@ -248,6 +249,10 @@ export class MemStorage implements IStorage {
   }
 
   // Deliveries
+  async getAllDeliveries(): Promise<Delivery[]> {
+    return Array.from(this.deliveries.values());
+  }
+
   async getDelivery(id: number): Promise<Delivery | undefined> {
     return this.deliveries.get(id);
   }
@@ -324,19 +329,26 @@ export class MemStorage implements IStorage {
 }
 
 // Database storage implementation
+const getDbOrThrow = () => {
+  if (!db) {
+    throw new Error("Database not configured. Set DATABASE_URL or use memory storage.");
+  }
+  return db;
+};
+
 export class DatabaseStorage implements IStorage {
   async getUser(id: number): Promise<User | undefined> {
-    const [user] = await db.select().from(users).where(eq(users.id, id));
+    const [user] = await getDbOrThrow().select().from(users).where(eq(users.id, id));
     return user || undefined;
   }
 
   async getUserByUsername(username: string): Promise<User | undefined> {
-    const [user] = await db.select().from(users).where(eq(users.username, username));
+    const [user] = await getDbOrThrow().select().from(users).where(eq(users.username, username));
     return user || undefined;
   }
 
   async createUser(insertUser: InsertUser): Promise<User> {
-    const [user] = await db
+    const [user] = await getDbOrThrow()
       .insert(users)
       .values(insertUser)
       .returning();
@@ -344,16 +356,16 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getAddress(id: number): Promise<Address | undefined> {
-    const [address] = await db.select().from(addresses).where(eq(addresses.id, id));
+    const [address] = await getDbOrThrow().select().from(addresses).where(eq(addresses.id, id));
     return address || undefined;
   }
 
   async getAddressesByUserId(userId: number): Promise<Address[]> {
-    return await db.select().from(addresses).where(eq(addresses.userId, userId));
+    return await getDbOrThrow().select().from(addresses).where(eq(addresses.userId, userId));
   }
 
   async createAddress(insertAddress: InsertAddress): Promise<Address> {
-    const [address] = await db
+    const [address] = await getDbOrThrow()
       .insert(addresses)
       .values(insertAddress)
       .returning();
@@ -361,16 +373,16 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getDriver(id: number): Promise<Driver | undefined> {
-    const [driver] = await db.select().from(drivers).where(eq(drivers.id, id));
+    const [driver] = await getDbOrThrow().select().from(drivers).where(eq(drivers.id, id));
     return driver || undefined;
   }
 
   async getAvailableDrivers(): Promise<Driver[]> {
-    return await db.select().from(drivers).where(eq(drivers.isActive, true));
+    return await getDbOrThrow().select().from(drivers).where(eq(drivers.isActive, true));
   }
 
   async createDriver(insertDriver: InsertDriver): Promise<Driver> {
-    const [driver] = await db
+    const [driver] = await getDbOrThrow()
       .insert(drivers)
       .values(insertDriver)
       .returning();
@@ -378,7 +390,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   async updateDriverLocation(id: number, latitude: string, longitude: string): Promise<Driver | undefined> {
-    const [driver] = await db
+    const [driver] = await getDbOrThrow()
       .update(drivers)
       .set({ currentLatitude: latitude, currentLongitude: longitude })
       .where(eq(drivers.id, id))
@@ -387,22 +399,26 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getDelivery(id: number): Promise<Delivery | undefined> {
-    const [delivery] = await db.select().from(deliveries).where(eq(deliveries.id, id));
+    const [delivery] = await getDbOrThrow().select().from(deliveries).where(eq(deliveries.id, id));
     return delivery || undefined;
   }
 
+  async getAllDeliveries(): Promise<Delivery[]> {
+    return await getDbOrThrow().select().from(deliveries);
+  }
+
   async getDeliveriesByUserId(userId: number): Promise<Delivery[]> {
-    return await db.select().from(deliveries).where(eq(deliveries.userId, userId));
+    return await getDbOrThrow().select().from(deliveries).where(eq(deliveries.userId, userId));
   }
 
   async getDeliveriesByDriverId(driverId: number): Promise<Delivery[]> {
-    return await db.select().from(deliveries).where(eq(deliveries.driverId, driverId));
+    return await getDbOrThrow().select().from(deliveries).where(eq(deliveries.driverId, driverId));
   }
 
   async createDelivery(insertDelivery: InsertDelivery): Promise<Delivery> {
     const orderNumber = `SP${new Date().getFullYear()}-${String(Math.floor(Math.random() * 1000)).padStart(3, '0')}`;
     
-    const [delivery] = await db
+    const [delivery] = await getDbOrThrow()
       .insert(deliveries)
       .values({
         ...insertDelivery,
@@ -419,7 +435,7 @@ export class DatabaseStorage implements IStorage {
       updateData.driverId = driverId;
     }
     
-    const [delivery] = await db
+    const [delivery] = await getDbOrThrow()
       .update(deliveries)
       .set(updateData)
       .where(eq(deliveries.id, id))
@@ -428,7 +444,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   async updateDeliveryPickupTime(id: number): Promise<Delivery | undefined> {
-    const [delivery] = await db
+    const [delivery] = await getDbOrThrow()
       .update(deliveries)
       .set({ pickedUpAt: new Date() })
       .where(eq(deliveries.id, id))
@@ -437,7 +453,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   async updateDeliveryDeliveredTime(id: number): Promise<Delivery | undefined> {
-    const [delivery] = await db
+    const [delivery] = await getDbOrThrow()
       .update(deliveries)
       .set({ deliveredAt: new Date() })
       .where(eq(deliveries.id, id))
@@ -446,4 +462,4 @@ export class DatabaseStorage implements IStorage {
   }
 }
 
-export const storage = new DatabaseStorage();
+export const storage: IStorage = dbAvailable ? new DatabaseStorage() : new MemStorage();
